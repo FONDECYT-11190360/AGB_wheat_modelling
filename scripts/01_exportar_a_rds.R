@@ -19,6 +19,7 @@ data |>
   
 # guardar los datos como .rds
 data |> 
+  mutate(site =replace(site, site == 'ariztia','la_cancha')) |> 
   write_rds('data/data_processed/data_biomasa_estructuras.rds')
 
 # data fenología
@@ -102,7 +103,37 @@ data_temp <- data_soil_hid |>
 
 data_soil_hidango <- left_join(data_sm,data_temp, by =c('site','season','date','depth'))
 
-data_soil_unida <- bind_rows(data_soil_la_cancha,data_soil_hidango)
+## Villa Baviera
+
+data_soil_vb <- read_csv2('data/data_raw/data_total_soil_vb.csv')
+
+data_sm <- data_soil_vb |>
+  mutate(site = 'villa_baviera', season = '2020-2021') |> 
+  relocate(season, .before = 'date') |> 
+  relocate(site, .before = 'season') |> 
+  select(c(1:6)) |> 
+  pivot_longer(4:6,values_to = 'sm') |> 
+  mutate(date = dmy(date),
+         depth = as.numeric(substr(name,4,5))) |>
+  group_by(site,season,date,depth) |> 
+  summarise(sm =mean(sm,na.rm = TRUE)) |> 
+  relocate(depth,.before = 'sm')  
+
+data_temp <- data_soil_vb |>
+  mutate(site = 'villa_baviera', season = '2020-2021') |> 
+  relocate(season, .before = 'date') |> 
+  relocate(site, .before = 'season') |> 
+  select(c(1:3,7:9)) |> 
+  pivot_longer(4:6,values_to = 'temp') |> 
+  mutate(date = dmy(date),
+         depth = as.numeric(substr(name,3,4))) |>
+  group_by(site,season,date,depth) |> 
+  summarise(temp =mean(temp,na.rm = TRUE)) |> 
+  relocate(depth,.before = 'temp') 
+
+data_soil_vb <- left_join(data_sm,data_temp, by =c('site','season','date','depth'))
+
+data_soil_unida <- bind_rows(data_soil_la_cancha,data_soil_hidango,data_soil_vb)
 
 write_rds(data_soil_unida,'data/data_processed/data_soil.rds')
 
@@ -165,4 +196,53 @@ data |>
   bind_rows(data_clima_ar) |> 
   write_rds('data/data_processed/data_clima.rds')
   
+data_clima <- read_rds('data/data_processed/data_clima.rds')
+
+data_clima <- data_clima |> 
+  group_by(site, date =floor_date(fecha_hora,'1 day')) |> 
+  summarize(precipitacion_mm = sum(precipitacion_mm,na.rm = TRUE),
+            temp_c = mean(temp_c,na.rm = TRUE)) |>
+  mutate(date = ymd(date)) 
+  
+
+## Datos clima Villa_Baviera
+
+data_clima_vb <- read_csv2('data/data_raw/data_clima_vb.csv')
+
+data_clima_vb |> 
+  select(date,mm_precipitation,air_temperature_c) |> 
+  setNames(c('date','precipitacion_mm','temp_c')) |> 
+  mutate(date = dmy(date)) |>   
+  group_by(date) |> 
+  summarize(precipitacion_mm = sum(precipitacion_mm,na.rm = TRUE),
+            temp_c = mean(temp_c,na.rm = TRUE)) |> 
+  mutate(site = 'villa_baviera') |> 
+  relocate(site,.before = 'date') |> 
+  bind_rows(data_clima) |> 
+  write_rds('data/data_processed/data_clima.rds')
+
+data_clima <- read_rds('data/data_processed/data_clima.rds')
+
+data_clima |> 
+  mutate(season = case_when(
+    site == 'hidango' & between(date,ymd("2021-05-23"),ymd("2022-01-04")) ~ '2021-2022',
+    site == 'hidango' & between(date,ymd("2022-05-28"),ymd("2023-01-04")) ~ '2022-2023',
+    site == 'ariztia' & between(date,ymd("2022-05-23"),ymd("2022-12-12")) ~ '2022-2023',
+    site == 'villa_baviera' & between(date,ymd("2020-09-15"),ymd("2021-01-18")) ~ '2020-2021',
+    .default = NA
+    )
+  ) |> 
+  filter(!is.na(season)) |> 
+  relocate(season,.after = site) |> 
+  write_rds('data/data_processed/data_clima.rds')
+
+
+# datos LAI
+
+data_lai <- read_csv2('data/data_raw/data_lai.csv')
+
+data_lai |> 
+  mutate(site =replace(site, site == 'ariztia','la_cancha')) |> 
+  write_rds('data/data_processed/data_lai.rds')
+
   
