@@ -12,7 +12,7 @@ data_bio |>
     facet_wrap(site~season+name,scales = 'free')+
     theme_bw()
 
-
+#datos de clima
 data_clima <- read_rds('data/data_processed/data_clima.rds')
 data_clima |> glimpse()
 
@@ -23,6 +23,7 @@ data_clima |>
   facet_wrap(site+season~name,scales = 'free')+
   theme_bw()
 
+#datos de fenologia (grados día)
 data_feno <- read_rds('data/data_processed/data_fenologia.rds')
 data_feno |> glimpse()
 
@@ -32,7 +33,7 @@ data_feno |>
   facet_wrap(site~season,scales = 'free')+
   theme_bw()
 
-
+#datos de fenología (clorofila)
 data_gcc <- read_rds('data/data_processed/data_gcc.rds')
 data_gcc |> glimpse()
 
@@ -42,6 +43,7 @@ data_gcc |>
   facet_wrap(site~season,scales = 'free')+
   theme_bw()
 
+#datos de fenología (lai)
 data_lai <- read_rds('data/data_processed/data_lai.rds')
 data_lai |> glimpse()
 
@@ -63,7 +65,8 @@ data_lai |>
 data_lai |> 
   drop_na() |> 
   summarize(r = cor(lai_cept,lai_manual))
-  
+
+#datos de suelo
 data_soil <- read_rds('data/data_processed/data_soil.rds')
 data_soil |> glimpse()
 
@@ -76,7 +79,7 @@ data_soil |>
   facet_wrap(site~season+name,scales = 'free',ncol=2)+
   theme_bw()
 
-
+#datos satelitales (panetscope)
 data_visps <- read_rds('data/data_processed/data_vis_planetscope.rds')
 data_visps |> glimpse()
 
@@ -87,10 +90,22 @@ data_visps |>
   facet_wrap(site~season+vi,scales = 'free',ncol=3) +
   theme_bw()
 
-
+#datos satelitales (sentinel 2)
 data_viss2 <- read_rds('data/data_processed/data_vis_sentinel2.rds')
 data_viss2 |> glimpse()
 
+data_viss2 |> 
+  mutate(value = ifelse(index != 'kNDVI', value/10000,value)) |> 
+  group_by(sitio,season,index) |> 
+  reframe(min = min(value,na.rm=T),
+          max = max(value,na.rm=T),
+          mean = mean(value,na.rm=T),
+          median = median(value,na.rm=T),
+          q1 = quantile(value,probs=.25,na.rm=T),
+          q3 = quantile(value,probs=.75,na.rm=T)) |> 
+  View()
+
+#datos satelitales (sentinel 2 backup)
 data_viss22 <- read_rds('data/data_processed/data_vis_sentinel2_bkp.rds')
 data_viss22 |> glimpse()
 
@@ -104,7 +119,7 @@ data_bio |>
     geom_point() +
     geom_line()
 
-
+# visualización
 data_clima |> distinct(site)
 
 data_clima |> 
