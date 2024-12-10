@@ -33,7 +33,8 @@ data_viss22 <- read_rds('data/data_processed/data_vis_sentinel2_bkp.rds')
 
 data_bio |> 
   mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season)) |> 
+         season = gsub('_','-',season),
+         sample = gsub('M','',sample)) |> 
   select(sitio = site,
          temporada = season,
          fecha = date_sample,
@@ -71,7 +72,8 @@ data_gcc |>
 
 data_lai |>
   mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season)) |> 
+         season = gsub('_','-',season),
+         sample = gsub('M','',sample)) |> 
   select(sitio = site,
          temporada = season,
          fecha = date_sample,
