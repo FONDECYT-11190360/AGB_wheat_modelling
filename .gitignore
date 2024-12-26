@@ -24,6 +24,7 @@
 
 # Carpetas
 data/processed/raster/indices/
+data/raw/raster/
 
 # RStudio files
 .Rproj.user/
