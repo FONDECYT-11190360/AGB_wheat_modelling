@@ -18,119 +18,70 @@ fecha_a_temporada <- function(fecha) {
   
 }
 
+muestra <- function(sitio,temporada,sample) {
+  
+  case_when(sitio == 'hidango')
+  
+}
+
 #datos
-data_bio <- read_rds('data/data_processed/data_biomasa_estructuras.rds')
-data_clima <- read_rds('data/data_processed/data_clima.rds')
-data_feno <- read_rds('data/data_processed/data_fenologia.rds')
-data_gcc <- read_rds('data/data_processed/data_gcc.rds')
-data_lai <- read_rds('data/data_processed/data_lai.rds')
-data_soil <- read_rds('data/data_processed/data_soil.rds')
-data_visps <- read_rds('data/data_processed/data_vis_planetscope.rds')
-data_viss2 <- read_rds('data/data_processed/data_vis_sentinel2.rds')
-data_viss22 <- read_rds('data/data_processed/data_vis_sentinel2_bkp.rds')
+data_bio <- read_rds('data/processed_old/data_biomasa_estructuras.rds')
+data_clima <- read_rds('data/processed_old/data_clima.rds')
+data_feno <- read_rds('data/processed_old/data_fenologia.rds')
+data_gcc <- read_rds('data/processed_old/data_gcc.rds')
+data_soil <- read_rds('data/processed_old/data_soil.rds')
 
 #unificar
 
-data_bio |> 
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season),
-         sample = gsub('M','',sample)) |> 
-  select(sitio = site,
-         temporada = season,
-         fecha = date_sample,
-         fecha_s2 = date_sentinel,
-         muestra = sample,
+data_bio |> as_tibble() |>  
+  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
+         temporada = gsub('_','-',season),
+         fecha = as.Date(date_sample),
+         muestra = case_when(
+           site == 'hidango' ~ gsub('IS','',sample),
+           TRUE ~ gsub('S1','',sample))) |> 
+  select(sitio, temporada, fecha, muestra,
          biomasa = biomass) |> 
   write_rds('rds/biomasa.rds')
 
 data_clima |> 
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season)) |> 
-  select(sitio = site,
-         temporada = season,
+  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
+         temporada = gsub('_','-',season)) |> 
+  select(sitio, temporada,
          fecha = date,
-         precipitacion_mm,temp_c) |> 
-  write_rds('rds/clima.rds')
+         pp_mm = precipitacion_mm) |> 
+  write_rds('rds/pp.rds')
 
 data_feno |>
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season)) |> 
-  select(sitio = site,
-         temporada = season,
+  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
+         temporada = gsub('_','-',season)) |> 
+  select(sitio, temporada,
          fecha = date_sentinel,
-         gdd,fenologia = phenology,cod_zadoks = code_zadoks) |> 
-  write_rds('rds/fenologia.rds')
+         gdd,fenologia = phenology) |> 
+  write_rds('rds/gdd.rds')
 
 data_gcc |> 
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season)) |> 
-  select(sitio = site,
-         temporada = season,
+  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
+         temporada = gsub('_','-',season)) |> 
+  select(sitio, temporada,
          fecha = date,
          gcc) |> 
   write_rds('rds/gcc.rds')
 
-data_lai |>
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season),
-         sample = gsub('M','',sample)) |> 
-  select(sitio = site,
-         temporada = season,
-         fecha = date_sample,
-         fecha_s2 = date_sentinel,
-         muestra = sample,
-         lai_cept,lai_manual) |> 
-  write_rds('rds/lai.rds')
-
-data_soil |>
-  filter(hour(date) %in% 15:16) |> 
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         season = gsub('_','-',season)) |> 
-  group_by(site,season,fecha = as.Date(date),depth) |> 
-  reframe(sm = mean(sm,na.rm=T),
-          temp = mean(temp,na.rm=T)) |>
-  select(sitio = site,
-         temporada = season,
-         fecha,
-         profundidad = depth,
-         sm,temp) |>  
+data_soil |> 
+  ungroup() |> 
+  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
+         temporada = gsub('_','-',season),
+         fecha = date,
+         mes = month(fecha),
+         .before = season) |>
+  mutate(mm = case_when(
+    sitio == 'hidango' & depth == 15 ~ sm*300,
+    sitio == 'hidango' & depth == 50 ~ sm*250,
+    sitio == 'hidango' & depth == 75 ~ NA,
+    sitio != 'hidango' & depth == 15 ~ sm*200,
+    sitio != 'hidango' & depth == 30 ~ sm*150,
+    sitio != 'hidango' & depth == 45 ~ sm*200)) |> 
+  group_by(sitio,temporada,fecha = as.Date(fecha)) |> 
+  reframe(sm_mm = mean(mm,na.rm=T)) |> 
   write_rds('rds/suelo.rds')
-
-data_visps |>
-  mutate(site = ifelse(site == 'ariztia','la_cancha',site),
-         dates = as.Date(dates),
-         sample = as.character(sample),
-         season = gsub('_','-',season)) |> 
-  select(sitio = site,
-         temporada = season,
-         fecha = dates,
-         muestra = sample,
-         vi,valor = value) |> 
-  write_rds('rds/vi_ps.rds')
-
-data_viss2 |>
-  mutate(sitio = ifelse(sitio == 'ariztia','la_cancha',sitio),
-         index = tolower(index),
-         season = gsub('_','-',season),
-         value = ifelse(index != 'kndvi',value/10000,value)) |> 
-  select(sitio,
-         temporada = season,
-         fecha = date,
-         muestra = sample,
-         vi = index,
-         valor = value) |> 
-  write_rds('rds/vi_s2.rds')
-
-data_viss22 |>
-  rowwise() |> 
-  mutate(sitio = ifelse(sitio == 'ariztia','la_cancha',sitio),
-         index = tolower(index),
-         season = fecha_a_temporada(date),
-         value = ifelse(index != 'kndvi',value/10000,value)) |> 
-  select(sitio,
-         temporada = season,
-         fecha = date,
-         muestra = sample,
-         vi = index,
-         valor = value) |> 
-  write_rds('rds/vi_s2_bkp.rds')

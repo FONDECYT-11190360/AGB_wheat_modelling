@@ -1,0 +1,22 @@
+Descripcion:
+Base de datos correspondiente al rendimiento biologico del cultivo de trigo en toneladas por hectarea. 
+
+Proyecto:  
+Proyecto Fondecyt de iniciacion 11190360. "The impact of weather variability on wheat and maize production: an improved early warning model for agricultural drought"
+
+Fecha de registro de datos: 
+	05-11-2020 (inicio) 
+	27-12-2022 (termino)
+
+Variables:
+	site: lugar donde se realizo la toma de muestras
+	season: temporada agricola
+	date_sample: fecha de toma de muestras en el campo
+	date_sentinel: fecha de paso y captura de datos del satelite sentinel-2
+	sample: codigo identificador que se le dio a cada muestra. M1 (MUESTRA 1), M2 (MUESTRA 2), M3 (MUESTRA 3), M4 (MESTRA 4), M5 (MUESTRA 5), M6 (MUESTRA 6)
+	biomass: rendimiento biologico en toneladas por hectarea de la biomasa total del cultivo
+	tatch: rendimiento biologico en toneladas por hetarea de paja (hoja + tallo)
+	ear: rendimiento biologico en toneladas por hectarea de espiga
+	grain: rendimiento biologico en toneladas por hectarea de grano
+	hi: indice de cosecha (harvest index)
+	
