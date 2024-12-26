@@ -23,7 +23,7 @@
 /*.Rcheck/
 
 # Carpetas
-data/processed/raster/
+data/processed/raster/indices/
 
 # RStudio files
 .Rproj.user/
