@@ -6,13 +6,7 @@ library(glue)
 dir <- 'data/processed/raster/indices/'
 indices <- list.files(dir)
 
-cod_id <- list.files('data/raw/sentinel_2a')
-
-pols <- lapply(cod_id,function(x) {
-  vector <- vect('data/processed/sitios.gpkg',layer = glue('muestreo_{x}')) |> 
-    project('EPSG:32719')
-})
-names(pols) <- cod_id
+cod_id <- list.files('data/raw/raster/sentinel_2a')
 
 lapply(indices, \(x) {
   
@@ -72,7 +66,7 @@ graficar_s2 <- \(x,data,output) {
     geom_point(aes(y = filled, color = "filled")) +
     geom_line(aes(y = filled, color = "filled")) +
     geom_point(aes(y = raw, color = "raw")) +
-    facet_grid(muestra~vi) +
+    facet_wrap(~vi,nrow=4, scales = 'free_y') +
     scale_color_manual(
       name = "", 
       values = c("filled" = "#00BFC4", "raw" = "#F8766D")
@@ -91,8 +85,11 @@ data_fill <- read_rds(glue('data/processed/rds/vi_sentinel_2a_filled.rds')) |>
   mutate(type = 'filled')
 
 data <- bind_rows(data_raw,data_fill) |> 
-  pivot_longer(cols=EVI:SAVI,names_to = 'vi', values_to = 'value') |> 
-  pivot_wider(names_from = type,values_from=value)
+  pivot_longer(cols=c(B1:NDWI,-type),names_to = 'vi', values_to = 'value') |> 
+  pivot_wider(names_from = type,values_from=value) |> 
+  group_by(temporada,sitio,fecha,vi) |> 
+  reframe(raw = mean(raw,na.rm=T),
+          filled = mean(filled,na.rm=T))
 
 graficar_s2('hidango_2021-2022',data,'output/figs/series/s2_raw_filled')
 graficar_s2('hidango_2022-2023',data,'output/figs/series/s2_raw_filled')
