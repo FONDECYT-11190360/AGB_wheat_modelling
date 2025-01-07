@@ -3,34 +3,30 @@ library(tidyverse)
 library(fs)
 library(glue)
 
-calc_index_s2 <- function(r,index,scl_mask_values = c(0,1,2,3,8,9,10)) {
+calc_index_s2 <- function(r, index = NULL, dates, mask_values = NULL, dir.out = NULL) {
+  if (!is.null(mask_values)) {
+    scl <- r[[grep("SCL", names(r))]] |> 
+      classify(rcl = matrix(c(mask_values, rep(NA, length(mask_values))),
+                            nrow = length(mask_values), ncol = 2), others = 1)
+  } else {
+    scl <- classify(r[[grep("SCL", names(r))]], rcl = matrix(c(NA, NA), ncol = 2, byrow = T), others = 1)
+  }
   
-  scl <- r[[grep("SCL", names(r))]] |> 
-    classify(rcl = matrix(c(scl_mask_values,rep(NA,length(scl_mask_values))),
-                          nrow=length(scl_mask_values),ncol=2), others = 1)
-  
-  band_name <- grep('^B',unique(names(r)),value=T)
-  
-  B <- lapply(band_name,\(x) {
-    r[[which(names(r) == x)]]/10000*scl
+  band_name <- grep('^B', unique(names(r)), value = T)
+  B <- lapply(band_name, \(x) {
+    band <- r[[which(names(r) == x)]] / 10000 * scl
+    band[band > 1] <- NA
+    band[band < 0.01] <- NA
+    band
   })
-  names(B) <- gsub('B','',gsub('0','',band_name))
+  names(B) <- gsub('0', '', band_name)
   
-  B1 = B[['1']]
-  B2 = B[['2']]
-  B3 = B[['3']]
-  B4 = B[['4']]
-  B5 = B[['5']]
-  B6 = B[['6']]
-  B7 = B[['7']]
-  B8 = B[['8']]
-  B8A = B[['8A']]
-  B9 = B[['9']]
-  B11 = B[['11']]
-  B12 = B[['12']]
+  list2env(B, envir = environment())
   
-  list(
-    B1,B2,B3,B4,B5,B6,B7,B8,B8A,B9,B11,B12,
+  {
+  
+  vi <- list(
+    B1 = B1,B2 = B2,B3 = B3,B4 = B4,B5 = B5,B6 = B6,B7 = B7,B8 = B8,B8A = B8A,B9 = B9,B11 = B11,B12 = B12,
     NDVI = (B8-B4)/(B8+B4),
     NDVI2 = (B7-B4)/(B7+B4),
     NDVI705 = (B6-B5)/(B6+B5),
@@ -119,18 +115,44 @@ calc_index_s2 <- function(r,index,scl_mask_values = c(0,1,2,3,8,9,10)) {
     SIPI_8A = (B8A-B2)/(B8A-B4),
     WI1_8A = B8A/B9,
     NDMI_8A = (B8A-B11)/(B8A+B11)
-  ) |> lapply(\(x) {
-    list(
-      min = min(global(x,min,na.rm=T)[,1],na.rm=T),
-    max = max(global(x,max,na.rm=T)[,1],na.rm=T),
-    mean = mean(global(x,mean,na.rm=T)[,1],na.rm=T)
-    )
-  })
+  ) |> 
+    lapply(\(x) {
+      names(x) <- dates
+      return(x)
+    })
+    
+  }
   
+  if (is.null(index)) {
+    warning("Debe especificar en el argumento `index` los índices que desea calcular. Use `index = 'all'` para obtener todos los índices disponibles.")
+    return(NULL)
+  }
+  
+  if (identical(index, "all")) {
+    index <- names(vi)
+  }
+  
+  missing_indices <- setdiff(index, names(vi))
+  if (length(missing_indices) > 0) {
+    warning(sprintf("Los siguientes índices no se calcularon: %s", paste(missing_indices, collapse = ", ")))
+  }
+  vi <- vi[intersect(index, names(vi))]
+  
+  if (length(vi) == 0) {
+    warning("No se calculó ningún índice válido, no se retornará nada.")
+    return(NULL)
+  }
+  
+  if (is.null(dir.out)) {
+    return(vi)
+  } else {
+    if (!dir.exists(dir.out)) dir.create(dir.out, recursive = T)
+    lapply(names(vi), \(name) {
+      writeRaster(vi[[name]], filename = file.path(dir.out, paste0(name, ".tif")), overwrite = T)
+    })
+    return(invisible(NULL))
+  }
 }
-
-
-
 
 cod_id <- list.files('data/raw/raster/sentinel_2a/')
 
@@ -140,49 +162,10 @@ dir_out <- 'data/processed/raster/indices/sentinel_2a/'
 lapply(cod_id, \(x) {
   
   tif <- list.files(glue('{dir_in}{x}/'),full.names=T)
-  tif <- tif[-grep('aux',tif)]
+  tif <- setdiff(tif, grep('.aux',tif,value = T))
   dates <- str_extract(basename(tif), "\\d{4}-\\d{2}-\\d{2}")
   r <- rast(tif)
   
-  scl <- r[[grep("SCL", names(r))]] |> 
-    classify(rcl = matrix(c(1,3,8,9,10,NA,NA,NA,NA,NA),nrow=5,ncol=2), others = 1)
-  
-  band_2 <- r[[which(names(r) == 'B02')]]/10000*scl
-  band_4 <- r[[which(names(r) == 'B04')]]/10000*scl
-  band_5 <- r[[which(names(r) == 'B05')]]/10000*scl
-  band_8 <- r[[which(names(r) == 'B08')]]/10000*scl
-  band_11 <- r[[which(names(r) == 'B11')]]/10000*scl
-  
-  NDVI <- (band_8-band_4)/(band_8+band_4)
-  SAVI <- (band_8-band_4)/(band_8+band_4+.5)*(1.5)
-  EVI <- 2.5*(band_8-band_4)/((band_8+6*band_4-7.5*band_2)+1)
-  NDWI <- (band_8-band_11)/(band_8+band_11)
-  NDRE <- (band_8-band_5)/(band_8+band_5)
-  KNR <- exp(-(band_8-band_4)^2/(2*.15^2))
-  KNDVI <- (1-KNR)/(1+KNR)
-  
-  names(NDVI) <- dates
-  names(SAVI) <- dates
-  names(EVI) <- dates
-  names(NDWI) <- dates
-  names(NDRE) <- dates
-  names(KNDVI) <- dates
-  
-  output_dir <- glue("{dir_out}{x}/")
-  if (!dir.exists(output_dir)) {
-    dir.create(output_dir, recursive = TRUE)
-  }
-  
-  writeRaster(NDVI,glue('{output_dir}NDVI.tif'), overwrite = T)
-  writeRaster(SAVI,glue('{output_dir}SAVI.tif'), overwrite = T)
-  writeRaster(EVI,glue('{output_dir}EVI.tif'), overwrite = T)
-  writeRaster(NDWI,glue('{output_dir}NDWI.tif'), overwrite = T)
-  writeRaster(NDRE,glue('{output_dir}NDRE.tif'), overwrite = T)
-  writeRaster(KNDVI,glue('{output_dir}KNDVI.tif'), overwrite = T)
-  
-  NULL
+  calc_index_s2(r, index = 'all', dates, mask_values = c(0,1,2,3,8,9,10), dir.out = glue('{dir_out}{x}/'))
   
 })
-
-
-

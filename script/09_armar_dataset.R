@@ -34,15 +34,14 @@ select(sitio,temporada,fecha,muestra) |>
 sos |> 
   bind_rows(data_list$biomasa) |> 
   arrange(temporada,sitio,fecha) |> 
-  left_join(data_list$clima) |> 
+  left_join(data_list$clima) |>
   left_join(data_list$sm |> select(sitio,temporada,fecha,sm_mm)) |> 
-  left_join(data_list$vi_filled |> select(sitio:muestra,
-                                          EVI_cumsum:SAVI_cumsum)) |> 
-  write_rds('data/processed/rds/dataset.rds')
+  left_join(data_list$vi_filled) |>
+  write_rds('data/processed/rds/dataset_full_index.rds')
 
 #visualizar
 
-data <- read_rds('data/processed/rds/dataset.rds')
+data <- read_rds('data/processed/rds/dataset_full_index.rds')
 
 var_orden <- names(data)[-(1:4)]
 
@@ -102,8 +101,9 @@ plot |>
                date_minor_breaks = '1 month',
                date_labels = "%b/%Y") +
   labs(y = 'scaled values', x = NULL, color = NULL) +
-  theme_bw()
+  theme_bw() +
+  theme(legend.position = "none")
 
-ggsave('output/figs/series/dataset.png', width = 15, height = 8)
+ggsave('output/figs/series/dataset_full_index.png', width = 15, height = 8)
 
 

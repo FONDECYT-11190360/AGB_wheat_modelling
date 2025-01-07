@@ -46,49 +46,53 @@ na_approx <- function(y){
   y
 }
 
-# fill_data <- function(y, method = 'all', both = FALSE) {
-  
-  valid_methods <- c('na_approx', 'na_lm', 'na_loess', 'imputeTS', 'kalman', 'all')
-  if (!(method %in% valid_methods)) {
-    stop("Método inválido. Por favor, elige uno de: ", paste(valid_methods, collapse = ", "))
-  }
-  
-  # Crear tibble inicial
-  data <- tibble(id = seq_along(y), y = y)
-  
-  # Aplicar métodos de imputación
-  d2 <- data |> 
-    mutate(
-      class = is.na(y),
-      na_approx = na_approx(y),
-      na_lm = na_lm(y),
-      na_loess = na_loess(y),
-      imputeTS = imputeTS::na_interpolation(y, option = "spline"),
-      kalman = imputeTS::na_kalman(y)
-    ) |> 
-    pivot_longer(cols = -c(id, class)) |> 
-    mutate(
-      name = forcats::fct_inorder(name),
-      name = forcats::fct_relevel(name, "y")
-    ) |> 
-    arrange(name, id)
-  
-  # Filtrar y devolver según el método
-  if (method == 'all') {
-    return(d2)
-  } else {
-    if (both) {
-      d2_filtered <- d2 |> 
-        filter(name == method | name == 'y')
-      return(d2_filtered)
-    } else {
-      d2_filtered <- d2 |> 
-        filter(name == method) |> 
-        pull(value)
-      return(d2_filtered)
-    }
-  }
-}
+{
+
+# # fill_data <- function(y, method = 'all', both = FALSE) {
+#   
+#   valid_methods <- c('na_approx', 'na_lm', 'na_loess', 'imputeTS', 'kalman', 'all')
+#   if (!(method %in% valid_methods)) {
+#     stop("Método inválido. Por favor, elige uno de: ", paste(valid_methods, collapse = ", "))
+#   }
+#   
+#   # Crear tibble inicial
+#   data <- tibble(id = seq_along(y), y = y)
+#   
+#   # Aplicar métodos de imputación
+#   d2 <- data |> 
+#     mutate(
+#       class = is.na(y),
+#       na_approx = na_approx(y),
+#       na_lm = na_lm(y),
+#       na_loess = na_loess(y),
+#       imputeTS = imputeTS::na_interpolation(y, option = "spline"),
+#       kalman = imputeTS::na_kalman(y)
+#     ) |> 
+#     pivot_longer(cols = -c(id, class)) |> 
+#     mutate(
+#       name = forcats::fct_inorder(name),
+#       name = forcats::fct_relevel(name, "y")
+#     ) |> 
+#     arrange(name, id)
+#   
+#   # Filtrar y devolver según el método
+#   if (method == 'all') {
+#     return(d2)
+#   } else {
+#     if (both) {
+#       d2_filtered <- d2 |> 
+#         filter(name == method | name == 'y')
+#       return(d2_filtered)
+#     } else {
+#       d2_filtered <- d2 |> 
+#         filter(name == method) |> 
+#         pull(value)
+#       return(d2_filtered)
+#     }
+#   }
+# }
+
+}  # función antigua
 
 fill_data <- function(y, method = 'all', both = FALSE) {
   
@@ -97,10 +101,14 @@ fill_data <- function(y, method = 'all', both = FALSE) {
     stop("Método inválido. Por favor, elige uno de: ", paste(valid_methods, collapse = ", "))
   }
   
-  # Crear tibble inicial
+  if (sum(!is.na(y)) <= 3) {
+    message("Menos de 4 valores válidos en 'y'. Devolviendo 'y' original.")
+    return(y)
+  }
+  
+  y[is.infinite(y)] <- NA
   data <- tibble(id = seq_along(y), y = y)
   
-  # Aplicar solo el método seleccionado
   if (method == 'na_approx') {
     data <- data |> mutate(value = na_approx(y))
   } else if (method == 'na_lm') {
@@ -112,7 +120,6 @@ fill_data <- function(y, method = 'all', both = FALSE) {
   } else if (method == 'kalman') {
     data <- data |> mutate(value = imputeTS::na_kalman(y))
   } else if (method == 'all') {
-    # Si el método es 'all', aplicar todos los métodos
     data <- data |> 
       mutate(
         na_approx = na_approx(y),
@@ -130,7 +137,69 @@ fill_data <- function(y, method = 'all', both = FALSE) {
     return(data)
   }
   
-  # Manejar salida según argumento 'both'
+  if (both) {
+    data <- data |> mutate(original = y) |> 
+      select(id, original, value)
+  } else {
+    data <- data |> pull(value)
+  }
+  
+  return(data)
+}
+
+# fill_data_2 <- function(y, method = 'all', both = FALSE) {
+  
+  valid_methods <- c('na_approx', 'na_lm', 'na_loess', 'imputeTS', 'kalman', 'all')
+  if (!(method %in% valid_methods)) {
+    stop("Método inválido. Por favor, elige uno de: ", paste(valid_methods, collapse = ", "))
+  }
+  
+  y[is.infinite(y)] <- NA
+  
+  data <- tibble(id = seq_along(y), y = y)
+  
+  # safe_mutate <- function(.data, column_name, fn) {
+  #   tryCatch(
+  #     .data |> mutate(!!sym(column_name) := fn(y)),
+  #     error = function(e) {
+  #       warning(glue("Error en el método '{column_name}': {e$message}. Se asignarán valores NA."))
+  #       .data |> mutate(!!sym(column_name) := NA_real_)
+  #     }
+  #   )
+  # }
+  
+  safe_mutate <- function(.data, column_name, fn) {
+    .data |> mutate(!!sym(column_name) := fn(y))
+  }
+  
+  if (method == 'na_approx') {
+    data <- safe_mutate(data, "value", na_approx)
+  } else if (method == 'na_lm') {
+    data <- safe_mutate(data, "value", na_lm)
+  } else if (method == 'na_loess') {
+    data <- safe_mutate(data, "value", na_loess)
+  } else if (method == 'imputeTS') {
+    data <- safe_mutate(data, "value", \(y) imputeTS::na_interpolation(y, option = "spline"))
+  } else if (method == 'kalman') {
+    data <- safe_mutate(data, "value", \(y) imputeTS::na_kalman(y))
+  } else if (method == 'all') {
+    data <- data |> 
+      mutate(
+        na_approx = tryCatch(na_approx(y), error = function(e) NA_real_),
+        na_lm = tryCatch(na_lm(y), error = function(e) NA_real_),
+        na_loess = tryCatch(na_loess(y), error = function(e) NA_real_),
+        imputeTS = tryCatch(imputeTS::na_interpolation(y, option = "spline"), error = function(e) NA_real_),
+        kalman = tryCatch(imputeTS::na_kalman(y), error = function(e) NA_real_)
+      ) |> 
+      pivot_longer(cols = -c(id, y)) |> 
+      mutate(
+        name = forcats::fct_inorder(name),
+        name = forcats::fct_relevel(name, "y")
+      ) |> 
+      arrange(name, id)
+    return(data)
+  }
+  
   if (both) {
     data <- data |> mutate(original = y) |> 
       select(id, original, value)
