@@ -11,6 +11,7 @@ data <- read_rds('data/processed/rds/dataset_full_index.rds') |>
 data |> glimpse()
 
 #2. Definir subgrupos de datos para el modelado ----
+set.seed(987)
 splits <- initial_split(data,strata = 'sitio')
 
 #splits <- group_initial_split(data,group = fecha)
@@ -79,7 +80,7 @@ model_rec <- recipe(biomasa~.,data = biom_train ) |>
   update_role(sitio, new_role = 'dont_use') |> 
   update_role(fecha, new_role = 'dont_use') |> 
   step_normalize(all_numeric_predictors()) |> 
-  step_impute_linear(all_numeric_predictors()) |> 
+  step_impute_knn(all_numeric_predictors()) |> 
   step_corr(all_numeric_predictors())
   
 filt_obj <- prep(model_rec,training = biom_train)
@@ -100,7 +101,7 @@ biom_res <-
       RF = rf_spec, 
       SVM = svm_spec,
       XGBoost = xgb_spec,
-      lGBM = lgbm_spec,
+      lgbm = lgbm_spec,
       glm = glmnet_spec
       #MLP = mlp_spec
     )
@@ -127,7 +128,7 @@ rankings |>
   rename(Model = wflow_id) |> 
   mutate(Model = str_remove(Model,'rec_')) 
 
-#6. ----
+#6. Ultimo entrenamiento de los modelos ----
 
 xgb_res <- 
   biom_res |>  
@@ -135,6 +136,16 @@ xgb_res <-
   finalize_workflow(
     biom_res |>  
       extract_workflow_set_result("rec_XGBoost") |>  
+      select_best(metric = "rsq")
+  ) |>  
+  last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
+
+lgbm_res <- 
+  biom_res |>  
+  extract_workflow("rec_lgbm") |>  
+  finalize_workflow(
+    biom_res |>  
+      extract_workflow_set_result("rec_lgbm") |>  
       select_best(metric = "rsq")
   ) |>  
   last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
@@ -159,10 +170,44 @@ svm_res <-
   ) |>  
   last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
 
-#7. Predecir en el set de testeo ----
+# 7. Metricas de los modelos ----
+ 
+df_metrics <- bind_rows(
+  tibble(collect_metrics(xgb_res),model = 'XGBoost'),
+  tibble(collect_metrics(lgbm_res),model = 'lgbm'),
+  tibble(collect_metrics(rf_res),model = 'RF'),
+  tibble(collect_metrics(svm_res),model = 'SVM')
+)
+
+df_metrics <- df_metrics |> 
+  mutate(
+    .metric = toupper(.metric),
+    x = -1,
+    y = case_when(
+      .metric == 'RSQ' ~ -2.5,
+      .metric == 'MAE' ~ -2.7,
+      .default = -2.9),
+    unit = case_when(
+      .metric == 'RSQ' ~ '',
+      .default = '~~MPa'),
+    
+    .metric = case_when(.metric == 'RSQ' ~ 'R^2',
+                        .default = .metric)
+  )
+
+write_rds(df_metrics,'data/processed/modelos/metrics.rds')
+
+#8. Extraer y guardar modelos ----
+
 rf_wflow_fit <- extract_workflow(rf_res)
+lgbm_wflow_fit <- extract_workflow(lgbm_res)
 xgb_wflow_fit <- extract_workflow(xgb_res)
 svm_wflow_fit <- extract_workflow(svm_res)
+
+write_rds(xgb_wflow_fit,'data/processed/modelos/xgboost.rds')
+write_rds(lgbm_wflow_fit,'data/processed/modelos/lgbm.rds')
+write_rds(rf_wflow_fit,'data/processed/modelos/random_forest.rds')
+write_rds(svm_wflow_fit,'data/processed/modelos/support_vector_machine.rds')
 
 test_results <- 
   biom_test |> 
