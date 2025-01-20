@@ -79,6 +79,7 @@ calc_index_s2 <- function(r, index = NULL, dates, mask_values = NULL, dir.out = 
     SIPI = (B8-B2)/(B8-B4),
     WI1 = B8/B9,
     NDMI = (B8-B11)/(B8+B11),
+    KNDVI = (1-exp(-(B8-B4)^2/(2*.15^2)))/(1+exp(-(B8-B4)^2/(2*.15^2))),
     
     NDVI_8A = (B8A-B4)/(B8A+B4),
     SR_8A = B8A/B4,
@@ -114,7 +115,8 @@ calc_index_s2 <- function(r, index = NULL, dates, mask_values = NULL, dir.out = 
     NDRE_NDVI_8A = ((B8A-B5)/(B8A+B5))/((B8A-B4)/(B8A+B4)),
     SIPI_8A = (B8A-B2)/(B8A-B4),
     WI1_8A = B8A/B9,
-    NDMI_8A = (B8A-B11)/(B8A+B11)
+    NDMI_8A = (B8A-B11)/(B8A+B11),
+    KNDVI_8A = (1-exp(-(B8A-B4)^2/(2*.15^2)))/(1+exp(-(B8A-B4)^2/(2*.15^2)))
   ) |> 
     lapply(\(x) {
       names(x) <- dates

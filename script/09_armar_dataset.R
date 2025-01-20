@@ -1,4 +1,5 @@
 library(tidyverse)
+library(glue)
 library(scales)
 
 #cargar datos
@@ -6,15 +7,6 @@ item <- c('biomasa','clima','sm','vi_filled')
 
 data_list <- lapply(item, \(x) {read_rds(glue('data/processed/rds/{x}.rds'))})
 names(data_list) <- item
-
-sos <- data_list$biomasa |> 
-  distinct(sitio,temporada,muestra) |> 
-  left_join(
-    read_rds('data/processed/rds/fechas_fenologia.rds') |> 
-      filter(fenologia == 'SOWING') 
-  ) |> 
-select(sitio,temporada,fecha,muestra) |> 
-  mutate(biomasa = 0)
 
 # data_vi <- sos |>
 #   bind_rows(data_list$biomasa) |> 
@@ -31,8 +23,7 @@ select(sitio,temporada,fecha,muestra) |>
 #     .names = "{.col}_filled"
 #   ))
 
-sos |> 
-  bind_rows(data_list$biomasa) |> 
+data_list$biomasa |> 
   arrange(temporada,sitio,fecha) |> 
   left_join(data_list$clima) |>
   left_join(data_list$sm |> select(sitio,temporada,fecha,sm_mm)) |> 
@@ -77,6 +68,9 @@ sos <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
 var_names <- gsub('_MM','',gsub('_CUMSUM','_acum',toupper(var_orden)))
 var_names[c(1:2,4)] <- c('biomass','pp_acum','sm')
 
+# plot <- plot |> 
+  # filter(variable %in% c('biomasa','pp_cumsum','gdd','cumsum','sm_mm','NDVI'))
+  
 plot |> 
   ggplot(aes(fecha, valor, color = variable)) +
   geom_point(data = plot |> filter(variable != 'biomasa'),
