@@ -1,5 +1,23 @@
 library(tidyverse)
 
+#fechas fenologia
+
+fechas_feno <- read_rds('data/processed_old/data_fenologia.rds') |>
+  as_tibble() |> 
+  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
+         temporada = gsub('_','-',season)) |> 
+  select(sitio, temporada,
+         fecha = date_sentinel,
+         gdd,fenologia = phenology,
+         zadoks = code_zadoks) |> 
+  group_by(sitio,temporada,fenologia) |> 
+  reframe(fecha = min(fecha)) |> 
+  arrange(temporada,sitio,fecha) |> 
+  select(sitio,temporada,fecha,fenologia) |> 
+  mutate(fenologia = ifelse(fenologia == 'STEM ELONG','STEM ELONGATION',fenologia))
+
+write_rds(fechas_feno,'data/processed/rds/fechas_fenologia.rds')
+
 #biomasa
 
 data_bio <- read_rds('data/processed_old/data_biomasa_estructuras.rds') |> 
@@ -14,6 +32,19 @@ data_bio <- read_rds('data/processed_old/data_biomasa_estructuras.rds') |>
          biomasa = biomass) |>
   arrange(temporada,sitio,muestra,fecha)
 
+sos <- data_bio |> 
+  distinct(sitio,temporada,muestra) |> 
+  left_join(
+    read_rds('data/processed/rds/fechas_fenologia.rds') |> 
+      filter(fenologia == 'SOWING') 
+  ) |> 
+  select(sitio,temporada,fecha,muestra) |> 
+  mutate(biomasa = 0)
+
+data_bio <- sos |> 
+  bind_rows(data_bio) |> 
+  arrange(temporada,sitio,fecha)
+
 data_bio |> 
   group_by(sitio,temporada) |> 
   reframe(fecha_inicio = min(fecha)) |> 
@@ -22,21 +53,6 @@ data_bio |>
 write_rds(data_bio,'data/processed/rds/biomasa.rds')
 
 #fenologia y clima
-
-fechas_feno <- read_rds('data/processed_old/data_fenologia.rds') |>
-  as_tibble() |> 
-  mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
-         temporada = gsub('_','-',season)) |> 
-  select(sitio, temporada,
-         fecha = date_sentinel,
-         gdd,fenologia = phenology,
-         zadoks = code_zadoks) |> 
-  group_by(sitio,temporada,fenologia) |> 
-  reframe(fecha = min(fecha)) |> 
-  arrange(temporada,sitio,fecha) |> 
-  select(sitio,temporada,fecha,fenologia)
-
-write_rds(fechas_feno,'data/processed/rds/fechas_fenologia.rds')
 
 sos <- fechas_feno |> 
   filter(fenologia == 'SOWING')
@@ -105,8 +121,8 @@ data_s2 <- read_rds('data/processed/rds/vi_sentinel_2a_filled.rds') |>
   mutate(fenologia = ifelse(is.na(fenologia) & lead(fenologia,1) == 'SOWING','OUT',fenologia)) |> 
   mutate(fenologia = ifelse(is.na(fenologia), zoo::na.locf(fenologia, fromLast = TRUE, na.rm = FALSE), fenologia)) |> 
   filter(fenologia != 'OUT' | is.na(fenologia)) |> 
-  select(-fenologia) |> 
-  mutate(across(EVI:SAVI, cumsum, .names = "{.col}_cumsum")) |> 
+  select(-fenologia) |>
+  mutate(across(CI_green:WI1_8A, cumsum, .names = "{.col}_cumsum")) |> 
   ungroup() |> 
   arrange(temporada,sitio,muestra,fecha)
 
