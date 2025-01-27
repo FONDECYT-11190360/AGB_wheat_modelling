@@ -52,7 +52,7 @@ data_bio |>
 
 write_rds(data_bio,'data/processed/rds/biomasa.rds')
 
-#fenologia y clima
+#clima
 
 sos <- fechas_feno |> 
   filter(fenologia == 'SOWING')
@@ -115,23 +115,22 @@ write_rds(data_sm,'data/processed/rds/sm.rds')
 
 fechas_feno <- read_rds('data/processed/rds/fechas_fenologia.rds')
 
-data_s2 <- read_rds('data/processed/rds/vi_sentinel_2a_filled.rds') |> 
+data_sat <- read_rds('data/processed/rds/satellite.rds') |> 
+  as_tibble() |> 
   left_join(fechas_feno |> filter(fenologia %in% c('SOWING','TRILLERING'))) |> 
   group_by(sitio,temporada,muestra) |> 
   mutate(fenologia = ifelse(is.na(fenologia) & lead(fenologia,1) == 'SOWING','OUT',fenologia)) |> 
   mutate(fenologia = ifelse(is.na(fenologia), zoo::na.locf(fenologia, fromLast = TRUE, na.rm = FALSE), fenologia)) |> 
   filter(fenologia != 'OUT' | is.na(fenologia)) |> 
   select(-fenologia) |>
-  mutate(across(CI_green:WI1_8A, cumsum, .names = "{.col}_cumsum")) |> 
-  ungroup() |> 
   arrange(temporada,sitio,muestra,fecha)
 
-data_s2 |> 
+data_sat |> 
   group_by(sitio,temporada) |> 
   reframe(fecha_inicio = min(fecha)) |> 
   arrange(temporada,sitio)
 
-write_rds(data_s2,'data/processed/rds/vi_filled.rds')
+write_rds(data_sat,'data/processed/rds/satelite_clean.rds')
   
 
 
