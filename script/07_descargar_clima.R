@@ -2,10 +2,11 @@ library(tidyverse)
 library(terra)
 library(stringr)
 library(agrometR)
+library(glue)
 
 estaciones <- vect(estaciones_agromet, geom = c("longitud", "latitud"), crs = "EPSG:4326")
 
-cod_id <- list.files('data/raw/sentinel_2a')
+cod_id <- list.files('data/raw/raster/sentinel_2a')
 pols <- lapply(cod_id,function(x) {
   vector <- vect('data/processed/sitios.gpkg',layer = glue('a_{x}'))
 })
