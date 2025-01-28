@@ -15,6 +15,8 @@ sos <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
 
 lapply(cod_id, \(x) {
   
+  print(x)
+  
   tif_f <- list.files(glue('{dir}/{x}'),full.names=T)
   fechas_raw <- sub(".*_(\\d{4}-\\d{2}-\\d{2})\\.tif$", "\\1", tif_f)
   fecha_sos <- sos |> 

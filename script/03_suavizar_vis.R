@@ -53,7 +53,7 @@ naApprox_fill <- function(y) {
 #sentinel-2
 
 dir.in <- 'data/processed/raster/indices/sentinel_2/'
-dir.out <- 'data/processed/raster/indices/sentinel_2_filled_alt/'
+dir.out <- 'data/processed/raster/indices/sentinel_2_filled/'
 cod_id <- list.files(dir.in)
 
 lapply(cod_id, \(x) {
@@ -121,16 +121,15 @@ lapply(cod_id, \(x) {
     
   }
   
-  names(r_filled) <- names_vi
-  
   for(fecha in as.character(fechas_continuas)) {
-    r_fecha <- lapply(names_vi, \(vi) {vi_filled[[vi]][[fecha]]}) |> 
+    r_fecha <- lapply(names_vi, \(vi) {r_filled[[vi]][[fecha]]}) |> 
       rast()
     names(r_fecha) <- names_vi
     writeRaster(r_fecha,glue('{output_dir}vi_s2_filled_{fecha}.tif'),
                 overwrite=T)
   }
 })
+
 
 #planetscope
 
@@ -154,9 +153,14 @@ lapply(cod_id, \(x) {
   r <- rast(tif)
   names_vi <- names(r) |> unique()
   
-  vi_filled <- lapply(names_vi,\(vi) {
+  r_filled <- list()
+  
+  for (vi in names_vi) {
+    
+    gc()
+    print(vi)
     r_vi <- r[[which(names(r) == vi)]]
-    r_vi <- clamp(r_vi,-5,10,values=F)
+    r_vi <- clamp(r_vi,-5,50,values=F)
     names(r_vi) <- fechas
     
     if (x == 'hidango_2021-2022') {
@@ -166,7 +170,7 @@ lapply(cod_id, \(x) {
     {ncores <- detectCores()
       cl <- makeCluster(ncores-2)
       clusterEvalQ(cl, library('tidyverse'))
-      clusterExport(cl, c('fill_data','kalman_fill','naApprox_fill','na_lm','na_loess','na_approx'))
+      clusterExport(cl, c('kalman_fill','naApprox_fill','na_approx'))
     }
     
     r_vi_filled <- app(r_vi, kalman_fill, cores = cl)
@@ -180,15 +184,13 @@ lapply(cod_id, \(x) {
     r_completo <- c(r_vi_filled, r_faltantes)
     r_completo <- r_completo[[order(names(r_completo))]]
     
-    r_filled <- app(r_completo, naApprox_fill, cores = cl)
-    names(r_filled) <- fechas_continuas
+    r_filled[[vi]] <- app(r_completo, naApprox_fill, cores = cl)
+    names(r_filled[[vi]]) <- fechas_continuas
     
-    r_filled
-  })
-  names(vi_filled) <- names_vi
-  
+  }
+
   for(fecha in as.character(fechas_continuas)) {
-    r_fecha <- lapply(names_vi, \(vi) {vi_filled[[vi]][[fecha]]}) |> 
+    r_fecha <- lapply(names_vi, \(vi) {r_filled[[vi]][[fecha]]}) |> 
       rast()
     names(r_fecha) <- names_vi
     writeRaster(r_fecha,glue('{output_dir}vi_planetscope_filled_{fecha}.tif'),
@@ -278,6 +280,7 @@ lapply(cod_id,\(x) {
       pivot_longer(cols = -c(ID), names_to = 'fecha', values_to = 'vi_filled')
     
     left_join(ext_vi_filled,ext_vi) |> 
+      suppressMessages() |> 
       rename(muestra = ID) |>   
       ggplot(aes(as.Date(fecha))) +
       # geom_point(aes(as.Date(fecha),vi_filled, color = 'filled'),shape = 21, col = 'black') + 
@@ -302,6 +305,8 @@ cod_id <- list.files(dir)
 
 lapply(cod_id,\(x) {
   
+  print(x)
+  
   sp <- vect('data/processed/sitios.gpkg',layer = glue('muestreo_{x}')) |> 
     project('EPSG:32719')
   
@@ -321,6 +326,7 @@ lapply(cod_id,\(x) {
   
   lapply(names_vi,\(vi) {
     
+    print(vi)
     r_vi <- r[[which(names(r) == vi)]]
     r_vi_filled <- r_filled[[which(names(r_filled) == vi)]]
     names(r_vi) <- fechas
@@ -332,6 +338,7 @@ lapply(cod_id,\(x) {
       pivot_longer(cols = -c(ID), names_to = 'fecha', values_to = 'vi_filled')
     
     left_join(ext_vi_filled,ext_vi) |> 
+      suppressMessages() |> 
       rename(muestra = ID) |>   
       ggplot(aes(as.Date(fecha))) +
       # geom_point(aes(as.Date(fecha),vi_filled, color = 'filled'),shape = 21, col = 'black') + 

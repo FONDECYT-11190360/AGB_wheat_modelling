@@ -306,7 +306,10 @@ calc_index_planet <- function(r,udm,index = NULL, dates, dir.out = NULL) {
     
     dates_unique <- unique(dates)
     for (date in dates_unique) {
-      index_stack <- rast(lapply(names(vi), function(idx) vi[[idx]][[date]]))
+      print(date)
+      index_stack <- rast(lapply(names(vi), function(idx) {
+        print(idx)
+        vi[[idx]][[date]]}))
       names(index_stack) <- names(vi)
       writeRaster(index_stack, glue('{dir.out}vi_planetscope_{date}.tif'), overwrite = TRUE)
     }
@@ -321,6 +324,8 @@ dir_out <- 'data/processed/raster/indices/planetscope/'
 cod_id <- list.files(dir_in)
 
 lapply(cod_id, \(x) {
+  
+  print(x)
   
   tif <- list.files(glue('{dir_in}{x}/'),full.names=T)
   tif <- setdiff(tif, grep('.aux',tif,value = T))
