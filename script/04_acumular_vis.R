@@ -6,7 +6,7 @@ library(terra)
 
 #sentinel-2
 
-dir <- 'data/processed/raster/indices/sentinel_2_filled'
+dir <- 'data/processed/raster/indicadores/sentinel_2_filled'
 cod_id <- list.files(dir)
 
 sos <- read_rds('data/processed/rds/fechas_fenologia.rds') |> 
@@ -14,6 +14,8 @@ sos <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
   mutate(cod_id = paste0(sitio,'_',temporada))
 
 lapply(cod_id, \(x) {
+  
+  print(x)
   
   tif_f <- list.files(glue('{dir}/{x}'),full.names=T)
   fechas_raw <- sub(".*_(\\d{4}-\\d{2}-\\d{2})\\.tif$", "\\1", tif_f)
@@ -40,7 +42,7 @@ lapply(cod_id, \(x) {
   #   r_vi_cumsum <- cumsum(r_vi)
   # })
   
-  dir_out <- glue('data/processed/raster/indices/sentinel_2_filled_cumsum/{x}')
+  dir_out <- glue('data/processed/raster/indicadores/sentinel_2_filled_cumsum/{x}')
   if (!dir.exists(dir_out)) dir.create(dir_out, recursive = T)
   
   for (date in seq_along(fechas)) {
@@ -53,7 +55,7 @@ lapply(cod_id, \(x) {
 
 #planetscope
 
-dir <- 'data/processed/raster/indices/planetscope_filled'
+dir <- 'data/processed/raster/indicadores/planetscope_filled'
 cod_id <- list.files(dir)
 
 sos <- read_rds('data/processed/rds/fechas_fenologia.rds') |> 
@@ -61,6 +63,8 @@ sos <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
   mutate(cod_id = paste0(sitio,'_',temporada))
 
 lapply(cod_id, \(x) {
+  
+  print(x)
   
   tif_f <- list.files(glue('{dir}/{x}'),full.names=T)
   fechas_raw <- sub(".*_(\\d{4}-\\d{2}-\\d{2})\\.tif$", "\\1", tif_f)
@@ -82,7 +86,7 @@ lapply(cod_id, \(x) {
     vi_stack[[vi]] <- cumsum(r_vi)
   }
   
-  dir_out <- glue('data/processed/raster/indices/planetscope_filled_cumsum/{x}')
+  dir_out <- glue('data/processed/raster/indicadores/planetscope_filled_cumsum/{x}')
   if (!dir.exists(dir_out)) dir.create(dir_out, recursive = T)
   
   for (date in seq_along(fechas)) {

@@ -23,7 +23,7 @@
 /*.Rcheck/
 
 # Carpetas
-data/processed/raster/indices/
+data/processed/raster/indicadores/
 data/raw/raster/
 data/processed_old/
 
