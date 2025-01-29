@@ -109,7 +109,7 @@ graficar_index <- \(df,id,id_name) {
       theme_bw() +
       theme(legend.position = 'none')
     
-    ggsave(glue('output/figs/series_finales/{id_name}/{x}.png'), height = 5,width = 10)
+    ggsave(glue('output/figs/series/series_finales/{id_name}/{x}.png'), height = 5,width = 10)
   })
 }
 

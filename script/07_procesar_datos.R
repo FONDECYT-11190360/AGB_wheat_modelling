@@ -124,7 +124,7 @@ data_vi <- read_rds('data/processed/rds/vi_extract.rds') |>
   select(-fenologia) |>
   arrange(temporada,sitio,muestra,fecha)
 
-data_sat |> 
+data_vi |> 
   group_by(sitio,temporada) |> 
   reframe(fecha_inicio = min(fecha)) |> 
   arrange(temporada,sitio)

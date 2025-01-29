@@ -166,8 +166,8 @@ calc_index_s2 <- function(r,index = NULL, dates, mask_values = NULL, dir.out = N
 
 cod_id <- list.files('data/raw/raster/sentinel_2/')
 
-dir_in <- 'data/raw/raster/sentinel_2_ext/'
-dir_out <- 'data/processed/raster/indices/sentinel_2_ext/'
+dir_in <- 'data/raw/raster/sentinel_2/'
+dir_out <- 'data/processed/raster/indices/sentinel_2/'
 
 lapply(cod_id, \(x) {
   
@@ -307,9 +307,7 @@ calc_index_planet <- function(r,udm,index = NULL, dates, dir.out = NULL) {
     dates_unique <- unique(dates)
     for (date in dates_unique) {
       print(date)
-      index_stack <- rast(lapply(names(vi), function(idx) {
-        print(idx)
-        vi[[idx]][[date]]}))
+      index_stack <- rast(lapply(names(vi), function(idx) vi[[idx]][[date]]))
       names(index_stack) <- names(vi)
       writeRaster(index_stack, glue('{dir.out}vi_planetscope_{date}.tif'), overwrite = TRUE)
     }
