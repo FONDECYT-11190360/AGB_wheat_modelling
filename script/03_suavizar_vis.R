@@ -241,7 +241,6 @@ lapply(cod_id, \(x) {
   }
 })
 
-
 #visualizar s2
 
 dir <- 'data/processed/raster/indices/sentinel_2/'
@@ -262,7 +261,7 @@ lapply(cod_id,\(x) {
   r_filled <- rast(tif_filled)
   names_vi <- unique(names(r))
   
-  output_dir <- glue('output/figs/series/sentinel_2/{x}/')
+  output_dir <- glue('output/figs/series/suavizado/sentinel_2/{x}/')
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
@@ -319,7 +318,7 @@ lapply(cod_id,\(x) {
   r_filled <- rast(tif_filled)
   names_vi <- unique(names(r))
   
-  output_dir <- glue('output/figs/series/planetscope/{x}/')
+  output_dir <- glue('output/figs/series/suavizado/planetscope/{x}/')
   if (!dir.exists(output_dir)) {
     dir.create(output_dir, recursive = TRUE)
   }
@@ -332,9 +331,9 @@ lapply(cod_id,\(x) {
     names(r_vi) <- fechas
     names(r_vi_filled) <- fechas_filled
     
-    ext_vi <- extract(r_vi,sp) |> 
+    ext_vi <- terra::extract(r_vi,sp) |> 
       pivot_longer(cols = -c(ID), names_to = 'fecha', values_to = 'vi')
-    ext_vi_filled <- extract(r_vi_filled,sp) |> 
+    ext_vi_filled <- terra::extract(r_vi_filled,sp) |> 
       pivot_longer(cols = -c(ID), names_to = 'fecha', values_to = 'vi_filled')
     
     left_join(ext_vi_filled,ext_vi) |> 
