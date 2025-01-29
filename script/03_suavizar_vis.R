@@ -52,8 +52,8 @@ naApprox_fill <- function(y) {
 
 #sentinel-2
 
-dir.in <- 'data/processed/raster/indices/sentinel_2/'
-dir.out <- 'data/processed/raster/indices/sentinel_2_filled/'
+dir.in <- 'data/processed/raster/indicadores/sentinel_2/'
+dir.out <- 'data/processed/raster/indicadores/sentinel_2_filled/'
 cod_id <- list.files(dir.in)
 
 lapply(cod_id, \(x) {
@@ -133,8 +133,8 @@ lapply(cod_id, \(x) {
 
 #planetscope
 
-dir.in <- 'data/processed/raster/indices/planetscope/'
-dir.out <- 'data/processed/raster/indices/planetscope_filled/'
+dir.in <- 'data/processed/raster/indicadores/planetscope/'
+dir.out <- 'data/processed/raster/indicadores/planetscope_filled/'
 cod_id <- list.files(dir.in)
 
 lapply(cod_id, \(x) {
@@ -200,8 +200,8 @@ lapply(cod_id, \(x) {
 
 #sentinel-1 (rellenar)
 
-dir.in <- 'data/processed/raster/indices/sentinel_1/'
-dir.out <- 'data/processed/raster/indices/sentinel_1_filled/'
+dir.in <- 'data/processed/raster/indicadores/sentinel_1/'
+dir.out <- 'data/processed/raster/indicadores/sentinel_1_filled/'
 cod_id <- list.files(dir.in)
 
 lapply(cod_id, \(x) {
@@ -243,8 +243,8 @@ lapply(cod_id, \(x) {
 
 #visualizar s2
 
-dir <- 'data/processed/raster/indices/sentinel_2/'
-dir_filled <- 'data/processed/raster/indices/sentinel_2_filled/'
+dir <- 'data/processed/raster/indicadores/sentinel_2/'
+dir_filled <- 'data/processed/raster/indicadores/sentinel_2_filled/'
 cod_id <- list.files(dir)
 
 lapply(cod_id,\(x) {
@@ -298,8 +298,8 @@ lapply(cod_id,\(x) {
 
 #visualizar planetscope
 
-dir <- 'data/processed/raster/indices/planetscope/'
-dir_filled <- 'data/processed/raster/indices/planetscope_filled/'
+dir <- 'data/processed/raster/indicadores/planetscope/'
+dir_filled <- 'data/processed/raster/indicadores/planetscope_filled/'
 cod_id <- list.files(dir)
 
 lapply(cod_id,\(x) {

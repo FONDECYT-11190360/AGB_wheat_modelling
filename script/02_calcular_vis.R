@@ -137,9 +137,9 @@ calc_index_s2 <- function(r,index = NULL, dates, mask_values = NULL, dir.out = N
     index <- names(vi)
   }
   
-  missing_indices <- setdiff(index, names(vi))
-  if (length(missing_indices) > 0) {
-    warning(sprintf("Los siguientes índices no se calcularon: %s", paste(missing_indices, collapse = ", ")))
+  missing_indicadores <- setdiff(index, names(vi))
+  if (length(missing_indicadores) > 0) {
+    warning(sprintf("Los siguientes índices no se calcularon: %s", paste(missing_indicadores, collapse = ", ")))
   }
   vi <- vi[intersect(index, names(vi))]
   
@@ -167,7 +167,7 @@ calc_index_s2 <- function(r,index = NULL, dates, mask_values = NULL, dir.out = N
 cod_id <- list.files('data/raw/raster/sentinel_2/')
 
 dir_in <- 'data/raw/raster/sentinel_2/'
-dir_out <- 'data/processed/raster/indices/sentinel_2/'
+dir_out <- 'data/processed/raster/indicadores/sentinel_2/'
 
 lapply(cod_id, \(x) {
   
@@ -288,9 +288,9 @@ calc_index_planet <- function(r,udm,index = NULL, dates, dir.out = NULL) {
     index <- names(vi)
   }
   
-  missing_indices <- setdiff(index, names(vi))
-  if (length(missing_indices) > 0) {
-    warning(sprintf("Los siguientes índices no se calcularon: %s", paste(missing_indices, collapse = ", ")))
+  missing_indicadores <- setdiff(index, names(vi))
+  if (length(missing_indicadores) > 0) {
+    warning(sprintf("Los siguientes índices no se calcularon: %s", paste(missing_indicadores, collapse = ", ")))
   }
   vi <- vi[intersect(index, names(vi))]
   
@@ -317,7 +317,7 @@ calc_index_planet <- function(r,udm,index = NULL, dates, dir.out = NULL) {
 }
 
 dir_in <- 'data/raw/raster/planetscope/'
-dir_out <- 'data/processed/raster/indices/planetscope/'
+dir_out <- 'data/processed/raster/indicadores/planetscope/'
 
 cod_id <- list.files(dir_in)
 
@@ -350,7 +350,7 @@ lapply(cod_id, \(x) {
 #sentinel-1
 
 dir_in <- 'data/raw/raster/sentinel_1/'
-dir_out <- 'data/processed/raster/indices/sentinel_1/'
+dir_out <- 'data/processed/raster/indicadores/sentinel_1/'
 
 cod_id <- gsub('.tif','',list.files(dir_in))
 

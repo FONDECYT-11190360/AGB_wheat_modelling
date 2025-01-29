@@ -3,13 +3,13 @@ library(tidyverse)
 library(fs)
 library(glue)
 
-dir_ps <- list.files('data/processed/raster/indices/planetscope_filled',full.names=T)
-dir_ps_cumsum <- list.files('data/processed/raster/indices/planetscope_filled_cumsum',full.names=T)
+dir_ps <- list.files('data/processed/raster/indicadores/planetscope_filled',full.names=T)
+dir_ps_cumsum <- list.files('data/processed/raster/indicadores/planetscope_filled_cumsum',full.names=T)
 
-dir_s2 <- list.files('data/processed/raster/indices/sentinel_2_filled',full.names=T)
-dir_s2_cumsum <- list.files('data/processed/raster/indices/sentinel_2_filled_cumsum',full.names=T)
+dir_s2 <- list.files('data/processed/raster/indicadores/sentinel_2_filled',full.names=T)
+dir_s2_cumsum <- list.files('data/processed/raster/indicadores/sentinel_2_filled_cumsum',full.names=T)
 
-dir_s1 <- list.files('data/processed/raster/indices/sentinel_1_filled',full.names=T)
+dir_s1 <- list.files('data/processed/raster/indicadores/sentinel_1_filled',full.names=T)
 
 tif <- c(dir_ps,dir_ps_cumsum,
          dir_s2,dir_s2_cumsum,
