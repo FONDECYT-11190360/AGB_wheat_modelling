@@ -75,16 +75,37 @@ glmnet_spec <-
 
 #4. Preprocesamiento
 
-model_rec <- recipe(biomasa~.,data = biom_train ) |>
+model_rec_todo <- recipe(biomasa~.,data = biom_train ) |>
   #update_role(sitio_temporada,new_role = 'dont_use') |> 
   update_role(sitio, new_role = 'dont_use') |> 
   update_role(fecha, new_role = 'dont_use') |> 
-  step_normalize(all_numeric_predictors()) |> 
   step_impute_knn(all_numeric_predictors()) |> 
-  step_corr(all_numeric_predictors())
-  
-filt_obj <- prep(model_rec,training = biom_train)
-filt_te <- bake(filt_obj,biom_test)
+  step_normalize(all_numeric_predictors()) |> 
+  step_corr(all_numeric_predictors()) 
+
+model_rec_s2 <- model_rec_todo |> 
+  step_select(biomasa,starts_with('S2'))
+
+model_rec_s2_clima <- model_rec_todo |> 
+  step_select(biomasa,pp_cumsum, sm_mm,starts_with('S2'))
+
+model_rec_ps <- model_rec_todo |> 
+  step_select(biomasa,starts_with('PS'))
+
+model_rec_ps_clima <- model_rec_todo |> 
+  step_select(biomasa,pp_cumsum, sm_mm,starts_with('PS'))
+
+model_rec_s1 <- model_rec_todo |> 
+  step_select(biomasa,starts_with('S1'))
+
+model_rec_s1_clima <- model_rec_todo |> 
+  step_select(biomasa,pp_cumsum, sm_mm,starts_with('S1'))
+
+model_rec_clima <- model_rec_todo |> 
+  step_select(biomasa, pp_cumsum, sm_mm)
+
+# filt_obj <- prep(model_rec,training = biom_train)
+# filt_te <- bake(filt_obj,biom_test)
 
 #4. Resampling y tunning
 
@@ -96,9 +117,17 @@ vb_folds <- vfold_cv(biom_train,strata = 'sitio')
 library(bonsai)
 biom_res <- 
   workflow_set(
-    preproc = list(rec = model_rec), 
+    preproc = list(rec1 = model_rec_todo,
+                   rec2 = model_rec_s1,
+                   rec3 = model_rec_s1_clima,
+                   rec4 = model_rec_clima,
+                   rec5 = model_rec_s2,
+                   rec6 = model_rec_s2_clima,
+                   rec7 = model_rec_ps,
+                   rec8 = model_rec_ps_clima,
+                   rec9 = model_rec_clima), 
     models = list(
-      RF = rf_spec, 
+      RF = rf_spec,
       SVM = svm_spec,
       XGBoost = xgb_spec,
       lgbm = lgbm_spec,
@@ -115,6 +144,8 @@ biom_res <-
     control = ctrl
   )
 
+autoplot(biom_res,select_best = TRUE)
+
 #5. Rankear modelos ----
 
 rankings <- 
@@ -122,7 +153,7 @@ rankings <-
   mutate(method = map_chr(wflow_id, ~ str_split(.x, "_", simplify = TRUE)[1])) 
 
 tidymodels_prefer()
-rankings |>  
+df_rank <- rankings |>  
   dplyr::select(rank, mean, model, wflow_id, .metric,std_err) |> 
   filter(.metric == c('rsq','rmse')[1]) |> 
   rename(Model = wflow_id) |> 
@@ -130,79 +161,52 @@ rankings |>
 
 #6. Ultimo entrenamiento de los modelos ----
 
-xgb_res <- 
-  biom_res |>  
-  extract_workflow("rec_XGBoost") |>  
-  finalize_workflow(
-    biom_res |>  
-      extract_workflow_set_result("rec_XGBoost") |>  
-      select_best(metric = "rsq")
-  ) |>  
-  last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
+models_name <- df_rank$Model
 
-lgbm_res <- 
-  biom_res |>  
-  extract_workflow("rec_lgbm") |>  
-  finalize_workflow(
+models_name |> 
+  walk(\(model){
     biom_res |>  
-      extract_workflow_set_result("rec_lgbm") |>  
-      select_best(metric = "rsq")
-  ) |>  
-  last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
-
-rf_res <- 
-  biom_res |>  
-  extract_workflow("rec_RF") |>  
-  finalize_workflow(
-    biom_res |>  
-      extract_workflow_set_result("rec_RF") |>  
-      select_best(metric = "rsq")
-  ) |>  
-  last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
-
-svm_res <- 
-  biom_res |>  
-  extract_workflow("rec_SVM") |>  
-  finalize_workflow(
-    biom_res |>  
-      extract_workflow_set_result("rec_SVM") |>  
-      select_best(metric = "rsq")
-  ) |>  
-  last_fit(split = splits, metrics = metric_set(rsq,rmse,mae))
+    extract_workflow(model) |>  
+    finalize_workflow(
+      biom_res |>  
+        extract_workflow_set_result(model) |>  
+        select_best(metric = "rsq")
+    ) |>  
+    last_fit(split = splits, metrics = metric_set(rsq,rmse,mae)) |> 
+      assign(x = model,value = _)
+  })
 
 # 7. Metricas de los modelos ----
  
-df_metrics <- bind_rows(
-  tibble(collect_metrics(xgb_res),model = 'XGBoost'),
-  tibble(collect_metrics(lgbm_res),model = 'lgbm'),
-  tibble(collect_metrics(rf_res),model = 'RF'),
-  tibble(collect_metrics(svm_res),model = 'SVM')
-)
+df_metrics <- models_name |> 
+  map_df(\(model){
+    tibble(collect_metrics(xgb_res),model = model)
+  })
 
-df_metrics <- df_metrics |> 
-  mutate(
-    .metric = toupper(.metric),
-    x = -1,
-    y = case_when(
-      .metric == 'RSQ' ~ -2.5,
-      .metric == 'MAE' ~ -2.7,
-      .default = -2.9),
-    unit = case_when(
-      .metric == 'RSQ' ~ '',
-      .default = '~~MPa'),
-    
-    .metric = case_when(.metric == 'RSQ' ~ 'R^2',
-                        .default = .metric)
-  )
+# df_metrics <- df_metrics |> 
+#   mutate(
+#     .metric = toupper(.metric),
+#     x = -1,
+#     y = case_when(
+#       .metric == 'RSQ' ~ -2.5,
+#       .metric == 'MAE' ~ -2.7,
+#       .default = -2.9),
+#     unit = case_when(
+#       .metric == 'RSQ' ~ '',
+#       .default = '~~MPa'),
+#     
+#     .metric = case_when(.metric == 'RSQ' ~ 'R^2',
+#                         .default = .metric)
+#   )
 
 write_rds(df_metrics,'data/processed/modelos/metrics.rds')
 
 #8. Extraer y guardar modelos ----
 
-rf_wflow_fit <- extract_workflow(rf_res)
-lgbm_wflow_fit <- extract_workflow(lgbm_res)
-xgb_wflow_fit <- extract_workflow(xgb_res)
-svm_wflow_fit <- extract_workflow(svm_res)
+rf_wflow_fit <- extract_fit_parsnip(rf_res)
+lgbm_wflow_fit <- extract_fit_parsnip(lgbm_res)
+xgb_wflow_fit <- extract_fit_parsnip(xgb_res)
+svm_wflow_fit <- extract_fit_parsnip(svm_res)
 
 write_rds(xgb_wflow_fit,'data/processed/modelos/xgboost.rds')
 write_rds(lgbm_wflow_fit,'data/processed/modelos/lgbm.rds')
@@ -226,3 +230,19 @@ test_results|>
   geom_point(alpha=.5) +
   facet_grid(.~name) +
   theme_bw()
+
+# Explicación del modelo
+# 
+library(DALEX)
+library(DALEXtra)
+explainer_rf <- 
+  DALEX::explain(
+    extract_fit_parsnip(rf_res), 
+    data = model_rec  |>  prep()  |>  bake(new_data = NULL, all_predictors()), 
+    y = biom_train$biomasa,
+    label = "random forest",
+    verbose = FALSE
+  )
+
+vip_rf <- model_parts(explainer_rf, loss_function = loss_root_mean_square)
+plot(vip_rf)
