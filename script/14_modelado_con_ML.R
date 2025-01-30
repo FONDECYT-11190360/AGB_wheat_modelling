@@ -3,12 +3,15 @@ library(tidymodels)
 library(tidyverse)
 library(glue)
 
+#0. Variables a seleccionar del análisis de correlacion
+
+vars <- c("sitio", "fecha", "pp_cumsum", "sm_mm", "S2_B1", "S2_B6", "S2_MCARI", "S2_TCARI", "S2_MCARI_OSAVI2", "S2_SWIR11_MCARI", "S2_SWIR11_TCARI","S2_SWIR12_MCARI", "S2_CVI", "S2_NDRE3", "S2_NDRE_NDVI", "S2_WI1", "S2_TCARI_OSAVI_8A", "S2_CI_red_8A", "S2_NDRE3_8A", "S2_SIPI_8A", "S2_WI1_8A", "S1_VV", "S1_VH", "S1_VH_VV", "PS_B3", "PS_B8", "PS_SR", "PS_CVI", "PS_EVI", "PS_GNDVI", "PS_SIPI", "PS_CI_red_cumsum", "PS_EVI_cumsum", "PS_GRVI_cumsum", "S2_B1_cumsum","S2_SWIR12_MCARI_cumsum", "S2_SWIR12_TCARI_cumsum", "S2_NDRE3_cumsum", "S2_CI_red_8A_cumsum", "S2_NDRE3_8A_cumsum", "PS_B5", "PS_TCARI_OSAVI", "PS_MCARI_OSAVI", "PS_NDRE_NDVI", "biomasa")
+
 #1. Leer los datos ----
 
 data <- read_rds('data/processed/rds/dataset_full_index.rds') |> 
-  select(-muestra,-temporada,fecha)
-
-data |> glimpse()
+  select(-muestra,-temporada,fecha) |> 
+  select(all_of(vars))
 
 #2. Definir subgrupos de datos para el modelado ----
 set.seed(987)
@@ -81,35 +84,36 @@ model_rec_todo <- recipe(biomasa~.,data = biom_train ) |>
   update_role(fecha, new_role = 'dont_use') |> 
   step_impute_knn(all_numeric_predictors()) |> 
   step_normalize(all_numeric_predictors()) |> 
-  step_corr(all_numeric_predictors()) 
+  step_corr(all_numeric_predictors()) |> 
+  step_dummy(all_nominal_predictors(), one_hot = TRUE)
 
 model_rec_s2 <- model_rec_todo |> 
-  step_select(biomasa,starts_with('S2'))
+  step_rm(pp_cumsum, sm_mm,starts_with('S1|PS'))
 
-model_rec_s2_clima <- model_rec_todo |> 
-  step_select(biomasa,pp_cumsum, sm_mm,starts_with('S2'))
+model_rec_s2_clima <- model_rec_todo |>
+  step_rm(starts_with('S1|PS'))
 
 model_rec_ps <- model_rec_todo |> 
-  step_select(biomasa,starts_with('PS'))
+  step_rm(pp_cumsum, sm_mm,starts_with('S1|S2'))
 
 model_rec_ps_clima <- model_rec_todo |> 
-  step_select(biomasa,pp_cumsum, sm_mm,starts_with('PS'))
+  step_rm(starts_with('S1|S2'))
 
 model_rec_s1 <- model_rec_todo |> 
-  step_select(biomasa,starts_with('S1'))
+  step_rm(pp_cumsum, sm_mm,starts_with('S2|PS'))
 
 model_rec_s1_clima <- model_rec_todo |> 
-  step_select(biomasa,pp_cumsum, sm_mm,starts_with('S1'))
+  step_rm(starts_with('S1|PS'))
 
 model_rec_clima <- model_rec_todo |> 
-  step_select(biomasa, pp_cumsum, sm_mm)
+  step_rm(starts_with('S1|S2|PS'))
 
-# filt_obj <- prep(model_rec,training = biom_train)
+# filt_obj <- prep(model_rec_todo,training = biom_train)
 # filt_te <- bake(filt_obj,biom_test)
 
 #4. Resampling y tunning
 
-ctrl <- control_grid(parallel_over = "everything")
+ctrl <- control_stack_grid()
 
 set.seed(453)
 vb_folds <- vfold_cv(biom_train,strata = 'sitio')
@@ -163,8 +167,8 @@ df_rank <- rankings |>
 
 models_name <- df_rank$Model
 
-models_name |> 
-  walk(\(model){
+models_lfit <- models_name |> 
+  map(\(model){
     biom_res |>  
     extract_workflow(model) |>  
     finalize_workflow(
@@ -172,15 +176,34 @@ models_name |>
         extract_workflow_set_result(model) |>  
         select_best(metric = "rsq")
     ) |>  
-    last_fit(split = splits, metrics = metric_set(rsq,rmse,mae)) |> 
-      assign(x = model,value = _)
+    last_fit(split = splits, metrics = metric_set(rsq,rmse,mae)) 
   })
 
+#7. ensamblar modelos ----
+#
+library(stacks)
+
+model_ensemnble <- stacks() |> 
+  add_candidates(biom_res) |> 
+  blend_predictions() |> 
+  fit_members()
+
+autoplot(model_ensemnble)
+
+res <- models_lfit |> 
+  map(possibly(\(model){
+    model_ex <- extract_workflow(model)
+    model_bio_test <- 
+    biom_test['biomasa'] |>
+    bind_cols(predict(model_ex,biom_test))
+    
+  },NA_real_))
+  
 # 7. Metricas de los modelos ----
  
-df_metrics <- models_name |> 
-  map_df(\(model){
-    tibble(collect_metrics(xgb_res),model = model)
+df_metrics <- seq_along(models_name) |> 
+  map_df(\(i){
+    tibble(collect_metrics(models_lfit[[i]]),model = models_name[i])
   })
 
 # df_metrics <- df_metrics |> 
@@ -203,44 +226,24 @@ write_rds(df_metrics,'data/processed/modelos/metrics.rds')
 
 #8. Extraer y guardar modelos ----
 
-rf_wflow_fit <- extract_fit_parsnip(rf_res)
-lgbm_wflow_fit <- extract_fit_parsnip(lgbm_res)
-xgb_wflow_fit <- extract_fit_parsnip(xgb_res)
-svm_wflow_fit <- extract_fit_parsnip(svm_res)
-
-write_rds(xgb_wflow_fit,'data/processed/modelos/xgboost.rds')
-write_rds(lgbm_wflow_fit,'data/processed/modelos/lgbm.rds')
-write_rds(rf_wflow_fit,'data/processed/modelos/random_forest.rds')
-write_rds(svm_wflow_fit,'data/processed/modelos/support_vector_machine.rds')
-
-test_results <- 
-  biom_test |> 
-  select(biomasa) %>%
-  bind_cols(
-    predict(svm_wflow_fit, new_data = biom_test),
-    predict(rf_wflow_fit, new_data = biom_test),
-    predict(xgb_wflow_fit, new_data = biom_test)
-  ) |> bind_cols(biom_test['sitio']) |> 
-  set_names(c('biomasa','pred_svm','pred_rf','pred_xgb','sitio'))
-
-test_results|>
-  pivot_longer(-c(biomasa,sitio)) |> 
-  ggplot(aes(biomasa,value,colour = sitio)) + 
-  geom_abline(col = 'darkblue',lwd=1,alpha =.6) +
-  geom_point(alpha=.5) +
-  facet_grid(.~name) +
-  theme_bw()
-
+seq_along(models_name) |> 
+  walk(\(i){
+    mname <- models_name[i]
+    models_lfit[[i]] |> 
+      extract_fit_parsnip() |> 
+      write_rds(glue('data/processed/modelos/{mname}.rds'))
+  })
+  
 # Explicación del modelo
 # 
 library(DALEX)
 library(DALEXtra)
 explainer_rf <- 
-  DALEX::explain(
-    extract_fit_parsnip(rf_res), 
-    data = model_rec  |>  prep()  |>  bake(new_data = NULL, all_predictors()), 
+  explain_tidymodels(
+    model_ensemnble, 
+    data = model_rec_todo  |>  prep()  |>  bake(new_data = biom_train), 
     y = biom_train$biomasa,
-    label = "random forest",
+    label = "Ensamblado",
     verbose = FALSE
   )
 
