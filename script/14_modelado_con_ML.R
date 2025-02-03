@@ -179,28 +179,8 @@ models_lfit <- models_name |>
     last_fit(split = splits, metrics = metric_set(rsq,rmse,mae)) 
   })
 
-#7. ensamblar modelos ----
-#
-library(stacks)
-
-model_ensemnble <- stacks() |> 
-  add_candidates(biom_res) |> 
-  blend_predictions() |> 
-  fit_members()
-
-autoplot(model_ensemnble)
-
-res <- models_lfit |> 
-  map(possibly(\(model){
-    model_ex <- extract_workflow(model)
-    model_bio_test <- 
-    biom_test['biomasa'] |>
-    bind_cols(predict(model_ex,biom_test))
-    
-  },NA_real_))
-  
 # 7. Metricas de los modelos ----
- 
+
 df_metrics <- seq_along(models_name) |> 
   map_df(\(i){
     tibble(collect_metrics(models_lfit[[i]]),model = models_name[i])
@@ -233,6 +213,30 @@ seq_along(models_name) |>
       extract_fit_parsnip() |> 
       write_rds(glue('data/processed/modelos/{mname}.rds'))
   })
+
+#9. ensamblar modelos ----
+
+library(stacks)
+
+model_ensemble <- stacks() |> 
+  add_candidates(biom_res) |> 
+  blend_predictions() |> 
+  fit_members()
+
+write_rds(model_ensemble,'data/processed/modelos/modelo_ensamblado.rds')
+
+autoplot(model_ensemnble)
+
+res <- models_lfit |> 
+  map(possibly(\(model){
+    model_ex <- extract_workflow(model)
+    model_bio_test <- 
+    biom_test['biomasa'] |>
+    bind_cols(predict(model_ex,biom_test))
+    
+  },NA_real_))
+  
+
   
 # Explicación del modelo
 # 
