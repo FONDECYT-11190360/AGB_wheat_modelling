@@ -57,11 +57,36 @@ data_biomasa <- map(1:4,\(lead){
     
 })
 
-# 4. Guardar set de datps de prediccion ----
+# 4. Guardar set de datos de biomasa para prediccion ----
 
 1:4 |> 
   walk(\(i){
     data <- bind_cols(data_biomasa[[i]],data_cosecha['cosecha'])
-    write_rds(data,glue::glue('data/processed/rds/data_prediccion_lead_{i}_mes.rds'))
+    write_rds(data,glue::glue('data/processed/rds/data_biomasa_prediccion_lead_{i}_mes.rds'))
   })
 
+
+# 5. Extrae datos de predictores satelitales ----
+
+dirs <- dir_ls('data/processed/raster/predictores')
+
+lead <- 4
+data_indices <- 1:4 |> 
+  map_df(\(i){
+    lead <- lead*30
+    sitio <- basename(dirs[i])
+    files <- dir_ls(dirs[i])
+    dates <- ymd(str_extract(basename(files),"[0-9]{4}-[0-9]{2}-[0-9]{2}"))
+    date_last <- sort(dates,decreasing = TRUE)[1]
+    date_lead <- date_last-days(c(lead,lead+10))
+    im <- rast(files[dates %in% date_lead])
+    data <- terra::extract(im,muestreo[[i]],ID = FALSE) |> 
+      mutate(sitio = sitio) |> 
+      relocate(sitio,.before=pp_cumsum) |> 
+      as_tibble()
+
+    })
+
+data_indices <- bind_cols(data_indices,data_cosecha['cosecha'])
+
+write_rds(data_indices,glue::glue('data/processed/rds/data_indices_prediccion_lead_{lead}_mes.rds'))
