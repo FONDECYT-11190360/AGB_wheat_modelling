@@ -2,15 +2,18 @@ library(xgboost)
 library(tidymodels)
 library(tidyverse)
 library(glue)
+library(stacks)
 
 #1. Leer los datos ----
 
-data <- read_rds('data/processed/rds/data_prediccion_lead_1_mes.rds') |> 
-  select(-lead_month)
+data <- read_rds('data/processed/rds/data_indices_prediccion_lead_4_mes.rds') #|>
+  #filter(sitio != 'villa_baviera_2020_2021')
+  # select(-lead_month) |> 
+  # select(seq(1,208,5),cosecha) #seleccionar cada 5 días
 
 #2. Definir subgrupos de datos para el modelado ----
 set.seed(987)
-splits <- initial_split(data,strata = 'sitio')
+splits <- group_initial_split(data,group = 'sitio')
 
 #splits <- group_initial_split(data,group = fecha)
 
@@ -80,26 +83,26 @@ model_rec_todo <- recipe(cosecha~.,data = biom_train ) |>
   # step_corr(all_numeric_predictors()) |> 
   # step_dummy(all_nominal_predictors(), one_hot = TRUE)
 
-# model_rec_s2 <- model_rec_todo |> 
-#   step_rm(pp_cumsum, sm_mm,starts_with('S1|PS'))
-# 
-# model_rec_s2_clima <- model_rec_todo |>
-#   step_rm(starts_with('S1|PS'))
-# 
-# model_rec_ps <- model_rec_todo |> 
-#   step_rm(pp_cumsum, sm_mm,starts_with('S1|S2'))
-# 
-# model_rec_ps_clima <- model_rec_todo |> 
-#   step_rm(starts_with('S1|S2'))
-# 
-# model_rec_s1 <- model_rec_todo |> 
-#   step_rm(pp_cumsum, sm_mm,starts_with('S2|PS'))
-# 
-# model_rec_s1_clima <- model_rec_todo |> 
-#   step_rm(starts_with('S1|PS'))
-# 
-# model_rec_clima <- model_rec_todo |> 
-#   step_rm(starts_with('S1|S2|PS'))
+model_rec_s2 <- model_rec_todo |>
+  step_rm(pp_cumsum, sm_mm,starts_with('S1|PS'))
+
+model_rec_s2_clima <- model_rec_todo |>
+  step_rm(starts_with('S1|PS'))
+
+model_rec_ps <- model_rec_todo |>
+  step_rm(pp_cumsum, sm_mm,starts_with('S1|S2'))
+
+model_rec_ps_clima <- model_rec_todo |>
+  step_rm(starts_with('S1|S2'))
+
+model_rec_s1 <- model_rec_todo |>
+  step_rm(pp_cumsum, sm_mm,starts_with('S2|PS'))
+
+model_rec_s1_clima <- model_rec_todo |>
+  step_rm(starts_with('S1|PS'))
+
+model_rec_clima <- model_rec_todo |>
+  step_rm(starts_with('S1|S2|PS'))
 
 # filt_obj <- prep(model_rec_todo,training = biom_train)
 # filt_te <- bake(filt_obj,biom_test)
@@ -109,7 +112,7 @@ model_rec_todo <- recipe(cosecha~.,data = biom_train ) |>
 ctrl <- control_stack_grid()
 
 set.seed(453)
-vb_folds <- vfold_cv(biom_train,strata = 'sitio')
+vb_folds <- group_vfold_cv(biom_train,group = 'sitio')
 
 library(bonsai)
 library(doMC)
@@ -125,14 +128,14 @@ biom_res <-
                    # rec6 = model_rec_s2_clima,
                    # rec7 = model_rec_ps,
                    # rec8 = model_rec_ps_clima,
-                   #rec9 = model_rec_clima
+                   # rec9 = model_rec_clima
                    ), 
     models = list(
       RF = rf_spec,
       SVM = svm_spec,
       XGBoost = xgb_spec,
-      lgbm = lgbm_spec,
-      glm = glmnet_spec
+      # lgbm = lgbm_spec
+       glm = glmnet_spec
       #MLP = mlp_spec
     )
   ) |>  
@@ -150,7 +153,7 @@ autoplot(biom_res,select_best = TRUE)
 #5. Rankear modelos ----
 
 rankings <- 
-  rank_results(biom_res[1,], select_best = TRUE) |> 
+  rank_results(biom_res, select_best = TRUE) |> 
   mutate(method = map_chr(wflow_id, ~ str_split(.x, "_", simplify = TRUE)[1])) 
 
 tidymodels_prefer()
@@ -159,3 +162,50 @@ df_rank <- rankings |>
   filter(.metric == c('rsq','rmse')[1]) |> 
   rename(Model = wflow_id) |> 
   mutate(Model = str_remove(Model,'rec_')) 
+
+#6. Ultimo entrenamiento de los modelos ----
+
+models_name <- df_rank$Model
+
+models_lfit <- models_name |> 
+  map(\(model){
+    biom_res |>  
+      extract_workflow(model) |>  
+      finalize_workflow(
+        biom_res |>  
+          extract_workflow_set_result(model) |>  
+          select_best(metric = "rsq")
+      ) |>  
+      last_fit(split = splits, metrics = metric_set(rsq,rmse,mae)) 
+  })
+
+# 7. Metricas de los modelos ----
+
+df_metrics <- seq_along(models_name) |> 
+  map_df(\(i){
+    tibble(collect_metrics(models_lfit[[i]]),model = models_name[i])
+  })
+
+
+#9. ensamblar modelos ----
+
+library(stacks)
+
+model_ensemble <- stacks() |> 
+  add_candidates(biom_res) |> 
+  blend_predictions() |> 
+  fit_members()
+
+#write_rds(model_ensemble,'data/processed/modelos/modelo_ensamblado.rds')
+
+autoplot(model_ensemnble)
+
+res <- models_lfit |> 
+  map(possibly(\(model){
+    model_ex <- extract_workflow(model)
+    model_bio_test <- 
+      biom_test['biomasa'] |>
+      bind_cols(predict(model_ex,biom_test))
+    
+  },NA_real_))
+
