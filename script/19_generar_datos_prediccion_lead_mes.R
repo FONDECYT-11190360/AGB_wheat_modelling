@@ -78,7 +78,7 @@ data_indices <- 1:4 |>
     files <- dir_ls(dirs[i])
     dates <- ymd(str_extract(basename(files),"[0-9]{4}-[0-9]{2}-[0-9]{2}"))
     date_last <- sort(dates,decreasing = TRUE)[1]
-    date_lead <- date_last-days(c(lead,lead+10))
+    date_lead <- date_last-days(c(lead,lead+20,lead+40))
     im <- rast(files[dates %in% date_lead])
     data <- terra::extract(im,muestreo[[i]],ID = FALSE) |> 
       mutate(sitio = sitio) |> 
