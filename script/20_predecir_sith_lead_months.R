@@ -6,11 +6,8 @@ library(stacks)
 
 #1. Leer los datos ----
 
-data <- read_rds('data/processed/rds/data_indices_prediccion_lead_4_mes.rds') #|>
-  #filter(sitio != 'villa_baviera_2020_2021')
-  # select(-lead_month) |> 
-  # select(seq(1,208,5),cosecha) #seleccionar cada 5 días
-
+data <- read_rds('data/processed/rds/data_indices_prediccion_lead_1_mes.rds') 
+  
 #2. Definir subgrupos de datos para el modelado ----
 set.seed(987)
 splits <- group_initial_split(data,group = 'sitio')
@@ -80,29 +77,42 @@ model_rec_todo <- recipe(cosecha~.,data = biom_train ) |>
   update_role(sitio, new_role = 'dont_use') |> 
   step_impute_knn(all_numeric_predictors()) |> 
   step_normalize(all_numeric_predictors()) 
-  # step_corr(all_numeric_predictors()) |> 
-  # step_dummy(all_nominal_predictors(), one_hot = TRUE)
+  
+model_rec_s2 <-  recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('S2'))) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) 
 
-model_rec_s2 <- model_rec_todo |>
-  step_rm(pp_cumsum, sm_mm,starts_with('S1|PS'))
+model_rec_s2_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('S2'))) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) 
 
-model_rec_s2_clima <- model_rec_todo |>
-  step_rm(starts_with('S1|PS'))
+model_rec_ps <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('PS'))) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) 
+  
+model_rec_ps_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('PS'))) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) 
 
-model_rec_ps <- model_rec_todo |>
-  step_rm(pp_cumsum, sm_mm,starts_with('S1|S2'))
+model_rec_s1 <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('S1'))) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) 
 
-model_rec_ps_clima <- model_rec_todo |>
-  step_rm(starts_with('S1|S2'))
+model_rec_s1_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('S1'))) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors())
 
-model_rec_s1 <- model_rec_todo |>
-  step_rm(pp_cumsum, sm_mm,starts_with('S2|PS'))
+model_rec_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm)) |>
+  update_role(sitio, new_role = 'dont_use') |> 
+  step_impute_knn(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) 
 
-model_rec_s1_clima <- model_rec_todo |>
-  step_rm(starts_with('S1|PS'))
-
-model_rec_clima <- model_rec_todo |>
-  step_rm(starts_with('S1|S2|PS'))
 
 # filt_obj <- prep(model_rec_todo,training = biom_train)
 # filt_te <- bake(filt_obj,biom_test)
@@ -123,19 +133,17 @@ biom_res <-
     preproc = list(rec1 = model_rec_todo
                    # rec2 = model_rec_s1,
                    # rec3 = model_rec_s1_clima,
-                   # rec4 = model_rec_clima,
-                   # rec5 = model_rec_s2,
-                   # rec6 = model_rec_s2_clima,
-                   # rec7 = model_rec_ps,
-                   # rec8 = model_rec_ps_clima,
-                   # rec9 = model_rec_clima
+                   # rec4 = model_rec_s2,
+                   # rec5 = model_rec_s2_clima,
+                   # rec6 = model_rec_ps,
+                   # rec7 = model_rec_ps_clima
                    ), 
     models = list(
       RF = rf_spec,
       SVM = svm_spec,
       XGBoost = xgb_spec,
-      # lgbm = lgbm_spec
-       glm = glmnet_spec
+      lgbm = lgbm_spec,
+      glm = glmnet_spec
       #MLP = mlp_spec
     )
   ) |>  
@@ -179,7 +187,7 @@ models_lfit <- models_name |>
       last_fit(split = splits, metrics = metric_set(rsq,rmse,mae)) 
   })
 
-# 7. Metricas de los modelos ----
+# 7. Metricas de los modelos en el set de testeo ----
 
 df_metrics <- seq_along(models_name) |> 
   map_df(\(i){
@@ -196,9 +204,9 @@ model_ensemble <- stacks() |>
   blend_predictions() |> 
   fit_members()
 
-#write_rds(model_ensemble,'data/processed/modelos/modelo_ensamblado.rds')
+#write_rds(model_ensemble,'data/processed/modelos/modelo_ensamblado_prediccion.rds')
 
-autoplot(model_ensemnble)
+autoplot(model_ensemble)
 
 res <- models_lfit |> 
   map(possibly(\(model){
@@ -208,4 +216,27 @@ res <- models_lfit |>
       bind_cols(predict(model_ex,biom_test))
     
   },NA_real_))
+
+#10. Explicación del modelo
+# 
+library(DALEX)
+library(DALEXtra)
+explainer_rf <- 
+  explain_tidymodels(
+    #model_ensemble, 
+    biom_res |> extract_workflow(models_name[6]) |> 
+                                 finalize_workflow(
+                                   biom_res |>
+                                   extract_workflow_set_result(models_name[6]) |>  
+                                   select_best(metric = "rsq")
+                                   ) |> fit(biom_test),
+    #models_lfit[[1]],
+    data = biom_test |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('PS')), 
+    y = biom_train$cosecha,
+    label = "Ensamblado",
+    verbose = FALSE
+  )
+
+vip_rf <- model_parts(explainer_rf, loss_function = loss_root_mean_square)
+plot(vip_rf)
 
