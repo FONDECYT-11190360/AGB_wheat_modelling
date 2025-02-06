@@ -61,7 +61,7 @@ svm_spec <-
   set_mode("regression")  |> 
   set_engine("kernlab")
 
-## Multilayer perceptron
+## glm regression models
 
 glmnet_spec <-
   linear_reg(
@@ -71,47 +71,65 @@ glmnet_spec <-
   set_engine("glmnet") |> 
   set_mode("regression") 
 
+# multilayer preceptron NN
+
+mlp_spec <- mlp(
+  hidden_units =tune(),
+  penalty = tune(),
+) |> 
+  set_engine("keras") |> 
+  set_mode("regression")  |>  
+  translate()
+
 #4. Preprocesamiento
 
 model_rec_todo <- recipe(cosecha~.,data = biom_train ) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_impute_linear(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
   
 model_rec_s2 <-  recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('S2'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_impute_linear(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
 
 model_rec_s2_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('S2'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_impute_linear(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
 
 model_rec_ps <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('PS'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_impute_linear(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
   
 model_rec_ps_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('PS'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_impute_linear(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
 
 model_rec_s1 <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('S1'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_impute_linear(all_numeric_predictors()) |> 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
 
 model_rec_s1_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('S1'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
   step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors())
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
 
 model_rec_clima <- recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,pp_cumsum,sm_mm)) |>
   update_role(sitio, new_role = 'dont_use') |> 
   step_impute_knn(all_numeric_predictors()) |> 
-  step_normalize(all_numeric_predictors()) 
+  step_normalize(all_numeric_predictors()) |> 
+  step_zv()
 
 
 # filt_obj <- prep(model_rec_todo,training = biom_train)
@@ -141,10 +159,10 @@ biom_res <-
     models = list(
       RF = rf_spec,
       SVM = svm_spec,
-      XGBoost = xgb_spec,
-      lgbm = lgbm_spec,
-      glm = glmnet_spec
-      #MLP = mlp_spec
+      #XGBoost = xgb_spec,
+      #lgbm = lgbm_spec,
+      glm = glmnet_spec,
+      MLP = mlp_spec
     )
   ) |>  
   workflow_map(
