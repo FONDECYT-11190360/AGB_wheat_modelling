@@ -85,9 +85,9 @@ mlp_spec <- mlp(
 
 model_rec_todo <- recipe(cosecha~.,data = biom_train ) |>
   update_role(sitio, new_role = 'dont_use') |> 
-  step_impute_linear(all_numeric_predictors()) |> 
+  step_impute_knn(all_numeric_predictors()) |> 
   step_normalize(all_numeric_predictors()) |> 
-  step_zv()
+  step_zv(all_numeric_predictors())
   
 model_rec_s2 <-  recipe(cosecha~.,data = biom_train |> select(sitio,cosecha,starts_with('S2'))) |>
   update_role(sitio, new_role = 'dont_use') |> 
@@ -159,10 +159,10 @@ biom_res <-
     models = list(
       RF = rf_spec,
       SVM = svm_spec,
-      #XGBoost = xgb_spec,
-      #lgbm = lgbm_spec,
-      glm = glmnet_spec,
-      MLP = mlp_spec
+      XGBoost = xgb_spec,
+      lgbm = lgbm_spec,
+      glm = glmnet_spec
+      #MLP = mlp_spec
     )
   ) |>  
   workflow_map(
@@ -241,15 +241,8 @@ library(DALEX)
 library(DALEXtra)
 explainer_rf <- 
   explain_tidymodels(
-    #model_ensemble, 
-    biom_res |> extract_workflow(models_name[6]) |> 
-                                 finalize_workflow(
-                                   biom_res |>
-                                   extract_workflow_set_result(models_name[6]) |>  
-                                   select_best(metric = "rsq")
-                                   ) |> fit(biom_test),
-    #models_lfit[[1]],
-    data = biom_test |> select(sitio,cosecha,pp_cumsum,sm_mm,starts_with('PS')), 
+    model_ensemble, 
+    data = prep(model_rec_todo,training = biom_train) |> bake(biom_test), 
     y = biom_train$cosecha,
     label = "Ensamblado",
     verbose = FALSE
