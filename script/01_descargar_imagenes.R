@@ -1,5 +1,6 @@
 library(tidyverse)
 library(glue)
+library(terra)
 
 #sentinel
 
@@ -72,3 +73,26 @@ download_s(pols$`la_cancha_2022-2023`, 'sentinel-2-l2a',inicio = '2022-05-01', f
             dir_out = glue('{dir_s2}{cod_id[3]}_ext'))
 download_s(pols$`villa_baviera_2020-2021`, 'sentinel-2-l2a',inicio = '2020-08-15', fin = '2021-02-25',
             dir_out = glue('{dir_s2}{cod_id[4]}_ext'))
+
+# biomap
+
+# library(geodata)https://geodata.ucdavis.edu/climate/worldclim/2_1/tiles/iso/CHL_wc2.1_30s_bio.tif
+
+# bio <- worldclim_country('chile',var = 'bio',path = tempdir())
+bio <- rast('data/raw/raster/biomap/CHL_wc2.1_30s_bio.tif')
+names(bio) <- gsub('wc2.1_30s_','',names(bio))
+
+cod_id <- c('hidango_2021-2022','hidango_2022-2023',
+            'la_cancha_2022-2023','villa_baviera_2020-2021')
+lapply(cod_id,\(x) {
+  pol <- vect('data/processed/sitios.gpkg',layer = glue('a_{x}'))
+  
+  bio_sitio <- bio |> 
+    crop(pol)
+  
+  writeRaster(bio_sitio,glue('data/processed/raster/indicadores/biomap/biomap_{x}.tif'))
+  
+  })
+
+
+

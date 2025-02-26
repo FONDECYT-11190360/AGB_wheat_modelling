@@ -85,6 +85,40 @@ data |>
   arrange(temporada,sitio,fecha,muestra) |> 
   write_rds('data/processed/rds/vi_extract.rds')
 
+#biomap
+
+cod_id <- c('hidango_2021-2022','hidango_2022-2023',
+            'la_cancha_2022-2023','villa_baviera_2020-2021')
+
+tif <- list.files('data/processed/raster/indicadores/biomap/',full.names=T)
+
+data_biomap <- lapply(cod_id,\(x) {
+  
+  sp <- vect(glue('data/processed/shp/puntos_muestreo/{x}.shp'))
+  biomap_sitio <- rast(glue('data/processed/raster/indicadores/biomap/biomap_{x}.tif')) |> 
+    project('EPSG:32719')
+  
+  sitio <- str_extract(x, ".*(?=_)")
+  temporada <- str_extract(x, "\\d{4}-\\d{4}")
+  
+  terra::extract(biomap_sitio,sp) |> 
+    mutate(sitio = sitio,
+           temporada = temporada,
+           muestra = as.character(sp$muestra),
+           muestra = case_when(
+             sitio == 'hidango' & temporada == '2021-2022' ~ glue('H1M{muestra}'),
+             sitio == 'hidango' & temporada == '2022-2023' ~ glue('H2M{muestra}'),
+             sitio == 'la_cancha'  ~ glue('LCM{muestra}'),
+             sitio == 'villa_baviera'  ~ glue('VBM{muestra}')
+           ) |> as.character(),
+           .before = ID) |> 
+    select(-ID)
+  
+}) |> 
+  bind_rows()
+
+write_rds(data_biomap,'data/processed/rds/biomap.rds')
+
 #visualizar
 
 data <- read_rds('data/processed/rds/vi_extract.rds')
