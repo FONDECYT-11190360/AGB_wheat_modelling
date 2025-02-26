@@ -9,7 +9,7 @@ vars <- c("sitio", "fecha", "pp_cumsum", "sm_mm", "S2_B1", "S2_B6", "S2_MCARI", 
 
 #1. Leer los datos ----
 
-data <- read_rds('data/processed/rds/dataset_full_index.rds') |> 
+data <- read_rds('data/processed/rds/dataset.rds') |> 
   select(-muestra,-temporada,fecha) |> 
   select(all_of(vars))
 
