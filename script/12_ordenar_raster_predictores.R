@@ -44,6 +44,8 @@ lapply(cod_id,\(x) {
   
   for (fecha in fechas) {
     
+    gc()
+    
     tif_fecha <- grep(fecha,tif,value=T)
     
     r_fecha <- lapply(tif_fecha, \(i) {
@@ -58,9 +60,9 @@ lapply(cod_id,\(x) {
     }) |> 
       rast()
     
-    var_faltantes <- setdiff(var_imp, names(r_fecha))
+    nlyr_start = length(names(r_fecha))
     
-    print(paste0(fecha,' predictores faltantes: ',paste(var_faltantes, collapse = "; ")))
+    var_faltantes <- setdiff(var_imp, names(r_fecha))
     
     if (length(var_faltantes) > 0) {
       for (var in var_faltantes) {
@@ -79,100 +81,48 @@ lapply(cod_id,\(x) {
     writeRaster(r_fecha,glue('{dir_out}PREDICTORES_{fecha}.tif'),
                 overwrite = T)
     
+    print(paste0(fecha,' (nlyr: ',nlyr_start,') predictores faltantes: ',
+                 paste(var_faltantes, collapse = "; "), ' (nlyr_final: ',nlyr(r_fecha),')'))
   }
 })
 
+#visualizar
 
+dir <- 'data/processed/raster/predictores/'
+cod_id <- list.files(dir)
 
-
-
-dir_ps <- list.files('data/processed/raster/indicadores/planetscope_filled',full.names=T)
-dir_ps_cumsum <- list.files('data/processed/raster/indicadores/planetscope_filled_cumsum',full.names=T)
-
-dir_s2 <- list.files('data/processed/raster/indicadores/sentinel_2_filled',full.names=T)
-dir_s2_cumsum <- list.files('data/processed/raster/indicadores/sentinel_2_filled_cumsum',full.names=T)
-
-dir_s1 <- list.files('data/processed/raster/indicadores/sentinel_1_filled',full.names=T)
-
-tif <- c(dir_s2,dir_ps,
-         dir_ps_cumsum,dir_s2_cumsum,
-         dir_s1)
-
-all_tif <- lapply(tif,\(dir) list.files(dir,full.names=T)) |> unlist()
-
-fechas <- str_extract(all_tif,"\\d{4}-\\d{2}-\\d{2}") |> unique() |> sort()
-
-lapply(fechas, \(fecha) {
+lapply(cod_id,\(x) {
   
-  tif_fecha <- grep(fecha,all_tif,value=T)
+  sp <- vect(glue('data/processed/shp/puntos_muestreo/{x}.shp'))
   
-  r_fecha <- lapply(tif_fecha, \(x) {
-    product_id <- case_when(length(grep('planetscope',x))>0 ~ 'PS',
-                            length(grep('sentinel_2',x))>0 ~ 'S2',
-                            length(grep('sentinel_1',x))>0 ~ 'S1')
-    name_id <- case_when(length(grep('hidango_2021-2022',x))>0 ~ 'H1',
-                         length(grep('higango_2022-2023',x))>0 ~ 'H2',
-                         length(grep('la_cancha_2022-2023',x))>0 ~ 'LC',
-                         length(grep('villa_baviera_2020-2021',x))>0 ~ 'VB')
-    subset <- case_when(length(grep('cumsum',x))>0 ~ '_cumsum',
-                        .default = '')
-    
+  tif <- list.files(glue('{dir}{x}'),full.names=T)
+  
+  dataset_x <- lapply(tif,\(tif_fecha) {
     r <- rast(tif_fecha)
-    names(r) <- paste0(product_id,'_',names(r),subset)
+    fecha <- str_extract(sources(r), "\\d{4}-\\d{2}-\\d{2}")
     
-  })
+    terra::extract(r,sp) |> 
+      mutate(fecha = fecha,
+             .before = ID) |> 
+      select(-ID)
+  }) |> 
+    bind_rows() |> 
+    group_by(fecha) |> 
+    reframe(across(everything(),  \(x) mean(x, na.rm = T))) |> 
+    pivot_longer(c(everything(),-fecha), values_to = 'value', names_to = 'predictor')
+  # pivot_longer(c(everything(),-fecha), values_to = 'value', names_to = 'predictor') |> 
+  # group_by(predictor) |> 
+  # mutate(value = as.numeric(scale(value)))
   
-  cod_id <- lapply()
-  
-  lapply(tif_fecha, \(x) {
-    product_id <- case_when(length(grep('planetscope',x))>0 ~ 'PS',
-                            length(grep('sentinel_2',x))>0 ~ 'S2',
-                            length(grep('sentinel_1',x))>0 ~ 'S1')
-    name_id <- case_when(length(grep('hidango_2021-2022',x))>0 ~ 'H1',
-                         length(grep('higango_2022-2023',x))>0 ~ 'H2',
-                         length(grep('la_cancha_2022-2023',x))>0 ~ 'LC',
-                         length(grep('villa_baviera_2020-2021',x))>0 ~ 'VB')
-    
-    subset <- case_when(length(grep('cumsum',x))>0 ~ 'ACC',
-                        .default = '')
-    return(c(product_id,name_id,subset))
-  })
-  
-  
-  
-  
+  dataset_x |> 
+    ggplot(aes(as.Date(fecha),value,color=as.factor(predictor))) +
+    # geom_point() +
+    geom_smooth(se = F,span = .1) +
+    theme_bw() +
+    theme(legend.position = 'none') +
+    labs(title = x, x = NULL, y = 'predictor value')
+  # ylim(-1,1)
   
 })
 
 
-
-
-
-
-
-lapply(all_tif, \(x) {
-  
-  fecha <- str_extract(x,"\\d{4}-\\d{2}-\\d{2}")
-  
-  product_id <- case_when(length(grep('planetscope',x))>0 ~ 'PS',
-                          length(grep('sentinel_2',x))>0 ~ 'S2',
-                          length(grep('sentinel_1',x))>0 ~ 'S1')
-  
-  name_id <- case_when(length(grep('hidango_2021-2022',x))>0 ~ 'H1',
-                       length(grep('higango_2022-2023',x))>0 ~ 'H2',
-                       length(grep('la_cancha_2022-2023',x))>0 ~ 'LC',
-                       length(grep('villa_baviera_2020-2021',x))>0 ~ 'VB')
-  
-  subset <- case_when(length(grep('cumsum',x))>0 ~ 'ACC',
-                      .default = '')
-  
-  glue('data/processed/raster/indicadores/dataset/{product_id}{name_id}{subset}_{fecha}.tif')
-  
-  r <- rast(x) |> 
-    project('EPSG:32719')
-  
-  names(r) <- paste0(product_id,'_',names(r))
-  
-  writeRaster(r,glue('data/processed/raster/indicadores/dataset/{product_id}_{name_id}_{fecha}.tif'))
-  
-})

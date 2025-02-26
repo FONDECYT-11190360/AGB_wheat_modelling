@@ -3,7 +3,7 @@ library(glue)
 library(scales)
 
 #cargar datos
-item <- c('biomasa','clima','sm','vi')
+item <- c('biomasa','clima','sm','vi','biomap')
 
 data_list <- lapply(item, \(x) {read_rds(glue('data/processed/rds/{x}.rds'))})
 names(data_list) <- item
@@ -27,12 +27,13 @@ data_list$biomasa |>
   arrange(temporada,sitio,fecha) |> 
   left_join(data_list$clima) |>
   left_join(data_list$sm |> select(sitio,temporada,fecha,sm_mm)) |> 
+  left_join(data_list$biomap) |>
   left_join(data_list$vi) |>
-  write_rds('data/processed/rds/dataset_full_index.rds')
+  write_rds('data/processed/rds/dataset.rds')
 
 #visualizar
 
-data <- read_rds('data/processed/rds/dataset_full_index.rds')
+data <- read_rds('data/processed/rds/dataset.rds')
 
 var_orden <- names(data)[-(1:4)]
 

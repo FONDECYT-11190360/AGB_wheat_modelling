@@ -6,7 +6,7 @@ library(glue)
 
 estaciones <- vect(estaciones_agromet, geom = c("longitud", "latitud"), crs = "EPSG:4326")
 
-cod_id <- list.files('data/raw/raster/sentinel_2a')
+cod_id <- list.files('data/raw/raster/sentinel_2')
 pols <- lapply(cod_id,function(x) {
   vector <- vect('data/processed/sitios.gpkg',layer = glue('a_{x}'))
 })
@@ -21,7 +21,12 @@ ema_id <- lapply(cod_id, \(x) {
   indice_mas_cercano <- which.min(distancias)
   estacion_mas_cercana <- estaciones[indice_mas_cercano, ]$nombre_ema
   
-  estaciones_agromet[which(estaciones_agromet$nombre_ema == estacion_mas_cercana),]$ema
+  # estaciones_agromet[which(estaciones_agromet$nombre_ema == estacion_mas_cercana),]$ema
+  x
+  estaciones_agromet[which(estaciones_agromet$nombre_ema == estacion_mas_cercana),]$nombre_ema
+  estaciones_agromet[which(estaciones_agromet$nombre_ema == estacion_mas_cercana),]$institucion
+  round(estaciones_agromet[which(estaciones_agromet$nombre_ema == estacion_mas_cercana),]$latitud,2)
+  round(estaciones_agromet[which(estaciones_agromet$nombre_ema == estacion_mas_cercana),]$longitud,2)
   
 }) |> unlist()
 names(ema_id) <- cod_id
