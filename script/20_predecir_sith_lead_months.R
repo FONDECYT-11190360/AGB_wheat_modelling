@@ -6,12 +6,13 @@ library(stacks)
 
 #1. Leer los datos ----
 
-data <- read_rds('data/processed/rds/data_indices_prediccion_lead_1_mes.rds') 
+data <- read_rds('data/processed/rds/data_indices_prediccion_lead_4_mes.rds') |> 
+  filter(sitio != "villa_baviera_2020-2021")
   
 #2. Definir subgrupos de datos para el modelado ----
 set.seed(987)
-splits <- group_initial_split(data,group = 'sitio')
-
+#splits <- group_initial_split(data,group = 'sitio')
+splits <- initial_split(data)
 #splits <- group_initial_split(data,group = fecha)
 
 biom_train <- training(splits)
@@ -141,6 +142,7 @@ ctrl <- control_stack_grid()
 
 set.seed(453)
 vb_folds <- group_vfold_cv(biom_train,group = 'sitio')
+vb_folds <- vfold_cv(biom_train)
 
 library(bonsai)
 library(doMC)
@@ -211,6 +213,22 @@ df_metrics <- seq_along(models_name) |>
   map_df(\(i){
     tibble(collect_metrics(models_lfit[[i]]),model = models_name[i])
   })
+
+#8. Explicación del modelo con mejor performance
+# 
+library(DALEX)
+library(DALEXtra)
+explainer_rf <- 
+  explain_tidymodels(
+    biom_res, 
+    data = prep(model_rec_todo,training = biom_train) |> bake(biom_test), 
+    y = biom_train$cosecha,
+    label = "Ensamblado",
+    verbose = FALSE
+  )
+
+vip_rf <- model_parts(explainer_rf, loss_function = loss_root_mean_square)
+plot(vip_rf)
 
 
 #9. ensamblar modelos ----
