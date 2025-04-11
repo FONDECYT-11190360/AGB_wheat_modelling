@@ -70,7 +70,7 @@ data_biomasa <- map(1:4,\(lead){
 
 dirs <- dir_ls('data/processed/raster/predictores')
 
-lead <- 1
+lead <- 3
 data_indices <- 1:4 |> 
   map_df(\(i){
     lead <- lead*30

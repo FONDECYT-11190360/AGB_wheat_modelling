@@ -244,7 +244,7 @@ library(DALEX)
 library(DALEXtra)
 explainer_rf <- 
   explain_tidymodels(
-    model_ensemnble, 
+    model_ensemble, 
     data = model_rec_todo  |>  prep()  |>  bake(new_data = biom_train), 
     y = biom_train$biomasa,
     label = "Ensamblado",
