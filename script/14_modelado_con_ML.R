@@ -11,7 +11,8 @@ vars <- c("sitio", "fecha", "pp_cumsum", "sm_mm", "S2_B1", "S2_B6", "S2_MCARI", 
 
 data <- read_rds('data/processed/rds/dataset.rds') |> 
   select(-muestra,-temporada,fecha) |> 
-  select(all_of(vars))
+  select(all_of(vars)) |> 
+  filter(sitio != 'villa_baviera')
 
 #2. Definir subgrupos de datos para el modelado ----
 set.seed(987)
@@ -112,7 +113,7 @@ model_rec_clima <- model_rec_todo |>
 # filt_te <- bake(filt_obj,biom_test)
 
 #4. Resampling y tunning
-
+library(stacks)
 ctrl <- control_stack_grid()
 
 set.seed(453)
@@ -225,7 +226,7 @@ model_ensemble <- stacks() |>
 
 write_rds(model_ensemble,'data/processed/modelos/modelo_ensamblado.rds')
 
-autoplot(model_ensemnble)
+autoplot(model_ensemble)
 
 res <- models_lfit |> 
   map(possibly(\(model){
