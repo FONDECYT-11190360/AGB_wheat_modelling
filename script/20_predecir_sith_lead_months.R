@@ -6,8 +6,8 @@ library(stacks)
 
 #1. Leer los datos ----
 
-data <- read_rds('data/processed/rds/data_indices_prediccion_lead_4_mes.rds') |> 
-  filter(sitio != "villa_baviera_2020-2021")
+data <- read_rds('data/processed/rds/data_indices_prediccion_lead_4_mes.rds') 
+  #filter(sitio != "villa_baviera_2020-2021")
   
 #2. Definir subgrupos de datos para el modelado ----
 set.seed(987)
