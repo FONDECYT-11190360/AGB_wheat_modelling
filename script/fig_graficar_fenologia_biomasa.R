@@ -26,9 +26,9 @@ fechas_feno <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
                            fenologia == 'DOUGH DEVELOPMENT' ~ 'D',
                            .default = label))
 
-data_vi <- read_rds('data/processed/rds/vi_filled.rds') |> 
+data_vi <- read_rds('data/processed/rds/vi.rds') |> 
   group_by(sitio,temporada,fecha) |> 
-  reframe(NDVI = mean(NDVI,na.rm=T)) |> 
+  reframe(NDVI = mean(S2_NDVI,na.rm=T)) |> 
   rowwise() |>
   mutate(fecha_nueva = as.Date(paste0(ifelse(month(fecha)>=5,2021,2022),'-',month(fecha),'-',day(fecha))),
          sitio = abrev(str_to_title(gsub('_',' ',sitio))),
