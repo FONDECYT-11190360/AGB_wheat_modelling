@@ -3,7 +3,7 @@ library(tidyverse)
 library(fs)
 library(glue)
 
-var_imp <- c('pp_cumsum','sm_mm','S2_B1','S2_B6','S2_MCARI','S2_TCARI','S2_MCARI_OSAVI2',
+var_imp <- c('pp_cumsum','gdd_cumsum','sm_mm','S2_B1','S2_B6','S2_MCARI','S2_TCARI','S2_MCARI_OSAVI2',
              'S2_SWIR11_MCARI','S2_SWIR11_TCARI','S2_SWIR12_MCARI','S2_CVI','S2_NDRE3',
              'S2_NDRE_NDVI','S2_WI1','S2_TCARI_OSAVI_8A','S2_CI_red_8A','S2_NDRE3_8A',
              'S2_SIPI_8A','S2_WI1_8A','S1_VV','S1_VH','S1_VH_VV','PS_B3','PS_B8','PS_SR',
