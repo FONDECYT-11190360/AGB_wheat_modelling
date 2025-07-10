@@ -3,6 +3,7 @@ library(tidymodels)
 library(tidyverse)
 library(glue)
 library(stacks)
+library(baguette)
 
 #1. Leer los datos ----
 
@@ -62,8 +63,7 @@ svm_spec <-
   set_mode("regression")  |> 
   set_engine("kernlab")
 
-## glm regression models
-
+## linear models with regularization
 glmnet_spec <-
   linear_reg(
     penalty = tune(),
@@ -72,15 +72,25 @@ glmnet_spec <-
   set_engine("glmnet") |> 
   set_mode("regression") 
 
-# multilayer preceptron NN
+# neural networks
+bagMLP_spec <- bag_mlp(
+  hidden_units = tune(), # Tune the number of hidden units
+  penalty = tune(), # Tune the regularization penalty
+  epochs = tune()  # Tune the dropout rate
+)  |> 
+  set_engine("nnet") |> 
+  set_mode("regression")
 
-mlp_spec <- mlp(
-  hidden_units =tune(),
-  penalty = tune(),
-) |> 
-  set_engine("keras") |> 
-  set_mode("regression")  |>  
-  translate()
+# K- Nearest neighbour
+
+knn_spec <- nearest_neighbor(
+  mode = "regression",
+  neighbors = tune(),         # k
+  weight_func = tune(),       # "rectangular" or "triangular" (uniform vs. distance)
+  dist_power = tune()         # 1 = Manhattan, 2 = Euclidean
+)  |> 
+  set_engine("kknn")
+
 
 #4. Preprocesamiento
 
@@ -145,8 +155,8 @@ vb_folds <- group_vfold_cv(biom_train,group = 'sitio')
 vb_folds <- vfold_cv(biom_train)
 
 library(bonsai)
-library(doMC)
-registerDoMC(cores = parallel::detectCores()-1)
+# library(doMC)
+# registerDoMC(cores = parallel::detectCores()-1)
 
 biom_res <- 
   workflow_set(
@@ -160,11 +170,12 @@ biom_res <-
                    ), 
     models = list(
       RF = rf_spec,
-      SVM = svm_spec,
+      #SVM = svm_spec,
       XGBoost = xgb_spec,
-      lgbm = lgbm_spec,
-      glm = glmnet_spec
-      #MLP = mlp_spec
+      #lgbm = lgbm_spec
+      GLM = glmnet_spec,
+      bagMLP = bagMLP_spec,
+      KNN = knn_spec
     )
   ) |>  
   workflow_map(
@@ -191,6 +202,8 @@ df_rank <- rankings |>
   rename(Model = wflow_id) |> 
   mutate(Model = str_remove(Model,'rec_')) 
 
+write_rds(df_rank,'data/processed/modelos/ranking_modelos_prediccion_resampling_4_meses.rds')
+
 #6. Ultimo entrenamiento de los modelos ----
 
 models_name <- df_rank$Model
@@ -214,21 +227,23 @@ df_metrics <- seq_along(models_name) |>
     tibble(collect_metrics(models_lfit[[i]]),model = models_name[i])
   })
 
+write_rds(df_rank,'data/processed/modelos/metrics_modelos_prediccion_testing_4_meses.rds')
+
 #8. Explicación del modelo con mejor performance
 # 
 library(DALEX)
 library(DALEXtra)
 explainer_rf <- 
   explain_tidymodels(
-    biom_res, 
-    data = prep(model_rec_todo,training = biom_train) |> bake(biom_test), 
+    models_lfit[[1]] |> extract_workflow(), 
+    data = biom_train, 
     y = biom_train$cosecha,
     label = "Ensamblado",
     verbose = FALSE
   )
 
 vip_rf <- model_parts(explainer_rf, loss_function = loss_root_mean_square)
-plot(vip_rf)
+plot(vip_rf[)
 
 
 #9. ensamblar modelos ----
@@ -260,7 +275,7 @@ library(DALEXtra)
 explainer_rf <- 
   explain_tidymodels(
     model_ensemble, 
-    data = prep(model_rec_todo,training = biom_train) |> bake(biom_test), 
+    data = biom_train, 
     y = biom_train$cosecha,
     label = "Ensamblado",
     verbose = FALSE
