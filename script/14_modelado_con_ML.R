@@ -123,7 +123,7 @@ model_rec_s1 <- model_rec_todo |>
   step_rm(pp_cumsum, sm_mm,starts_with(c('S2','PS')))
 
 model_rec_s1_clima <- model_rec_todo |> 
-  step_rm(starts_with(c('S1','PS')))
+  step_rm(starts_with(c('S2','PS')))
 
 model_rec_clima <- model_rec_todo |> 
   step_rm(starts_with(c('S1','S2','PS')))
@@ -171,15 +171,24 @@ biom_res <-
     control = ctrl
   )
 
+write_rds(biom_res,'data/processed/modelos/workflow_estimacion.rds')
+
 autoplot(biom_res,select_best = TRUE)
 df_rank <- rank_results(biom_res, select_best = TRUE) 
 
 df_rank |> 
   separate(wflow_id,sep = '_',into = c('rec','model')) |> 
-  ggplot(aes(rank,mean,colour = rec,shape =model)) + 
+  ggplot(aes(rank,mean,colour = model,shape =rec)) + 
   geom_point() +
   geom_errorbar(aes(ymax = mean +std_err,ymin = mean - std_err)) +
-  scale_color_manual(name = 'Recipe',values = cols4all::c4a('spectral'),
+  scale_color_manual(name = 'Model',
+                     values = cols4all::c4a('color_blind'),
+                     labels =c('bagMLP',
+                              'GLMnet',
+                              'KNN',
+                              'RF',
+                              'XGBoost')) +
+  scale_shape_manual(name = 'Recipe',
                      labels = c('rec1 (all)',
                                 'rec2 (S1)',
                                 'rec3 (S1+W)',
@@ -188,13 +197,13 @@ df_rank |>
                                 'rec6 (S2+W)',
                                 'rec7 (PS)',
                                 'rec8 (PS+W)'
-                                )) +
+                     ),values=10:17) +
   labs(y='value') +
-  facet_grid(.metric~.,scales ='free') +
+  facet_grid(.metric~.,scales ='free',labeller = labeller(model = panel_labels)) +
   theme_bw() +
   theme(strip.background = element_rect(fill= 'white'))
 ggsave('output/figs/ranking_estimacion_modelos_rec.png',
-       width=6,height =4,dpi =300,scale = 1.5)
+       width=6,height =4,dpi =300,scale = 1.2)
 
 #5. Rankear modelos ----
 
@@ -271,62 +280,4 @@ model_ensemble <- stacks() |>
 
 write_rds(model_ensemble,'data/processed/modelos/modelo_ensamblado.rds')
 
-autoplot(model_ensemble,select_best = TRUE)
 
-bind_cols(biom_test, predict(model_ensemble, biom_test))
-
-# Explicación del modelo
-# 
-library(DALEX)
-library(DALEXtra)
-explainer_rf <- 
-  explain_tidymodels(
-    model_ensemble, 
-    data = biom_train, 
-    y = biom_train$biomasa,
-    label = "Ensamblado",
-    verbose = FALSE
-  )
-
-vip_rf <- model_parts(explainer_rf, loss_function = loss_root_mean_square)
-plot(vip_rf)
-
-labels <- c("Sigma~GDD","S1~VH","S1~VV","S1~VH/VV","SM",
-            "Sigma~PS~GRVI","S2~WI1","S2~NDRE3","S2~CVI",
-            "Sigma~S2~SWIR12~TCARI","S2~B6","Sigma~PP",
-            "PS~CVI","Sigma~PS~CI~red","Sigma~S2~B1",          
-            "S2~SWIR11~TCARI","S2~NDRE~NDVI","S2~TCARI",
-            "Sigma~S2~CI[red]*8*A","Sigma~S2~SWIR12~MCARI")
-
-vip_rf |> 
-  group_by(variable) |> 
-  summarize(mean_dl = mean(dropout_loss),
-            sd_dl = sd(dropout_loss)) |> 
-  arrange(desc(mean_dl)) |>
-  slice(-1) |> 
-  slice_head(n=20) |> 
-  mutate(variable = labels) |> 
-  ggplot(aes(mean_dl,fct_reorder(variable,mean_dl))) +
-  coord_cartesian(xlim = c(1, 6.5)) +# Set y-axis to start at 5 and end at 15
-  geom_col(fill = 'darkblue',alpha = .7) +
-  geom_point() +
-  geom_errorbar(aes(xmin=mean_dl-sd_dl,xmax=mean_dl+sd_dl)) +
-  #scale_x_continuous(breaks = seq(9,12,0.25),limits = c(9,12)) +
-  scale_y_discrete(labels =label_parse()) +
-  labs(x='Root mean square error (RMSE) loss after permutations') +
-  theme_bw() +
-  theme(axis.title.y = element_blank())
-ggsave('output/figs/variables_importance.png',
-       width=6,height =3,dpi =300,scale = 1.5)
-
-explainer_rf2 <- 
-  explain_tidymodels(
-    mod1, 
-    data = biom_train, 
-    y = biom_train$biomasa,
-    label = "Mod1",
-    verbose = FALSE
-  )
-
-vip_rf2 <- model_parts(explainer_rf2, loss_function = loss_root_mean_square)
-plot(vip_rf)
