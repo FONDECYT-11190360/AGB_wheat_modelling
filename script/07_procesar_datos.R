@@ -22,6 +22,7 @@ write_rds(fechas_feno,'data/processed/rds/fechas_fenologia.rds')
 
 data_bio <- read_rds('data/processed_old/data_biomasa_estructuras.rds') |> 
   as_tibble() |>  
+  mutate(biomass = ifelse(site == 'villa_baviera' & date_sample == '2021-01-18', tatch + ear,biomass)) |> 
   mutate(sitio = ifelse(site == 'ariztia','la_cancha',site),
          temporada = gsub('_','-',season),
          fecha = as.Date(date_sample),
