@@ -354,4 +354,56 @@ lapply(cod_id,\(x) {
   })
 })
 
+# visualizar s1
+
+library(fs)
+
+cod_id <- list.files('data/processed/raster/indicadores/sentinel_1/')
+
+lapply(cod_id, \(x) {
+  
+  file_raw <- dir_ls(glue('data/processed/raster/indicadores/sentinel_1/{x}'))
+  file_fill <- dir_ls(glue('data/processed/raster/indicadores/sentinel_1_filled/{x}'))
+  
+  r_raw <- rast(file_raw)
+  r_fill <- rast(file_fill)
+  
+  bands <- c('VV','VH','VH_VV')
+  
+  sample_points <- vect('data/processed/sitios.gpkg', layer = glue('muestreo_{x}'))
+  
+  data <- lapply(bands, \(band) {
+    band_raw <- r_raw |> 
+      subset(names(r_raw) == band) |> 
+      setNames(str_extract(file_raw,'\\d{4}-\\d{2}-\\d{2}'))
+    
+    band_fill <- r_fill |> 
+      subset(names(r_fill) == band) |> 
+      setNames(str_extract(file_fill,'\\d{4}-\\d{2}-\\d{2}'))
+    
+    data_band <- bind_rows(
+      terra::extract(band_raw, sample_points) |> 
+        pivot_longer(c(everything(),-ID), names_to = 'fecha',values_to = band) |> 
+        mutate(s1 = 'raw',
+               .before = ID),
+      terra::extract(band_fill, sample_points) |> 
+        pivot_longer(c(everything(),-ID), names_to = 'fecha',values_to = band) |> 
+        mutate(s1 = 'filled',
+               .before = ID)
+    )
+  }) |> reduce(full_join) |> 
+    pivot_longer(cols = c(VV,VH,VH_VV), names_to = 'band', values_to = 'value') |> 
+    mutate(fecha = as.Date(fecha))
+  
+  ggplot(data = filter(data,s1=='filled'), aes(fecha,value,color = 'filled')) +
+    geom_point() +
+    geom_point(data = filter(data,s1=='raw'), aes(fecha,value,color = 'raw')) +
+    geom_line(data = filter(data,s1=='raw'), aes(fecha,value,color = 'raw')) +
+    labs(x = NULL,color = NULL, title = x) +
+    facet_wrap(ID~band,ncol=3, scales = 'free_y') +
+    theme_bw() +
+    theme(strip.background = element_rect(fill = 'white'))
+  
+})
+
 

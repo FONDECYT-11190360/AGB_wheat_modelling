@@ -4,6 +4,23 @@ library(terra)
 library(glue)
 library(tidyverse)
 
+misiones <- c('sentinel_1', 'sentinel_2', 'planetscope')
+
+dir <- 'data/processed/raster/indicadores'
+
+sitios <- list.files('data/processed/raster/indicadores/sentinel_1')
+
+lapply(misiones, \(mision) {
+  lapply(sitios, \(sitio) length(list.files(glue('{dir}/{mision}/{sitio}')))) |> 
+    setNames(sitios)
+}) |> 
+  setNames(misiones)
+
+
+
+
+
+
 dir <- 'data/processed/raster/indices/sentinel_2a/'
 sitios <- list.files(dir)
 
