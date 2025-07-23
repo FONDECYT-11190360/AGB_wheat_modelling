@@ -16,73 +16,103 @@ fechas_feno <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
                                 month(fecha),'-',day(fecha))),
          fecha_nueva = as.Date(paste0(ifelse(month(fecha_nueva)>=5,2021,2022),'-',
                                       month(fecha_nueva),'-',day(fecha_nueva))),
-         sitio = abrev(str_to_title(gsub('_',' ',sitio))),
-         sitio = case_when(sitio == 'H' & temporada == '2021-2022' ~ 'H1',
-                           sitio == 'H' & temporada == '2022-2023' ~ 'H2',
-                           .default = sitio),
-         sitio = factor(sitio,levels = c('VB','LC','H1','H2'))) |> 
+         sitio = str_to_title(gsub('_',' ',sitio))) |> 
   mutate(label = case_when(fenologia == 'EAR EMERGENCE' ~ 'E',
                            fenologia == 'MILK DEVELOPMENT' ~ 'M',
                            fenologia == 'DOUGH DEVELOPMENT' ~ 'D',
-                           .default = label))
+                           .default = label)) |> 
+  mutate(temporada = paste0(substr(temporada,1,4),' season'))
 
 data_vi <- read_rds('data/processed/rds/vi.rds') |> 
-  group_by(sitio,temporada,fecha) |> 
+  group_by(sitio,temporada,muestra,fecha) |> 
   reframe(NDVI = mean(S2_NDVI,na.rm=T)) |> 
-  rowwise() |>
-  mutate(fecha_nueva = as.Date(paste0(ifelse(month(fecha)>=5,2021,2022),'-',month(fecha),'-',day(fecha))),
-         sitio = abrev(str_to_title(gsub('_',' ',sitio))),
-         sitio = case_when(sitio == 'H' & temporada == '2021-2022' ~ 'H1',
-                           sitio == 'H' & temporada == '2022-2023' ~ 'H2',
-                           .default = sitio),
-         sitio = factor(sitio,levels = c('VB','LC','H1','H2'))) |> 
-  ungroup()
+  mutate(sitio = str_to_title(gsub('_',' ',sitio)),
+         fecha = as.Date(paste0(ifelse(month(fecha)>=5,2021,2022),'-',month(fecha),'-',day(fecha)))) |> 
+  mutate(temporada = paste0(substr(temporada,1,4),' season'))
 
 data_biomasa <- read_rds('data/processed/rds/biomasa.rds') |> 
-  rowwise() |> 
-  mutate(fecha_nueva = as.Date(paste0(ifelse(month(fecha)>=5,2021,2022),'-',month(fecha),'-',day(fecha)))) |> 
-  mutate(sitio = abrev(str_to_title(gsub('_',' ',sitio))),
-         sitio = case_when(sitio == 'H' & temporada == '2021-2022' ~ 'H1',
-                           sitio == 'H' & temporada == '2022-2023' ~ 'H2',
-                           .default = sitio),
-         sitio = factor(sitio,levels = c('VB','LC','H1','H2'))) |> 
-  group_by(sitio,temporada,fecha,fecha_nueva) |> 
+  mutate(sitio = str_to_title(gsub('_',' ',sitio)),
+         fecha = as.Date(paste0(ifelse(month(fecha)>=5,2021,2022),'-',month(fecha),'-',day(fecha)))) |> 
+  mutate(temporada = paste0(substr(temporada,1,4),' season'))
+
+data_plot <- data_vi |> 
+  left_join(data_biomasa) |> 
+  mutate(temporada = paste0(substr(temporada,1,4),' season'))
+
+data_label <- data_biomasa |>
+  group_by(sitio,temporada,fecha) |> 
   reframe(biomasa = mean(biomasa,na.rm=T)) |> 
-  left_join(data_vi |> select(-fecha),by=c('sitio','temporada','fecha_nueva')) |> 
   group_by(sitio,temporada) |> 
   mutate(sub = 0:(length(sitio)-1),
          sub = ifelse(sub == first(sub),'SOS',sub),
          sub = ifelse(sub == last(sub),'final',sub),
          label = sprintf("S[%s]", sub)) |> 
-  ungroup()
-  
-coef <- max(data_biomasa$biomasa, na.rm = TRUE) / max(data_vi$NDVI, na.rm = TRUE)
+  ungroup() |> 
+  mutate(temporada = paste0(substr(temporada,1,4),' season'))
 
-data_vi |> 
-  ggplot(aes(fecha_nueva)) +
-  geom_hline(yintercept = 0, alpha = .4, col = 'black') +
-  geom_vline(data = fechas_feno, aes(xintercept = fecha), linetype = 'dashed', alpha = .4,color = 'navyblue') +
-  geom_smooth(aes(y = NDVI * coef, color = 'NDVI'), method = "loess", span = 0.1, 
-              linewidth = 1, se = F, alpha = .6) +
-  geom_line(data = data_biomasa, aes(y = biomasa, color='AGB'), linewidth = 1, alpha = .7) +
-  geom_point(data = data_biomasa, aes(y = biomasa), size = 2, color = "darkorange", alpha = .7, shape = 21, fill = 'white') +
-  geom_text(data = fechas_feno, aes(x = fecha_nueva, y = 42, label = label, hjust = .5), size = 3) +
-  geom_label(data = data_biomasa,aes(x = fecha_nueva,y = biomasa,label = label),
-            size = 3.5,alpha = .5,vjust = -.3,parse = TRUE, label.size = 0) +
-  scale_y_continuous(name = "AGB",
-                     sec.axis = sec_axis(~ . / coef, name = "NDVI"),
-                     breaks = seq(0, 40, by = 10), 
-                     limits = c(-5, 42), 
-                     minor_breaks = NULL) +
-  scale_x_date(date_breaks='2 months',minor_breaks='1 month',date_labels='%b') +
+data_plot |> 
+  ggplot(aes(fecha,biomasa,color = 'AGB')) +
+  geom_vline(data = fechas_feno, aes(xintercept = fecha), linetype = 'dotted', alpha = .6, color = 'navyblue') +
+  geom_line(aes(fecha,NDVI*45,color = 'NDVI'), stat = "smooth", method = 'gam',
+            linewidth = .8, alpha = 0.6) +
+  geom_line(data=data_label,linewidth = .8, alpha = 0.7) +
+  geom_point(size = 1) +
+  # geom_boxplot(aes(group=fecha)) +
+  geom_label(data = data_label, aes(fecha,biomasa,label = label), col = 'black',
+             size = 3.5,alpha = .5,vjust = -.3,hjust = 1,parse = TRUE, label.size = 0) +
+  geom_text(data = fechas_feno, aes(x = fecha_nueva, y = 47, label = label, hjust = .5), size = 3, color = 'black') +
   scale_color_manual(values = c("NDVI" = "darkolivegreen3", "AGB" = "darkorange"),name = NULL) +
-  labs(x = NULL, y = NULL, fill = NULL) +
-  facet_wrap(~sitio + temporada, ncol = 2) +
+  scale_y_continuous(name = "AGB",
+                     sec.axis = sec_axis(~ . / 45, 
+                                         name = "NDVI",
+                                         labels = function(x) sub("\\.0$", "", as.character(x)),
+                                         breaks = seq(0,1,by = .25)),
+                     limits = c(0,48),
+                     breaks = seq(0, 45, by = 15),
+                     minor_breaks = seq(0, 45, by = 5)) +
+  scale_x_date(date_breaks='1 month',minor_breaks='1 month',date_labels='%b',
+               limits = c(as.Date('2021-05-18'),as.Date('2022-01-20'))) +
+  labs(x = NULL, y = NULL) +
+  facet_wrap(~sitio+temporada,ncol=1) +
   theme_bw() +
-  theme(legend.position = 'bottom',
-        legend.margin = margin(0, 0, 0, 0),
-        legend.box.margin = margin(-10, -10, 0, -10),
-        strip.background = element_rect(fill='white'))
+  theme(strip.background = element_rect(fill = 'white'))
 
-ggsave('output/figs/fenology_and_biomass.png', height = 6, width = 8)
+ggsave('output/figs/fenology_and_biomass_new_v1.png', height = 8, width = 7, scale=1)
+
+data_plot |> 
+  ggplot(aes(fecha,biomasa,color = 'AGB')) +
+  geom_vline(data = fechas_feno, aes(xintercept = fecha), linetype = 'dotted', alpha = .6, color = 'navyblue') +
+  geom_line(aes(fecha,NDVI*45,color = 'NDVI'), stat = "smooth", method = 'gam',
+            linewidth = .8, alpha = 0.6) +
+  geom_line(data=data_label,linewidth = .8, alpha = 0.7) +
+  geom_point(size = 1) +
+  # geom_boxplot(aes(group=fecha)) +
+  geom_label(data = data_label, aes(fecha,biomasa,label = label), col = 'black',
+             size = 3.5,alpha = .5,vjust = -.3,hjust = 1,parse = TRUE, label.size = 0) +
+  geom_text(data = fechas_feno, aes(x = fecha_nueva, y = 47, label = label, hjust = .5), size = 3, color = 'black') +
+  scale_color_manual(values = c("NDVI" = "darkolivegreen3", "AGB" = "darkorange"),name = NULL) +
+  scale_y_continuous(name = "AGB",
+                     sec.axis = sec_axis(~ . / 45, 
+                                         name = "NDVI",
+                                         labels = function(x) sub("\\.0$", "", as.character(x)),
+                                         breaks = seq(0,1,by = .25)),
+                     limits = c(0,48),
+                     breaks = seq(0, 45, by = 15),
+                     minor_breaks = seq(0, 45, by = 5)) +
+  scale_x_date(date_breaks='1 month',minor_breaks='1 month',date_labels='%b',
+               limits = c(as.Date('2021-05-01'),as.Date('2022-01-20'))) +
+  labs(x = NULL, y = NULL) +
+  facet_wrap(~sitio+temporada,ncol=2) +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = 'white'),
+        legend.position = 'bottom')
+
+ggsave('output/figs/fenology_and_biomass_new_v2.png', height = 7, width = 9,scale=1)
+
+
+
+data_biomasa |> 
+  group_by(sitio,temporada) |> 
+  reframe(n = n())
+  
   
