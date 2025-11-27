@@ -1,6 +1,7 @@
 library(tidyverse)
 library(terra)
 library(sf)
+library(fs)
 
 # Cargar metricas modelos de predicción
 # 
