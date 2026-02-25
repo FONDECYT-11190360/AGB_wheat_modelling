@@ -66,9 +66,9 @@ df_pdp <- as.data.frame(profiles$agr_profiles) |>
 agro_refs <- tribble(
   ~variable,    ~x_ref,  ~label,
   "gdd_cumsum",  800,    "Heading ≈ 800 GDD",
-  "gdd_cumsum",  1400,   "Madurez ≈ 1400 GDD",
-  "S1_VH",       0.05,  "Umbral dosel denso",
-  "S1_VH_VV",    0.25,  "Señal senescencia"
+  "gdd_cumsum",  1400,   "Maturity ≈ 1400 GDD",
+  "S1_VH",       0.05,  "Dense canopy threshold",
+  "S1_VH_VV",    0.25,  "Senescence signal"
 ) |>
   filter(variable %in% top4_vars)
 
@@ -95,13 +95,13 @@ ggplot(df_pdp, aes(x, yhat)) +
              label.padding = unit(0.18, "lines")) +
   scale_linetype_manual(
     values = c("longdash", "dotdash", "dashed", "dotted"),
-    name   = "Referencia agronómica"
+    name   = "Agronomic reference"
   ) +
   facet_wrap(~ variable, scales = "free_x", ncol = 2,
              labeller = as_labeller(var_labels, label_parsed)) +
   labs(
-    y = "Predicción promedio AGB (t/ha)",
-    x = "Valor del predictor"
+    y = "Average predicted AGB (t/ha)",
+    x = "Predictor value"
   ) +
   theme_bw() +
   theme(
