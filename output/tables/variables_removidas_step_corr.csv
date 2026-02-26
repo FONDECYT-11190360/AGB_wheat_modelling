@@ -1,0 +1,2 @@
+variable,id,reason
+S2_SWIR11_MCARI,corr_0Mo4V,step_corr: |r| ≥ 0.9 con al menos un predictor retenido

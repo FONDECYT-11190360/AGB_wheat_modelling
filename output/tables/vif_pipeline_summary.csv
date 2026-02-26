@@ -1,0 +1,4 @@
+stage,n_predictors,n_removed
+Full predictor set (post-imputation/normalization),43,NA
+After step_corr (|r| ≥ 0.9),42,1
+After iterative VIF > 10 removal,22,20

@@ -1,0 +1,3 @@
+stage,n_predictors,n_removed_this_step
+Before step_corr,43,NA
+After step_corr,42,1
