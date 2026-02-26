@@ -1,0 +1,8 @@
+metric,value
+Models in ensemble,fusion_RF + fusion_XGBoost + fusion_GLM
+Uncertainty type,Epistemic (inter-model disagreement)
+CI formula,mean ± 1.96 × SD across fusion models
+Empirical coverage (global),68%
+Mean CI width (global),18.28 t/ha
+Site with highest uncertainty,villa_baviera (24.98 t/ha)
+Site with lowest uncertainty,la_cancha (13.39 t/ha)
