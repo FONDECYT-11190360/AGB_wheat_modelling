@@ -111,12 +111,20 @@ interaction between cumulative thermal time~(GDD) and canopy greenness.
 The study covers three dryland wheat sites in the Mediterranean climatic zone
 of central Chile (35$^{\circ}$--37$^{\circ}$~S): Hidango (two growing seasons:
 2021--22 and 2022--23), La~Cancha (2022--23), and Villa~Baviera (2020--21),
-comprising four distinct site-seasons used as LOSO folds. Field campaigns
+comprising four distinct site-seasons used as LOSO folds (Fig.~\ref{fig:studyarea}). Field campaigns
 collected 153 destructive AGB samples spanning the full phenological cycle from
 emergence to senescence (AGB range: 0--43.5~t/ha; mean~$\pm$~SD:
 12.4~$\pm$~9.7~t/ha). At each sampling date (6--12 per season), three
 0.5~m$^2$ quadrats per field were harvested, oven-dried at 70~$^{\circ}$C for
 48~h, and weighed.
+
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{figs/area_estudio_v2.png}
+\caption{The map on the left panel shows the location of the sites in Central Chile. The remaining panels illustrate the field boundaries and sampling points for each site. In Hidalgo, the northern field is from the 2021–2022 season, and the southern one from 2022–2023.
+.}
+\label{fig:studyarea}
+\end{figure}
 
 \subsection{Satellite Imagery}
 
@@ -234,6 +242,16 @@ phenological--biomass covariation. Performance differences between recipes
 are larger for XGBoost, while RF shows more consistent generalization across
 folds (Fig.~\ref{fig:ablation}).
 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=0.95\linewidth]{figs/loso_ablation_metrics.png}
+\caption{LOSO ablation metrics (RMSE and R$^2$) across sensor recipes and
+algorithms. Dot-and-whisker plots show mean~$\pm$~SD over the four
+site-season folds. The dashed horizontal line indicates the climate-only
+XGBoost baseline (RMSE~=~7.63~t/ha).}
+\label{fig:ablation}
+\end{figure}
+
 \begin{table}[!t]
 \caption{LOSO Performance Summary (Mean~$\pm$~SD, 4~Folds).
 Best result per metric in bold.\label{tab:results}}
@@ -299,6 +317,19 @@ across fields regardless of yield potential, but canopy density modulates
 radiation-use efficiency~\cite{ref16}. Multi-source optical fusion captures
 this interaction; SAR backscatter alone does not.
 
+\begin{figure}[!t]
+\centering
+
+\includegraphics[width=0.95\linewidth]{figs/interaccion_gdd_ps_evi.png}
+\caption{Conditional partial dependence of predicted AGB on cumulative GDD,
+stratified by PS\_EVI tercile (Low, Mid, High). Vertical dashed lines mark
+agronomic thresholds: heading ($\approx$800~GDD) and maturity
+($\approx$1400~GDD). The gap between High and Low terciles peaks at heading
+(mean: 9.41~t/ha; max: 26.56~t/ha), demonstrating that canopy density
+modulates the thermal-time--biomass relationship. }
+\label{fig:pdp}
+\end{figure}
+
 \subsection{Temporal Bias Structure}
 
 Residual analysis as a function of days after sowing~(DAS) for
@@ -355,9 +386,8 @@ replace the inter-model spread heuristic to provide valid coverage guarantees.
 % -----------------------------------------------------------------------
 \section*{Acknowledgments}
 
-This work was supported by FONDECYT Regular Grant 11190360. Satellite imagery
-was accessed through the Microsoft Planetary Computer and Planet Labs
-Education and Research Program.
+This work was supported by FONDECYT Iniciación Grant 11190360 from the National Agency of Research and Development (ANID) of Chile. Satellite imagery
+was accessed through the Microsoft Planetary Computer and Planet Labs Education and Research Program.
 
 % -----------------------------------------------------------------------
 \begin{thebibliography}{17}
@@ -390,21 +420,25 @@ narrow and broad leaf crops,'' \textit{IEEE Trans. Geosci. Remote Sens.},
 vol.~39, no.~4, pp.~873--884, Apr.~2001. DOI:~10.1109/36.917914.
 
 \bibitem{ref6}
-[REPLACE: Recent~(2020--2025) peer-reviewed paper on SAR + optical fusion
-for crop AGB estimation. Suggested venues: \textit{IEEE TGRS},
-\textit{Remote Sens. Environ.}, or \textit{IEEE J-STARS}.]
+C.~Xu, Y.~Ding, X.~Zheng, Y.~Qu, Z.~Tao, H.~Li, and Q.~Xie,
+``Enhanced estimation of crop biomass and height using {Sentinel-1}
+polarization texture indices and integration with optical remote sensing,''
+\textit{Int. J. Digit. Earth}, vol.~19, no.~1, 2026, Art. no. 2616988.
+doi:~10.1080/17538947.2026.2616988.
 
 \bibitem{ref7}
-[REPLACE: PlanetScope validation or mission description paper,
-e.g., R.~Houborg and M.~McCabe,
-``A cubesat enabled spatio-temporal enhancement method (CESTEM) utilizing
-Planet, Landsat and MODIS data,'' \textit{Remote Sens. Environ.},
-vol.~209, pp.~211--226, 2018. DOI:~10.1016/j.rse.2018.02.067.]
+R.~Houborg and M.~F.~McCabe,
+``A {CubeSat} enabled spatio-temporal enhancement method ({CESTEM})
+utilizing {Planet}, {Landsat} and {MODIS} data,''
+\textit{Remote Sens. Environ.}, vol.~209, pp.~211--226, 2018.
+doi:~10.1016/j.rse.2018.02.067.
 
 \bibitem{ref8}
-[REPLACE: A high-citation study representative of random-CV practice in
-crop remote sensing or a meta-analysis documenting the prevalence of
-random splits in the crop monitoring literature.]
+C.~Kumar, G.~Walton, P.~Santi, and C.~Luza,
+``Random cross-validation produces biased assessment of machine learning
+performance in regional landslide susceptibility prediction,''
+\textit{Remote Sens.}, vol.~17, no.~2, Art. no. 213, 2025.
+doi:~10.3390/rs17020213.
 
 \bibitem{ref9}
 H.~Meyer, C.~Reudenbach, T.~Hengl, M.~Katurji, and T.~Nauss,
@@ -414,10 +448,11 @@ forward feature selection and target-oriented validation,''
 DOI:~10.1016/j.envsoft.2017.12.001.
 
 \bibitem{ref10}
-[REPLACE: A peer-reviewed paper explicitly applying LOSO or
-leave-one-region-out CV to crop remote sensing or vegetation
-biophysical retrieval. Suggested: Meyer et~al.\ 2019 in
-\textit{Remote Sens.} or similar spatial CV crop study.]
+L.~A.~Yates, Z.~Aandahl, S.~A.~Richards, and B.~W.~Brook,
+``Cross validation for model selection: A review with examples from
+ecology,''
+\textit{Ecol. Monogr.}, vol.~93, no.~1, 2023, Art. no. e1557.
+doi:~10.1002/ecm.1557.
 
 \bibitem{ref11}
 H.~McNairn and B.~Brisco, ``The application of C-band polarimetric SAR
@@ -425,14 +460,20 @@ for agriculture: A review,'' \textit{Can. J. Remote Sens.}, vol.~30,
 no.~5, pp.~525--542, 2004. DOI:~10.5589/m04-013.
 
 \bibitem{ref12}
-[REPLACE: Paper demonstrating C-band SAR limitations under semi-arid or
-water-stressed agricultural conditions, e.g., from \textit{Remote Sens.}
-or \textit{Agric. For. Meteorol.}]
+E.~Ghafari, J.~P.~Walker, N.~N.~Das, K.~Davary, A.~Faridhosseini,
+X.~Wu, and L.~Zhu,
+``On the impact of {C}-band in place of {L}-band radar for {SMAP}
+downscaling,''
+\textit{Remote Sens. Environ.}, vol.~251, Art. no. 112111, 2020.
+doi:~10.1016/j.rse.2020.112111.
 
 \bibitem{ref13}
-[REPLACE: Peer-reviewed study using the VH/VV ratio as a structural
-discriminator in wheat or similar annual crops, e.g., from
-\textit{IEEE TGRS} or \textit{Remote Sens. Environ.}]
+A.~Veloso, S.~Mermoz, A.~Bouvet, T.~Le~Toan, M.~Planells,
+J.-F.~Dejoux, and E.~Ceschia,
+``Understanding the temporal behavior of crops using {Sentinel-1} and
+{Sentinel-2}-like data for agricultural applications,''
+\textit{Remote Sens. Environ.}, vol.~199, pp.~415--426, 2017.
+doi:~10.1016/j.rse.2017.07.015.
 
 \bibitem{ref14}
 P.~D.~Jamieson, J.~R.~Porter, J.~Goudriaan, J.~T.~Ritchie, H.~van~Keulen,
@@ -458,33 +499,8 @@ New York, NY, USA: Springer, 2005. DOI:~10.1007/b106715.
 
 \end{thebibliography}
 
-% -----------------------------------------------------------------------
-% Figure placeholders --- replace \fbox with actual \includegraphics
-% once figures are finalised.
 
-\begin{figure}[!t]
-\centering
-\fbox{\rule{0pt}{2.5in}\rule{3.0in}{0pt}}
-\caption{LOSO ablation metrics (RMSE and R$^2$) across sensor recipes and
-algorithms. Dot-and-whisker plots show mean~$\pm$~SD over the four
-site-season folds. The dashed horizontal line indicates the climate-only
-XGBoost baseline (RMSE~=~7.63~t/ha). Replace with
-\texttt{output/figs/loso\_ablation\_metrics.png}.}
-\label{fig:ablation}
-\end{figure}
 
-\begin{figure}[!t]
-\centering
-\fbox{\rule{0pt}{2.5in}\rule{3.0in}{0pt}}
-\caption{Conditional partial dependence of predicted AGB on cumulative GDD,
-stratified by PS\_EVI tercile (Low, Mid, High). Vertical dashed lines mark
-agronomic thresholds: heading ($\approx$800~GDD) and maturity
-($\approx$1400~GDD). The gap between High and Low terciles peaks at heading
-(mean: 9.41~t/ha; max: 26.56~t/ha), demonstrating that canopy density
-modulates the thermal-time--biomass relationship. Replace with
-\texttt{output/figs/interaccion\_gdd\_ps\_evi.png}.}
-\label{fig:pdp}
-\end{figure}
 
 \vfill
 
