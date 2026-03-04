@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.27)  27 FEB 2026 12:56
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.2.27)  4 MAR 2026 09:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -345,136 +345,130 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Font Info:    Trying to load font information for U+msa on input line 43.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
+1.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+LaTeX Font Info:    Trying to load font information for U+msa on input line 47.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 43.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 47.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Underfull \hbox (badness 10000) in paragraph at lines 30--51
+Underfull \hbox (badness 10000) in paragraph at lines 34--55
 []\OT1/ptm/b/it/9 Abstract\OT1/ptm/b/n/9 ---Accurate es-ti-ma-tion of wheat abo
 ve-ground
  []
 
 
-Underfull \hbox (badness 2856) in paragraph at lines 30--51
+Underfull \hbox (badness 2856) in paragraph at lines 34--55
 \OT1/ptm/b/n/9 with three ma-chine learn-ing algorithms---Random For-est,
  []
 
 
-Underfull \hbox (badness 3108) in paragraph at lines 30--51
+Underfull \hbox (badness 3108) in paragraph at lines 34--55
 \OT1/ptm/b/n/9 A GDD $\OMS/cmsy/m/n/9 ^^B$ \OT1/ptm/b/n/9 canopy-greenness in-t
 er-ac-tion anal-y-sis fur-ther
  []
 
 
-Underfull \hbox (badness 4805) in paragraph at lines 53--57
+Underfull \hbox (badness 4805) in paragraph at lines 57--61
 []\OT1/ptm/b/it/9 Index Terms\OT1/ptm/b/n/9 ---above-ground biomass, wheat, Sen
 tinel-1,
  []
 
-<figs/area_estudio_v2.png, id=1, 1559.8275pt x 1475.5125pt>
-File: figs/area_estudio_v2.png Graphic file (type png)
-<use figs/area_estudio_v2.png>
-Package pdftex.def Info: figs/area_estudio_v2.png  used on input line 123.
-(pdftex.def)             Requested size: 239.39923pt x 226.45062pt.
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
-36.
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texm
-f-dist/fonts/enc/dvips/base/8r.enc}
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-
+dist/fonts/enc/dvips/base/8r.enc}
 
 
 ]
+<figs/area_estudio_v2.png, id=13, 1559.8275pt x 1475.5125pt>
+File: figs/area_estudio_v2.png Graphic file (type png)
+<use figs/area_estudio_v2.png>
+Package pdftex.def Info: figs/area_estudio_v2.png  used on input line 127.
+(pdftex.def)             Requested size: 239.39923pt x 226.45062pt.
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 1
-69.
- (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+73.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-Overfull \hbox (1.46967pt too wide) in paragraph at lines 183--193
- [][] 
- []
-
-
-Underfull \hbox (badness 1917) in paragraph at lines 197--203
+Underfull \hbox (badness 1917) in paragraph at lines 202--208
 \OT1/ptm/m/n/10 hy-per-pa-ram-e-ters to avoid hy-per-pa-ram-e-ter leak-age acro
 ss
  []
 
-
-Underfull \hbox (badness 2970) in paragraph at lines 237--244
+[2 <./figs/area_estudio_v2.png>]
+Underfull \hbox (badness 2970) in paragraph at lines 242--249
 []\OT1/ptm/m/n/10 Table II[] re-ports LOSO per-for-mance. The best con-
  []
 
 
-Underfull \hbox (badness 3471) in paragraph at lines 237--244
+Underfull \hbox (badness 3471) in paragraph at lines 242--249
 \OT1/ptm/m/n/10 fig-u-ra-tion is Fusion-RF (RMSE = 7.10 $\OMS/cmsy/m/n/10 ^^F$ 
 \OT1/ptm/m/n/10 2.57 t/ha,
  []
 
-[2 <./figs/area_estudio_v2.png>]
 <figs/loso_ablation_metrics.png, id=24, 520.344pt x 433.62pt>
 File: figs/loso_ablation_metrics.png Graphic file (type png)
 <use figs/loso_ablation_metrics.png>
-Package pdftex.def Info: figs/loso_ablation_metrics.png  used on input line 247
+Package pdftex.def Info: figs/loso_ablation_metrics.png  used on input line 252
 .
 (pdftex.def)             Requested size: 239.39923pt x 199.5007pt.
 
-Overfull \hbox (17.70122pt too wide) in paragraph at lines 260--275
- [][] 
- []
-
-
-Underfull \hbox (badness 1442) in paragraph at lines 279--285
+Underfull \hbox (badness 1442) in paragraph at lines 284--290
 \OT1/ptm/m/n/10 per-for-mance (RMSE: 7.63 $\OMS/cmsy/m/n/10 !$ \OT1/ptm/m/n/10 
 7.68 t/ha, $\OT1/cmr/m/n/10 ^^A$ \OT1/ptm/m/n/10 = $\OMS/cmsy/m/n/10 ^^@$\OT1/p
 tm/m/n/10 0.5%).
  []
 
-<figs/interaccion_gdd_ps_evi.png, id=25, 607.068pt x 488.5452pt>
+<figs/interaccion_gdd_ps_evi.png, id=25, 607.068pt x 422.0568pt>
 File: figs/interaccion_gdd_ps_evi.png Graphic file (type png)
 <use figs/interaccion_gdd_ps_evi.png>
 Package pdftex.def Info: figs/interaccion_gdd_ps_evi.png  used on input line 32
-3.
-(pdftex.def)             Requested size: 239.39923pt x 192.65642pt.
-[3 <./figs/loso_ablation_metrics.png> <./figs/interaccion_gdd_ps_evi.png>]
-Underfull \hbox (badness 2735) in paragraph at lines 376--379
+8.
+(pdftex.def)             Requested size: 239.39923pt x 166.43689pt.
+[3 <./figs/loso_ablation_metrics.png>]
+Underfull \hbox (badness 2735) in paragraph at lines 381--384
 []\OT1/ptm/m/n/10 The GDD $\OMS/cmsy/m/n/10 ^^B$ \OT1/ptm/m/n/10 PS[]EVI con-di
 -tional PDP demon-strates
  []
 
 
-Underfull \hbox (badness 3343) in paragraph at lines 430--435
+Underfull \hbox (badness 3343) in paragraph at lines 434--439
 []\OT1/ptm/m/n/8 R. Houborg and M. F. Mc-Cabe, ``A Cube-Sat en-abled spatio-
  []
 
-
-Underfull \hbox (badness 3861) in paragraph at lines 496--499
+[4 <./figs/interaccion_gdd_ps_evi.png>]
+Underfull \hbox (badness 3861) in paragraph at lines 500--503
 []\OT1/ptm/m/n/8 V. Vovk, A. Gam-mer-man, and G. Shafer, \OT1/ptm/m/it/8 Al-go-
 rith-mic Learn-
  []
 
-[4] (./wheat_paper.aux)
+[5
+
+] (./wheat_paper.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 4446 strings out of 476106
- 76598 string characters out of 5793933
- 1945975 words of memory out of 5000000
- 26398 multiletter control sequences out of 15000+600000
- 597585 words of font info for 113 fonts, out of 8000000 for 9000
+ 4450 strings out of 476106
+ 76643 string characters out of 5793933
+ 1943975 words of memory out of 5000000
+ 26402 multiletter control sequences out of 15000+600000
+ 597899 words of font info for 114 fonts, out of 8000000 for 9000
  65 hyphenation exceptions out of 8191
- 57i,9n,65p,544b,297s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,10n,65p,544b,297s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share
 /texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive
@@ -487,10 +481,10 @@ ic/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier
 sr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texli
 ve/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/f
 onts/type1/urw/times/utmri8a.pfb>
-Output written on wheat_paper.pdf (4 pages, 6688032 bytes).
+Output written on wheat_paper.pdf (5 pages, 6641253 bytes).
 PDF statistics:
- 89 PDF objects out of 1000 (max. 8388607)
- 51 compressed objects within 1 object stream
+ 92 PDF objects out of 1000 (max. 8388607)
+ 53 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
