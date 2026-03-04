@@ -15,12 +15,16 @@
 \title{Multi-Sensor Fusion for Wheat Above-Ground Biomass Estimation:\\
 Sensor Contribution Analysis Under Leave-One-Site-Out Spatial Validation}
 
-\author{[Author Names omitted for blind review]%
-\thanks{Manuscript submitted for review. This work was supported by FONDECYT Grant 11190360.}%
-\thanks{[Affiliations omitted for blind review]}}
+\author{Francisco Zambrano,
+        Abel Herrera,
+        and~Mauricio Molina-Roco%
+\thanks{Manuscript submitted for review. This work was supported by the National Agency of Research and Development (ANID) of Chile through the grants FONDECYT Iniciación N°11190360, FONDEF IdEA I+D ID21I10297, and the drought emergency FSEQ210022.}%
+\thanks{F.~Zambrano is with the Facultad de Economía, Negocios y Gobierno, Universidad San Sebastián, Santiago, Chile.}%
+\thanks{A.~Herrera is with the Hemera Centro de Observación de la Tierra, Facultad de Ciencias, Ingeniería y Tecnología, Universidad Mayor, Santiago, Chile.}%
+\thanks{M.~Molina-Roco is with the Laboratorio de Suelos y Sostenibilidad, Departamento de Acuicultura y Recursos Agroalimentarios, Universidad de Los Lagos, Osorno, 5311157, Chile.}}
 
 \markboth{IEEE Geoscience and Remote Sensing Letters}%
-{Author \MakeLowercase{\textit{et al.}}: Multi-Sensor Wheat AGB Estimation Under LOSO Validation}
+{Zambrano \MakeLowercase{\textit{et al.}}: Multi-Sensor Wheat AGB Estimation Under LOSO Validation}
 
 \IEEEpubid{0000--0000/00\$00.00~\copyright~2025 IEEE}
 
@@ -69,7 +73,7 @@ Multispectral satellite imagery has long underpinned remote sensing-based AGB
 estimation, with vegetation indices such as NDVI and EVI serving as proxies
 for canopy greenness and leaf area~\cite{ref3}. The availability of free,
 synoptic Sentinel-2~(S2) data at 10--20~m resolution has substantially
-advanced this field~\cite{ref4}. Concurrently, Sentinel-1~(S1) SAR offers
+advanced this field~\cite{ref4}. Concurrently, Sentinel-1~(S1) SAR (Synthetic Aperture Radar) offers
 cloud-independent acquisition and sensitivity to canopy structure through its
 C-band VV/VH backscatter, motivating a growing literature on multi-sensor
 optical--SAR fusion for biomass estimation~\cite{ref5,ref6}. Commercial
@@ -179,7 +183,7 @@ changes to individual sensor layers under otherwise identical conditions.
 \begin{table}[!t]
 \caption{Sensor Ablation Recipes Used in the LOSO Study\label{tab:recipes}}
 \centering
-\footnotesize
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
 \textbf{Recipe} & \textbf{Predictors} & \textbf{Purpose} \\
@@ -189,7 +193,8 @@ S2+Clima     & Clima + 22 S2 indices         & Optical baseline \\
 S2+S1+Clima  & S2+Clima + VV, VH, VH/VV     & SAR contribution \\
 Fusion       & S2+S1+Clima + 15 PS indices   & Full fusion \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{Machine Learning Models}
@@ -247,8 +252,7 @@ folds (Fig.~\ref{fig:ablation}).
 \includegraphics[width=0.95\linewidth]{figs/loso_ablation_metrics.png}
 \caption{LOSO ablation metrics (RMSE and R$^2$) across sensor recipes and
 algorithms. Dot-and-whisker plots show mean~$\pm$~SD over the four
-site-season folds. The dashed horizontal line indicates the climate-only
-XGBoost baseline (RMSE~=~7.63~t/ha).}
+site-season folds. }
 \label{fig:ablation}
 \end{figure}
 
@@ -256,7 +260,7 @@ XGBoost baseline (RMSE~=~7.63~t/ha).}
 \caption{LOSO Performance Summary (Mean~$\pm$~SD, 4~Folds).
 Best result per metric in bold.\label{tab:results}}
 \centering
-\footnotesize
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{llccc}
 \toprule
 \textbf{Recipe} & \textbf{Model} &
@@ -271,12 +275,13 @@ Fusion       & XGBoost & 7.24 $\pm$ 2.91 & 0.714 $\pm$ 0.089 & 5.68 $\pm$ 2.01 \
   \textbf{7.10 $\pm$ 2.57} & \textbf{0.729 $\pm$ 0.073} &
   \textbf{5.53 $\pm$ 1.77} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
 \subsection{Sensor Marginal Contributions}
 
-Applying~(\ref{eq:delta}) to the XGBoost results: S2 improves over the
+Applying Eq.~(\ref{eq:delta}) to the XGBoost results: S2 improves over the
 climate baseline by 23.4\% (RMSE: 9.96~$\to$~7.63~t/ha). Sentinel-1 SAR,
 however, shows no aggregate benefit---adding VV/VH to S2+Clima marginally
 worsens XGBoost performance (RMSE: 7.63~$\to$~7.68~t/ha,
@@ -386,8 +391,7 @@ replace the inter-model spread heuristic to provide valid coverage guarantees.
 % -----------------------------------------------------------------------
 \section*{Acknowledgments}
 
-This work was supported by FONDECYT Iniciación Grant 11190360 from the National Agency of Research and Development (ANID) of Chile. Satellite imagery
-was accessed through the Microsoft Planetary Computer and Planet Labs Education and Research Program.
+This work was supported by the National Agency of Research and Development (ANID) of Chile through the grants FONDECYT Iniciación N°11190360, FONDEF IdEA I+D ID21I10297, and the drought emergency FSEQ210022. Satellite imagery was accessed through the Microsoft Planetary Computer and Planet Labs Education and Research Program.
 
 % -----------------------------------------------------------------------
 \begin{thebibliography}{17}
