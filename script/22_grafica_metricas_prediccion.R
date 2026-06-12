@@ -5,7 +5,7 @@ library(fs)
 
 # Cargar metricas modelos de predicción
 # 
-files <- dir_ls('data/processed/modelos',regexp = 'metrics(.*)lead')
+files <- dir_ls('data/processed/modelos',regexp = 'metrics_modelos(.*)lead')
 
 df_metrics <- files |> 
   map_df(\(file){
@@ -26,7 +26,7 @@ df_metrics |>
          ),
          .metric = factor(.metric,levels = c('R^2','MAE','RMSE')),
   ) |> 
-  ggplot(aes(lead,.estimate,color = model,shape=model,group=.metric)) +
+  ggplot(aes(lead,mean,color = model,shape=model,group=.metric)) +
   #geom_line() +
   geom_line(stat = "smooth", alpha = 0.3,lwd=1.5,colour = 'darkblue') +
   geom_point() + 

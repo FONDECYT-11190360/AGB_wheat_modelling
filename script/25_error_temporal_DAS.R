@@ -76,16 +76,16 @@ ggplot(analysis, aes(DAS, residual, color = fenologia_actual)) +
   geom_smooth(method = "loess", formula = y ~ x,
               aes(group = 1),
               color = "black", linewidth = 1, se = TRUE, alpha = 0.15) +
-  scale_color_brewer(palette = "Set1", name = "Etapa fenológica",
+  scale_color_brewer(palette = "Set1", name = "Phenological stage",
                      na.value = "gray70") +
   labs(
-    x     = "Días después de siembra (DAS)",
-    y     = "Residual: predicho − observado (t/ha)",
-    title = "Error del modelo LOSO por fenología (fusion_XGBoost)"
+    x     = "Days after seeding (DAS)",
+    y     = "Residual: predicted − observed (t/ha)",
+    title = "Error of the LOSO model by phenology (fusion_XGBoost)"
   ) +
   theme_bw() +
   theme(legend.position      = "bottom",
-        legend.title.align   = 0.5,
+        legend.title   = element_text(hjust = 0.5),
         strip.background     = element_rect(fill = "white"))
 
 ggsave('output/figs/residuales_vs_DAS.png',
