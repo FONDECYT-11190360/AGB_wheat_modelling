@@ -1,0 +1,1911 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Francisco Zambrano">
+<meta name="author" content="Abel Herrera">
+<meta name="author" content="Mauricio Molina-Roco">
+<meta name="dcterms.date" content="2026-06-12">
+<meta name="keywords" content="above-ground biomass, Sentinel‑1, Sentinel‑2, PlanetScope, soil moisture, machine learning, precision agriculture">
+
+<title>An explainable machine learning framework for estimating and forecasting wheat above‑ground biomass using Sentinel‑1, Sentinel‑2, PlanetScope, and in‑situ weather data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="manuscript_files/libs/clipboard/clipboard.min.js"></script>
+<script src="manuscript_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="manuscript_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="manuscript_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="manuscript_files/libs/quarto-html/popper.min.js"></script>
+<script src="manuscript_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="manuscript_files/libs/quarto-html/anchor.min.js"></script>
+<link href="manuscript_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="manuscript_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="manuscript_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="manuscript_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="manuscript_files/libs/bootstrap/bootstrap-cb5b25c0b2dbaa07e4625950326014b7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#materials-and-methods" id="toc-materials-and-methods" class="nav-link" data-scroll-target="#materials-and-methods"><span class="header-section-number">2</span> Materials and Methods</a>
+  <ul class="collapse">
+  <li><a href="#study-area" id="toc-study-area" class="nav-link" data-scroll-target="#study-area"><span class="header-section-number">2.1</span> Study Area</a></li>
+  <li><a href="#data-acquisition-and-processing" id="toc-data-acquisition-and-processing" class="nav-link" data-scroll-target="#data-acquisition-and-processing"><span class="header-section-number">2.2</span> Data acquisition and processing</a>
+  <ul class="collapse">
+  <li><a href="#field-data" id="toc-field-data" class="nav-link" data-scroll-target="#field-data"><span class="header-section-number">2.2.1</span> Field data</a></li>
+  <li><a href="#weather-data" id="toc-weather-data" class="nav-link" data-scroll-target="#weather-data"><span class="header-section-number">2.2.2</span> Weather Data</a></li>
+  <li><a href="#remote-sensing-data" id="toc-remote-sensing-data" class="nav-link" data-scroll-target="#remote-sensing-data"><span class="header-section-number">2.2.3</span> Remote Sensing Data</a></li>
+  <li><a href="#preprocessing-of-remote-sensing-data" id="toc-preprocessing-of-remote-sensing-data" class="nav-link" data-scroll-target="#preprocessing-of-remote-sensing-data"><span class="header-section-number">2.2.4</span> Preprocessing of remote sensing data</a></li>
+  <li><a href="#selection-and-processing-of-vis" id="toc-selection-and-processing-of-vis" class="nav-link" data-scroll-target="#selection-and-processing-of-vis"><span class="header-section-number">2.2.5</span> Selection and processing of VIs</a></li>
+  </ul></li>
+  <li><a href="#modeling-with-machine-learning-algorithms" id="toc-modeling-with-machine-learning-algorithms" class="nav-link" data-scroll-target="#modeling-with-machine-learning-algorithms"><span class="header-section-number">2.3</span> Modeling with Machine Learning Algorithms</a>
+  <ul class="collapse">
+  <li><a href="#overview-of-the-modeling-process" id="toc-overview-of-the-modeling-process" class="nav-link" data-scroll-target="#overview-of-the-modeling-process"><span class="header-section-number">2.3.1</span> Overview of the modeling process</a></li>
+  <li><a href="#defining-dataset-recipes-for-estimation-and-prediction-models" id="toc-defining-dataset-recipes-for-estimation-and-prediction-models" class="nav-link" data-scroll-target="#defining-dataset-recipes-for-estimation-and-prediction-models"><span class="header-section-number">2.3.2</span> Defining dataset recipes for estimation and prediction models</a></li>
+  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering"><span class="header-section-number">2.3.3</span> Feature engineering</a></li>
+  <li><a href="#estimation-models-for-agb-within-the-growing-season" id="toc-estimation-models-for-agb-within-the-growing-season" class="nav-link" data-scroll-target="#estimation-models-for-agb-within-the-growing-season"><span class="header-section-number">2.3.4</span> Estimation models for AGB within the growing season</a></li>
+  <li><a href="#prediction-models-for-agb-at-harvest" id="toc-prediction-models-for-agb-at-harvest" class="nav-link" data-scroll-target="#prediction-models-for-agb-at-harvest"><span class="header-section-number">2.3.5</span> Prediction models for AGB at harvest</a></li>
+  <li><a href="#hyperparameter-optimization-and-evaluation" id="toc-hyperparameter-optimization-and-evaluation" class="nav-link" data-scroll-target="#hyperparameter-optimization-and-evaluation"><span class="header-section-number">2.3.6</span> Hyperparameter optimization and evaluation</a></li>
+  <li><a href="#explainable-machine-learning-with-dalex" id="toc-explainable-machine-learning-with-dalex" class="nav-link" data-scroll-target="#explainable-machine-learning-with-dalex"><span class="header-section-number">2.3.7</span> Explainable Machine Learning with DALEX</a></li>
+  </ul></li>
+  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software"><span class="header-section-number">2.4</span> Software</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">3</span> Results</a>
+  <ul class="collapse">
+  <li><a href="#estimation-model-for-agb-within-the-growing-season" id="toc-estimation-model-for-agb-within-the-growing-season" class="nav-link" data-scroll-target="#estimation-model-for-agb-within-the-growing-season"><span class="header-section-number">3.1</span> Estimation model for AGB within the growing season</a>
+  <ul class="collapse">
+  <li><a href="#selecting-the-best-models" id="toc-selecting-the-best-models" class="nav-link" data-scroll-target="#selecting-the-best-models"><span class="header-section-number">3.1.1</span> Selecting the best models</a></li>
+  <li><a href="#explainable-machine-learning-with-dalex-1" id="toc-explainable-machine-learning-with-dalex-1" class="nav-link" data-scroll-target="#explainable-machine-learning-with-dalex-1"><span class="header-section-number">3.1.2</span> Explainable Machine Learning with DALEX</a></li>
+  <li><a href="#spatio-temporal-variation-of-agb-within-the-growing-season" id="toc-spatio-temporal-variation-of-agb-within-the-growing-season" class="nav-link" data-scroll-target="#spatio-temporal-variation-of-agb-within-the-growing-season"><span class="header-section-number">3.1.3</span> Spatio-temporal variation of AGB within the growing season</a></li>
+  </ul></li>
+  <li><a href="#prediction-models-for-agb-at-harvest-1" id="toc-prediction-models-for-agb-at-harvest-1" class="nav-link" data-scroll-target="#prediction-models-for-agb-at-harvest-1"><span class="header-section-number">3.2</span> Prediction models for AGB at harvest</a></li>
+  </ul></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"><span class="header-section-number">4</span> Discussion</a>
+  <ul class="collapse">
+  <li><a href="#models-performance" id="toc-models-performance" class="nav-link" data-scroll-target="#models-performance"><span class="header-section-number">4.1</span> Models performance</a></li>
+  <li><a href="#application-for-wheat-yield-management" id="toc-application-for-wheat-yield-management" class="nav-link" data-scroll-target="#application-for-wheat-yield-management"><span class="header-section-number">4.2</span> Application for wheat yield management</a></li>
+  <li><a href="#study-limitations" id="toc-study-limitations" class="nav-link" data-scroll-target="#study-limitations"><span class="header-section-number">4.3</span> Study limitations</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">5</span> Conclusion</a></li>
+  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements"><span class="header-section-number">6</span> Acknowledgements</a></li>
+  <li><a href="#data-and-code-availability" id="toc-data-and-code-availability" class="nav-link" data-scroll-target="#data-and-code-availability"><span class="header-section-number">7</span> Data and code availability</a></li>
+  <li><a href="#credit-authorship-contribution-statement" id="toc-credit-authorship-contribution-statement" class="nav-link" data-scroll-target="#credit-authorship-contribution-statement"><span class="header-section-number">8</span> CRediT authorship contribution statement</a></li>
+  <li><a href="#declaration-of-competing-interest" id="toc-declaration-of-competing-interest" class="nav-link" data-scroll-target="#declaration-of-competing-interest"><span class="header-section-number">9</span> Declaration of competing interest</a></li>
+  <li><a href="#funding-sources" id="toc-funding-sources" class="nav-link" data-scroll-target="#funding-sources"><span class="header-section-number">10</span> Funding Sources</a></li>
+  <li><a href="#declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" id="toc-declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" class="nav-link" data-scroll-target="#declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process"><span class="header-section-number">11</span> Declaration of generative AI and AI-assisted technologies in the writing process</a></li>
+  <li><a href="#glossary" id="toc-glossary" class="nav-link" data-scroll-target="#glossary"><span class="header-section-number">12</span> Glossary</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="../manuscript.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">An explainable machine learning framework for estimating and forecasting wheat above‑ground biomass using Sentinel‑1, Sentinel‑2, PlanetScope, and in‑situ weather data</h1>
+</div>
+
+
+<div class="quarto-title-meta-author">
+  <div class="quarto-title-meta-heading">Authors</div>
+  <div class="quarto-title-meta-heading">Affiliations</div>
+  
+    <div class="quarto-title-meta-contents">
+    <p class="author">Francisco Zambrano </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Facultad de Economía, Negocios y Gobierno, Universidad San Sebastián, Santiago, Chile
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author">Abel Herrera </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Hemera Centro de Observación de la Tierra, Facultad de Ciencias, Ingeniería y Tecnología; Universidad Mayor, Santiago, Chile
+          </p>
+      </div>
+    <div class="quarto-title-meta-contents">
+    <p class="author">Mauricio Molina-Roco </p>
+  </div>
+  <div class="quarto-title-meta-contents">
+        <p class="affiliation">
+            Laboratorio de Suelos y Sostenibilidad. Departamento de Acuicultura y Recursos Agroalimentarios, Universidad de Los Lagos, Osorno, 5311157, Chile
+          </p>
+      </div>
+  </div>
+
+<div class="quarto-title-meta">
+
+      
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 12, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+<div>
+  <div class="abstract">
+    <div class="block-title">Abstract</div>
+    <p>Global food security faces increasing climate change challenges, making accurate monitoring of crops like wheat (<em>Triticum aestivum</em>) critical. This research introduces an explainable machine learning (ML) framework to estimate and forecast wheat above-ground biomass (AGB) in central Chile across the 2020–2023 growing seasons. Using a two-stage approach—in-season estimation and harvest forecasting—the study integrated in-situ weather data with satellite imagery from Sentinel-1, Sentinel-2, and PlanetScope. We evaluated 41 models across five ML algorithms (Random Forest, XGBoost, GLMnet, bagMLP, KNN) and an ensemble. Model transparency was ensured via the DALEX framework.</p>
+    <p>Results demonstrated high accuracy; Stage 1 models combining Sentinel-1 and weather data achieved an R²&gt;0.91 (RMSE ≈ 3.2 t/ha). Key predictors included accumulated growing degree days, SAR variables, and soil moisture. For Stage 2, soil moisture and SAR data remained critical, enabling harvest forecasting at 1–4 month leads (R²: 0.86–0.94; RMSE: 1.11–1.74 t/ha). This cloud-resilient methodology offers significant value for precision agriculture and risk management. While currently reliant on localized in-situ data, future integration of satellite-derived soil moisture could enhance its global scalability for yield forecasting.</p>
+  </div>
+</div>
+
+<div>
+  <div class="keywords">
+    <div class="block-title">Keywords</div>
+    <p>above-ground biomass, Sentinel‑1, Sentinel‑2, PlanetScope, soil moisture, machine learning, precision agriculture</p>
+  </div>
+</div>
+
+</header>
+
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>As the world population is projected to reach 9.8 billion by 2050 <span class="citation" data-cites="UN2024">(<a href="#ref-UN2024" role="doc-biblioref">UN, 2024</a>)</span>, food security is expected to face significant challenges <span class="citation" data-cites="Bahar2020">(<a href="#ref-Bahar2020" role="doc-biblioref">Bahar et al., 2020</a>)</span>, which are further intensified by climate change <span class="citation" data-cites="Chen2025">(<a href="#ref-Chen2025" role="doc-biblioref">Chen, 2025</a>)</span>. Wheat (<em>Triticum aestivum</em>) is the most consumed crop worldwide, and its production is key for food security <span class="citation" data-cites="FAO2025">(<a href="#ref-FAO2025" role="doc-biblioref">FAO, 2025</a>)</span>. Furthermore, droughts significantly impact agriculture, as evidenced by the decrease in crop yield <span class="citation" data-cites="Santini2022 Naumann2021 Mishra2015">(<a href="#ref-Mishra2015" role="doc-biblioref">Mishra et al., 2015</a>; <a href="#ref-Naumann2021" role="doc-biblioref">Naumann et al., 2021</a>; <a href="#ref-Santini2022" role="doc-biblioref">Santini et al., 2022</a>)</span>. In fact, global wheat production could drop by 13% by mid-century under climate change <span class="citation" data-cites="Pequeno2024">(<a href="#ref-Pequeno2024" role="doc-biblioref">Pequeno et al., 2024</a>)</span>. Quantifying above-ground biomass (AGB) is of utmost importance since it allows us to monitor and optimize agricultural processes <span class="citation" data-cites="Dietz2021">(<a href="#ref-Dietz2021" role="doc-biblioref">Dietz et al., 2021</a>)</span>. Proxies of vegetation productivity derived from vegetation indices can help monitor and predict the impact of drought at a regional scale <span class="citation" data-cites="Zambrano2021 Zambrano2018 Zambrano2016">(<a href="#ref-Zambrano2021" role="doc-biblioref">Zambrano, 2021</a>; <a href="#ref-Zambrano2018" role="doc-biblioref">Zambrano et al., 2018</a>, <a href="#ref-Zambrano2016" role="doc-biblioref">2016</a>)</span>. However, on a farm level, we must quantify this impact using crop yield as a productivity metric, which can aid in determining the economic impact of seasonal variations in crop yield. Generally, the estimation and monitoring of agricultural production is made by using three methods: i) crop growth models <span class="citation" data-cites="Lobell2010 Wang2023">(<a href="#ref-Lobell2010" role="doc-biblioref">Lobell and Burke, 2010</a>; <a href="#ref-Wang2023" role="doc-biblioref">Wang et al., 2023</a>)</span>, ii) surveys <span class="citation" data-cites="Gardner1980">(<a href="#ref-Gardner1980" role="doc-biblioref">Gardner et al., 1980</a>)</span>, and iii) in-situ measurements. The models help predict how crops will grow, yield, and produce under different environmental and management conditions, which is useful for forecasting food supply and understanding how climate change and policy decisions affect global agriculture, but the downside is that they require many different variables to obtain meaningful results. The objective of the surveys is to collect timely and reliable data from the agricultural sector in order to carry out statistical studies of crops, but it provides summaries at administrative units (e.g., states, districts) <span class="citation" data-cites="Gardner1980">(<a href="#ref-Gardner1980" role="doc-biblioref">Gardner et al., 1980</a>)</span>. Additionally, field measurements provide reliable data—known as the ground truth—that can be used for comparison with models and surveys; however, this process is costly and time-consuming.</p>
+<p>The use of empirical models that are based solely on remote sensing sources has become a straightforward option for the estimation of crop yield, especially for cereals <span class="citation" data-cites="Lischeid2022">(<a href="#ref-Lischeid2022" role="doc-biblioref">Lischeid et al., 2022</a>)</span>. There are multiple remote sensing methods to estimate AGB, among which the methods based on multispectral imaging <span class="citation" data-cites="Marshall2022 Segarra2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>; <a href="#ref-Segarra2022" role="doc-biblioref">Segarra et al., 2022</a>)</span>, Synthetic Aperture Radar (SAR) <span class="citation" data-cites="Hu2024 Chao2019">(<a href="#ref-Chao2019" role="doc-biblioref">Chao et al., 2019</a>; <a href="#ref-Hu2024" role="doc-biblioref">Hu et al., 2024</a>)</span>, LiDAR (Light Detection and Ranging) <span class="citation" data-cites="Bates2021">(<a href="#ref-Bates2021" role="doc-biblioref">Bates et al., 2021</a>)</span>, hyperspectral <span class="citation" data-cites="Yue2021">(<a href="#ref-Yue2021" role="doc-biblioref">Yue et al., 2021</a>)</span>, or combination of them <span class="citation" data-cites="Li2024 David2022 Wang2016">(<a href="#ref-David2022" role="doc-biblioref">David et al., 2022</a>; <a href="#ref-Li2024" role="doc-biblioref">Li et al., 2024</a>; <a href="#ref-Wang2016" role="doc-biblioref">Wang et al., 2016</a>)</span>, stand out, offering promising results. Estimation methods based on SAR data focus on the measurement of the structure of the crop, soil moisture, and their temporal variations. An advantage of this technique is that it can penetrate the cloud cover, allowing a constant measurement in the study area; its disadvantage is the angle of observation to the crop and the speckle noise inherent to the signal <span class="citation" data-cites="Lopes1990 Maghsoudi2012 Moran1997">(<a href="#ref-Lopes1990" role="doc-biblioref">Lopes et al., 1990</a>; <a href="#ref-Maghsoudi2012" role="doc-biblioref">Maghsoudi et al., 2012</a>; <a href="#ref-Moran1997" role="doc-biblioref">Moran et al., 1997</a>)</span>. Estimation methods based on LiDAR and hyperspectral data focus on the measurement of the crop structure and phenological monitoring of the crop <span class="citation" data-cites="Brovkina2017 Luo2017 Wang2016">(<a href="#ref-Brovkina2017" role="doc-biblioref">Brovkina et al., 2017</a>; <a href="#ref-Luo2017" role="doc-biblioref">Luo et al., 2017</a>; <a href="#ref-Wang2016" role="doc-biblioref">Wang et al., 2016</a>)</span>. Its main disadvantage is the high cost of implementation, which limits its proliferation. Another common approach is the use of spectral indices (e.g., NDVI, EVI, etc.) derived from optical sensors such as Sentinel-2 <span class="citation" data-cites="David2022">(<a href="#ref-David2022" role="doc-biblioref">David et al., 2022</a>)</span> for specific dates. Furthermore, the use of accumulated spectral indices <span class="citation" data-cites="PeroniVenancio2020">(<a href="#ref-PeroniVenancio2020" role="doc-biblioref">Peroni Venancio et al., 2020</a>)</span> over the growing season has shown improvements in estimating biomass/yield compared with using indices just for specific dates. The main advantage is its simplicity and strong correlation with the observed biomass. Currently, the research about estimating biomass is moving forward integrating Sentinel 1 &amp; 2 <span class="citation" data-cites="Uribeetxebarria2023">(<a href="#ref-Uribeetxebarria2023" role="doc-biblioref">Uribeetxebarria et al., 2023</a>)</span>, LiDAR, hyperspectral, and Landsat missions <span class="citation" data-cites="Zhang2023 He2018">(<a href="#ref-He2018" role="doc-biblioref">He et al., 2018</a>; <a href="#ref-Zhang2023" role="doc-biblioref">Zhang et al., 2023</a>)</span>, which aids in better monitoring of the crop’s growth stages <span class="citation" data-cites="Shen2023">(<a href="#ref-Shen2023" role="doc-biblioref">Shen et al., 2023</a>)</span>.</p>
+<p>Effective machine learning (ML) methods, along with remote sensing data, are increasingly used to estimate the AGB in various cereals, including wheat. In Southern Brazil, <span class="citation" data-cites="AtkinsonAmorim2022">(<a href="#ref-AtkinsonAmorim2022" role="doc-biblioref">Atkinson Amorim et al., 2022</a>)</span> collected images from unmanned aerial vehicles (UAV) and used random forest, support vector regressions, and neural networks to estimate AGB in wheat. Their results reached a R² of 0.90 and a root mean square error (RMSE) of 0.83 t/ha. In another study, <span class="citation" data-cites="Liu2024">(<a href="#ref-Liu2024" role="doc-biblioref">Liu et al., 2024</a>)</span> used spectral data obtained from UAV, phenological information, and multiple machine learning algorithms to estimate AGB on wheat, having results of an R² ranging from 0.84 to 0.91 and an RMSE of 1.69 to 2.11 t/ha. Considering another approach, <span class="citation" data-cites="Marshall2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>)</span> used hyperspectral and Sentinel-2 data and applied random forest and partial least squares to estimate wheat AGB on different stages of the crop. Their results achieve an R²=0.81 and RMSE=3.7 t/ha with the random forest model. Further, for different types of grass cover, Sentinel-1 has been tested to estimate AGB with varied results <span class="citation" data-cites="David2022 Li2024 Nuthammachot2022">(<a href="#ref-David2022" role="doc-biblioref">David et al., 2022</a>; <a href="#ref-Li2024" role="doc-biblioref">Li et al., 2024</a>; <a href="#ref-Nuthammachot2022" role="doc-biblioref">Nuthammachot et al., 2022</a>)</span>. The benefits of SAR Sentinel-1 are that it can gather dependable data even on cloudy days, which is not possible with optical sensors like Sentinel-2 and Landsat. Additionally, Sentinel-1’s backscatter is closely linked to the dielectric constant, making it a proxy of soil moisture <span class="citation" data-cites="Fan2025 Zhu2024">(<a href="#ref-Fan2025" role="doc-biblioref">Fan et al., 2025</a>; <a href="#ref-Zhu2024" role="doc-biblioref">Zhu et al., 2024</a>)</span>, and, therefore, the amount of water crops can absorb from the soil, which affects their growth. Thus, it is worthwhile to explore its usefulness for AGB prediction.</p>
+<p>Here, we aim to evaluate ML models to predict wheat AGB at harvest using remote sensing data from missions Sentinel-1 &amp; 2, and PlanetScope, as well as weather and soil moisture in situ measurements. We will test predictions at lead times from one to four months before harvest. We defined three secondary objectives: i) derive predictors from weather, soil moisture, Sentinel-1 &amp; 2, and PlanetScope data; ii) use ML models to estimate the spatiotemporal variation of wheat AGB through the season; and iii) evaluate ML models for the prediction of AGB at four lead times, one to four months before harvest.</p>
+</section>
+<section id="materials-and-methods" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Materials and Methods</h1>
+<section id="study-area" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="study-area"><span class="header-section-number">2.1</span> Study Area</h2>
+<p>The study was conducted during the 2020–2023 growing seasons (June–January) across four wheat field sites (<em>Triticum</em> <em>aestivum</em>) located in central Chile: i) La Cancha in the Metropolitan region, ii) Hidango in the O’Higgins region (two different fields in two seasons), and iii) Villa Baviera in the Maule region. Sampling took place in delineated fields at each site (Figure&nbsp;<a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a>). In Hidango, separate fields were established for the 2021-2022 and 2022-2023 seasons; in Villa Baviera and La Cancha, sampling occurred during the 2020-2021 and 2022-2023 seasons, respectively. To capture spatial variability and ensure representativeness, sampling points were randomly selected and evenly distributed: five in La Cancha, Villa Baviera, and the first season in Hidango; and six in the second season in Hidango (Figure&nbsp;<a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a>).</p>
+<div id="fig-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/area_estudio_v2.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: <strong>Study Area.</strong> The map on the left panel shows the location of the sites in Central Chile. The remaining panels illustrate the field boundaries and sampling points for each site. In Hidalgo, the northern field is from the 2021–2022 season, and the southern one from 2022–2023.
+</figcaption>
+</figure>
+</div>
+<p>A variety of spring wheat was planted in Villa Baviera (Llareta-INIA; <span class="citation" data-cites="Garrido2013">(<a href="#ref-Garrido2013" role="doc-biblioref">Garrido et al., 2013</a>)</span>), while the other sites had winter wheat (Irafen-INIA and Pantera-INIA; <span class="citation" data-cites="DelPozo2023">(<a href="#ref-DelPozo2023" role="doc-biblioref">Del Pozo et al., 2023</a>)</span>). Spring wheat is typically sown in late winter or early spring and harvested within the same year, whereas winter wheat is sown in autumn, requires vernalization, and is harvested the following summer <span class="citation" data-cites="Liu2025 Zhao2022">(<a href="#ref-Liu2025" role="doc-biblioref">Liu and Chen, 2025</a>; <a href="#ref-Zhao2022" role="doc-biblioref">Zhao et al., 2022</a>)</span>. According to the FAO–UNESCO Soil Map of the World <span class="citation" data-cites="FAO2014">(<a href="#ref-FAO2014" role="doc-biblioref">FAO, 2014</a>)</span>; La Cancha is characterized by shallow, fine-textured Regosols on nearly flat terrain; Hidango presents fine-textured Luvisols on gently undulating landscapes; and Villa Baviera features deep, well-structured Nitisols on slightly sloped land. The climate in these regions is Mediterranean with winter rainfall (Csb) under the Köppen–Geiger classification <span class="citation" data-cites="Beck2023">(<a href="#ref-Beck2023" role="doc-biblioref">Beck et al., 2023</a>)</span>; Hidango, however, exhibits an oceanic influence. Mean annual precipitation ranges from 700 to 900 mm, with average temperatures between 11 and 12 °C.</p>
+</section>
+<section id="data-acquisition-and-processing" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="data-acquisition-and-processing"><span class="header-section-number">2.2</span> Data acquisition and processing</h2>
+<section id="field-data" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="field-data"><span class="header-section-number">2.2.1</span> Field data</h3>
+<p>AGB, defined as the total dry mass of dead and living plant organs per unit ground area <span class="citation" data-cites="Chave2014">(<a href="#ref-Chave2014" role="doc-biblioref">Chave et al., 2014</a>)</span>, was sampled at distinct wheat phenological stages across each season. Phenological stages were identified using the Zadoks scale, which describes 10 principal growth stages from sowing to ripening <span class="citation" data-cites="Zadoks1974">(<a href="#ref-Zadoks1974" role="doc-biblioref">Zadoks et al., 1974</a>)</span>. At each sampling point (Figure&nbsp;<a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a>), biomass from a 0.25 m² area was harvested, dried in a forced-air oven at 70°C for three days, weighed on a precision scale, and converted to t/ha. Sampling intervals were planned to capture variability across growth stages, ensuring representative data for each field and season. The temporal distribution of sampling dates across phenological stages is illustrated in Figure&nbsp;<a href="#fig-2" class="quarto-xref">Figure&nbsp;2</a>, with NDVI time series indicating canopy development over the season. A total of 153 AGB wheat samples were collected: 88 in Hidango (40 in 2021–2022 and 48 in 2022-2023), 35 in La Cancha, and 30 in Villa Baviera.</p>
+<div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/fenology_and_biomass_new_v2.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: <strong>Above-ground biomass (AGB) sampling dates across the seasons and fields.</strong> Zadoks scale, with NDVI included to illustrate changes in canopy vigor throughout the seasons. S = Sowing, SG = Seeding Growth, T = Tillering, SE = Stem Elongation, B = Booting, E = Ear Emergence, F = Flowering, M = Milk Development, D = Dough Development, and R = Ripening. Sampling dates are marked as Sn, where n represents the number of samples collected during the season. S<sub>SOS</sub> indicates the start of the season (SOS) when AGB = 0, and S<sub>final</sub> represents AGB at harvest.
+</figcaption>
+</figure>
+</div>
+<p>Additionally, soil moisture was measured using TEROS 12 sensors (METER Group, USA), which operate via a capacitance/frequency domain method to assess dielectric permittivity, achieving ±1% accuracy in typical mineral soils <span class="citation" data-cites="Fragkos2024">(<a href="#ref-Fragkos2024" role="doc-biblioref">Fragkos et al., 2024</a>)</span>. The sensors were installed at a central point within each field’s sampling area at depths of 15, 30, and 45 cm in La Cancha and Villa Baviera, and 15, 50, and 75 cm in Hidango in both seasons. Each sensor recorded data at 30-minute intervals, and daily values were computed by averaging the measurements from each day.</p>
+<p>Soil water content (cm³/cm³) measured by the sensors was converted to water depth (mm) within the 0–55 cm using the specific depth of the profile at which the sensor was installed.</p>
+</section>
+<section id="weather-data" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="weather-data"><span class="header-section-number">2.2.2</span> Weather Data</h3>
+<p>Precipitation and temperature data were obtained from automatic meteorological stations managed by the Red Agrometeorológica de Chile. This national network provides continuous, open-access weather data for agricultural use (http://agromet.inia.cl; http://agrometeorologia.cl), recording several meteorological variables at hourly intervals. Each station is equipped with a Texas Electronics TE525MM-L25 tipping-bucket rain gauge for precipitation and a Vaisala HMP60-L11 sensor for air temperature and relative humidity <span class="citation" data-cites="ChaconC2019">(<a href="#ref-ChaconC2019" role="doc-biblioref">Chacón C., 2019</a>)</span>. For each study site, the nearest meteorological station was selected (Table&nbsp;<a href="#tbl-1" class="quarto-xref">Table&nbsp;1</a>), and hourly precipitation and air temperature data were downloaded starting from the sowing date.</p>
+<div id="tbl-1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Meteorological stations for each field.
+</figcaption>
+<div aria-describedby="tbl-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 14%">
+<col style="width: 18%">
+<col style="width: 19%">
+<col style="width: 19%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Field</strong></th>
+<th><strong>Nearest station</strong></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><strong>EMA code</strong></td>
+<td><strong>Name</strong></td>
+<td><strong>Institution</strong></td>
+<td><strong>Coordinates</strong></td>
+<td><strong>Distance to field (km)</strong></td>
+</tr>
+<tr class="even">
+<td>Hidango</td>
+<td>260</td>
+<td>Hidango</td>
+<td>INIA</td>
+<td>34.1°S; 71.8°W</td>
+<td>1.03</td>
+</tr>
+<tr class="odd">
+<td>La Cancha</td>
+<td>50</td>
+<td>Chocalan</td>
+<td>FDF</td>
+<td>33.73°S; 71.21°W</td>
+<td>1.16</td>
+</tr>
+<tr class="even">
+<td>Villa Baviera</td>
+<td>103</td>
+<td>Parral Norte</td>
+<td>FDF</td>
+<td>36.23°S; 71.73°W</td>
+<td>20.89</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Daily precipitation (mm) was cumulatively summed over the growing season to obtain daily accumulated precipitation (mm, ∑PP). Daily minimum (Tmin) and maximum (Tmax) temperatures were used to compute Growing Degree Days (GDD):</p>
+<p><span class="math display">\[GDD  =  \frac{\left( T_{\max} + T_{\min} \right)}{2} - T_{base}\]</span></p>
+<p>A base temperature of 2°C was applied for the early growth stages (sowing to tillering), while 6°C was used for reproductive stages (stem elongation to ripening) <span class="citation" data-cites="DelPozo1987">(<a href="#ref-DelPozo1987" role="doc-biblioref">Del Pozo et al., 1987</a>)</span>. Negative GDD values were set to zero. Then, the accumulated GDD values were calculated by summing the daily GDD from the start of the season of each field (∑GDD).</p>
+</section>
+<section id="remote-sensing-data" class="level3" data-number="2.2.3">
+<h3 data-number="2.2.3" class="anchored" data-anchor-id="remote-sensing-data"><span class="header-section-number">2.2.3</span> Remote Sensing Data</h3>
+<p>Satellite time series imagery from three missions—Sentinel-1, Sentinel-2, and PlanetScope—were used to derive predictors for aboveground biomass (AGB) modeling. These datasets include radar and optical sensors, covering different spectral ranges (SAR, visible, NIR, SWIR) and having different spatial resolutions.</p>
+<p>The Sentinel‑1 (S1) mission, operated by the European Space Agency (ESA), consists of a constellation of C-band synthetic aperture radar (SAR) satellites that operate in several acquisition modes (Interferometric Wide—IW, Extra Wide—EW, and Stripmap—SM), with spatial resolutions ranging from 5 to 40 m and a swath width up to 410 km. Data acquisition is independent of cloud cover or sunlight, enabling consistent time-series generation under any weather condition. We used Level‑1 Ground Range Detected (GRD) products from Sentinel‑1A (S1A), the only satellite of the constellation operational during the study period, as Sentinel‑1B stopped transmitting in 2022 and Sentinel‑1C was not yet launched. GRD products are radiometrically calibrated, multi-looked, and terrain-corrected using a digital elevation model, then projected to the WGS84 datum (Table&nbsp;<a href="#tbl-2" class="quarto-xref">Table&nbsp;2</a>). These products are delivered in dual-polarization (VV, VH or HH, HV), depending on the acquisition mode and region, with a pixel spacing of 10 to 40 m <span class="citation" data-cites="Torres2012">(<a href="#ref-Torres2012" role="doc-biblioref">Torres et al., 2012</a>)</span>.</p>
+<p>Sentinel‑2 (S2) is a dual-satellite optical mission carrying the MultiSpectral Instrument (MSI), which captures 13 spectral bands across the visible, near-infrared (NIR), and shortwave infrared (SWIR) regions. Spatial resolution varies by band (10, 20, or 60 m), and the system provides global coverage with a revisit time of ~5 days at the Equator. We used Level‑2A surface reflectance products, which are atmospherically corrected (bottom-of-atmosphere, BOA) and orthorectified (Table&nbsp;<a href="#tbl-2" class="quarto-xref">Table&nbsp;2</a>). These products include cloud and shadow masks, aerosol optical thickness (AOT), and water vapor content layers, along with scene classification maps and pixel-level quality information <span class="citation" data-cites="Drusch2012">(<a href="#ref-Drusch2012" role="doc-biblioref">Drusch et al., 2012</a>)</span>.</p>
+<div id="tbl-2" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Summary of satellite data used to derive predictors for AGB estimation.
+</figcaption>
+<div aria-describedby="tbl-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 9%">
+<col style="width: 24%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Dataset</strong></th>
+<th><strong>Collection</strong></th>
+<th><strong>Bands</strong></th>
+<th><strong>Central wavelength (nm)</strong></th>
+<th><strong>Resolution</strong></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td><strong>Spatial (m)</strong></td>
+<td><strong>Revisit (days)</strong></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Sentinel-1</td>
+<td>Ground Range Detected (GRD)</td>
+<td>VV</td>
+<td>5.546×10<sup>7</sup> (C-Band)</td>
+<td>10</td>
+<td>6</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>VH</td>
+<td>5.546×10<sup>7</sup> (C-Band)</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Sentinel-2</td>
+<td>Level-2A</td>
+<td>1 - Coastal aerosol</td>
+<td>442.7 (A) / 442.2 (B)</td>
+<td>60</td>
+<td>5</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>2 - Blue</td>
+<td>492.7 (A) / 492.3 (B)</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>3 - Green</td>
+<td>559.8 (A) / 558.9 (B)</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>4 - Red</td>
+<td>664.6 (A) / 664.9 (B)</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>5 - Vegetation Red Edge (RE<sub>1</sub>)</td>
+<td>704.1 (A) / 703.8 (B)</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>6 - Vegetation Red Edge (RE<sub>2</sub>)</td>
+<td>740.5 (A) / 739.1 (B)</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>7 - Vegetation Red Edge (RE<sub>3</sub>)</td>
+<td>782.8 (A) / 779.7 (B)</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>8 - NIR</td>
+<td>832.8 (A) / 832.9 (B)</td>
+<td>10</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>8A - Vegetation Red Edge</td>
+<td>864.7 (A) / 864.0 (B)</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>9 - Water vapour</td>
+<td>945.1 (A) / 943.2 (B)</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>10 - SWIR - Cirrus</td>
+<td>1373.5 (A) / 1376.9 (B)</td>
+<td>60</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>11 - SWIR (SWIR<sub>1</sub>)</td>
+<td>1613.7 (A) / 1610.4 (B)</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>12 - SWIR (SWIR<sub>2</sub>)</td>
+<td>2202.4 (A) / 2185.7 (B)</td>
+<td>20</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>PlanetScope</td>
+<td>Level 3B Surface Reflectance (SR)</td>
+<td>1 - Coastal Blue</td>
+<td>441.5</td>
+<td>3</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>2 - Blue</td>
+<td>490</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>3 - Green I</td>
+<td>531</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>4 - Green</td>
+<td>565</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>5 - Yellow</td>
+<td>610</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>6 - Red</td>
+<td>665</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td>7 - Red Edge</td>
+<td>705</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td>8 - NIR</td>
+<td>865</td>
+<td>3</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>PlanetScope (PS) is a commercial constellation of ~120 CubeSats operated by Planet Labs, which capture daily multispectral imagery at a nominal resolution of 3 m. The constellation includes different sensor types deployed over time, such as Dove-C (three- or four-band imagers with a split-frame NIR filter), Dove-R (four-band imagers with a butcher-block filter), and SuperDove (eight-band imagers including the visible, NIR, and Red Edge bands). We used Level‑3B Surface Reflectance products, which are orthorectified and atmospherically corrected using Planet’s in-house model based on global aerosol assumptions. Although not fully corrected for haze or thin cirrus clouds, the products are radiometrically calibrated, georeferenced to sub-pixel accuracy, and delivered with metadata and quality indicators <span class="citation" data-cites="Roy2021">(<a href="#ref-Roy2021" role="doc-biblioref">Roy et al., 2021</a>)</span>. Due to the sensor transition that occurred during the study period, both Dove and SuperDove imagery were included. To ensure consistency across the dataset, only the four bands common to all sensor types (Blue, Green, Red, and NIR) were used.</p>
+<p>S1 Ground Range Detected (GRD) imagery was accessed via Google Earth Engine; S2 Level-2A products were obtained from the Planetary Computer; and PS imagery was acquired through the Planet Explorer platform, excluding images with cloud cover over the fields. A total of 185 S1, 208 S2, and 180 PS images were used across the four fields in their respective seasons: Hidango 2021-2022 (S1: 52; S2: 60; PS: 47), Hidango 2022-2023 (S1: 56; S2: 56; PS: 40), La Cancha 2022-2023 (S1: 43; S2: 53; PS: 41), and Villa Baviera 2020-2021 (S1: 34; S2: 39; PS: 52).</p>
+</section>
+<section id="preprocessing-of-remote-sensing-data" class="level3" data-number="2.2.4">
+<h3 data-number="2.2.4" class="anchored" data-anchor-id="preprocessing-of-remote-sensing-data"><span class="header-section-number">2.2.4</span> Preprocessing of remote sensing data</h3>
+<p>For data preprocessing, Sentinel-1 backscatter values (VV and VH) were first converted from decibels to linear scale, and the VH/VV polarization ratio was then computed. No additional masking was applied to Sentinel-1, as its GRD products undergo standard preprocessing, including radiometric calibration, multi-looking, and orthorectification. For Sentinel-2 and PlanetScope, reflectance values were scaled by dividing by 10,000, and values outside the [0.01, 1] range were discarded. Low-quality Sentinel-2 pixels were identified using the Scene Classification Layer (SCL), excluding classes 0, 1, 2, 3, 8, 9, and 10. For PlanetScope, the Universal Data Mask (UDM) was used to retain only clear-sky pixels.</p>
+<p>All variables were interpolated to create continuous daily time series, ensuring they aligned with AGB sampling dates and allowing for biomass estimation at consistent temporal offsets across different fields and seasons. For Sentinel-1, VV, VH, and VH/VV ratio were temporally extended by duplicating each acquisition across the days until the midpoint to the following observation. For Sentinel-2 and PlanetScope, spectral bands were interpolated using a Kalman smoothing approach <span class="citation" data-cites="Moritz2017">(<a href="#ref-Moritz2017" role="doc-biblioref">Moritz and Bartz-Beielstein, 2017</a>)</span>, and cumulative sums were computed from the start of each season. Daily values from all sources, and cumulative sums for Sentinel-2 and PlanetScope, were extracted at sampling locations and later used as input variables for AGB estimation.</p>
+</section>
+<section id="selection-and-processing-of-vis" class="level3" data-number="2.2.5">
+<h3 data-number="2.2.5" class="anchored" data-anchor-id="selection-and-processing-of-vis"><span class="header-section-number">2.2.5</span> Selection and processing of VIs</h3>
+<p>A total of 53 vegetation indices (VIs) were selected to estimate AGB using the daily interpolated S2 and PS data (Table&nbsp;<a href="#tbl-3" class="quarto-xref">Table&nbsp;3</a>). Daily cumulative sums of these VIs were also computed from the start of each season to capture integrated vegetation dynamics. Furthermore, 36 of these 53 VIs originally derived from the B8 band were recalculated using the B8A band (available only for S2) to assess potential differences in vegetation response between these two near-infrared bands, resulting in a total of 89 VIs across both products. The indices were chosen based on their relevance for assessing vegetation status, biomass estimation, and yield prediction in wheat, forage, maize, and similar crops <span class="citation" data-cites="Peng2023 Segarra2022 Uribeetxebarria2023 Wang2022 Wu2008 Zheng2017">(<a href="#ref-Peng2023" role="doc-biblioref">Peng et al., 2023</a>; <a href="#ref-Segarra2022" role="doc-biblioref">Segarra et al., 2022</a>; <a href="#ref-Uribeetxebarria2023" role="doc-biblioref">Uribeetxebarria et al., 2023</a>; <a href="#ref-Wang2022" role="doc-biblioref">Wang et al., 2022</a>; <a href="#ref-Wu2008" role="doc-biblioref">Wu et al., 2008</a>; <a href="#ref-Zheng2017" role="doc-biblioref">Zheng et al., 2017</a>)</span>. Both daily values and cumulative VIs were used as predictor variables in the modeling framework.</p>
+<p>Table&nbsp;<a href="#tbl-3" class="quarto-xref">Table&nbsp;3</a> outlines the vegetation indices (VIs) chosen for the machine learning (ML) model after eliminating those that were highly correlated. To see all the other VIs that were used, please refer to the Supplementary Material Table S1.</p>
+<div id="tbl-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Vegetation indices (covariates) derived from Sentinel-2 (S2) and PlanetScope (PS) spectral bands. Asterisk (*) next to the S2 dataset indicates that the index was also recalculated using Sentinel-2 Band 8A (narrow NIR) instead of Band 8 (broad NIR).
+</figcaption>
+<div aria-describedby="tbl-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 24%">
+<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 15%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>N°</th>
+<th>Dataset used</th>
+<th>Name</th>
+<th>Abbreviation</th>
+<th>Formula</th>
+<th>Reference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>S2</td>
+<td>OSAVI Variant</td>
+<td>OSAVI<sub>2</sub></td>
+<td><span class="math inline">\(\frac{1.16 \cdot (RE3 - Red)}{(RE3 + Red + 0.16)}\)</span></td>
+<td><span class="citation" data-cites="Jin2020">Jin et al. (<a href="#ref-Jin2020" role="doc-biblioref">2020</a>)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>S2</td>
+<td>-</td>
+<td>MCARI/OSAVI<sub>2</sub></td>
+<td><span class="math inline">\(MCARI/{OSAVI}_{2}\)</span></td>
+<td><span class="citation" data-cites="Wu2008">Wu et al. (<a href="#ref-Wu2008" role="doc-biblioref">2008</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>S2</td>
+<td>SWIR 11 Related MCARI</td>
+<td>MCARI<sub>SWIR11</sub></td>
+<td><span class="math inline">\((\left( RE_{1} - SWIR_{1} \right) - 0.2 \cdot (RE_{1} - Green)) \cdot (RE_{1}/SWIR_{1})\)</span></td>
+<td><span class="citation" data-cites="Herrmann2011">Herrmann et al. (<a href="#ref-Herrmann2011" role="doc-biblioref">2011</a>)</span></td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>S2</td>
+<td>SWIR 11 Related TCARI</td>
+<td>TCARI<sub>SWIR11</sub></td>
+<td><span class="math inline">\(3 \cdot ((RE_{1} - SWIR_{1}) - 0.2 \cdot (RE_{1} - Green) \cdot (RE_{1}/SWIR_{1}))\)</span></td>
+<td><span class="citation" data-cites="Herrmann2011">Herrmann et al. (<a href="#ref-Herrmann2011" role="doc-biblioref">2011</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>S2</td>
+<td>SWIR 12 Related MCARI</td>
+<td>MCARI<sub>SWIR12</sub></td>
+<td><span class="math inline">\((\left( RE_{1} - SWIR_{2} \right) - 0.2 \cdot (RE_{1} - Green)) \cdot (RE_{1}/SWIR_{2})\)</span></td>
+<td><span class="citation" data-cites="Herrmann2011">Herrmann et al. (<a href="#ref-Herrmann2011" role="doc-biblioref">2011</a>)</span></td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>S2*</td>
+<td>Normalized Difference Red-edge Index 3</td>
+<td>NDRE3</td>
+<td><span class="math inline">\((NIR - RE_{3})/(NIR + RE_{3})\)</span></td>
+<td><span class="citation" data-cites="Magney2017">Magney et al. (<a href="#ref-Magney2017" role="doc-biblioref">2017</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>S2*</td>
+<td>Water Index</td>
+<td>WI</td>
+<td><span class="math inline">\(NIR/Water\ vapour\)</span></td>
+<td><span class="citation" data-cites="Jin2020">Jin et al. (<a href="#ref-Jin2020" role="doc-biblioref">2020</a>)</span></td>
+</tr>
+<tr class="even">
+<td>8</td>
+<td>S2 - PS</td>
+<td>Modified Chlorophyll Absorption in Reflectance Index</td>
+<td>MCARI</td>
+<td><span class="math inline">\((\left( RE_{1} - Red \right) - 0.2 \cdot (RE_{1} - Green)) \cdot (RE_{1}/Red)\)</span></td>
+<td><span class="citation" data-cites="Daughtry2000">Daughtry (<a href="#ref-Daughtry2000" role="doc-biblioref">2000</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>9</td>
+<td>S2 - PS</td>
+<td>Transformed Chlorophyll Absorption in Reflectance Index</td>
+<td>TCARI</td>
+<td><span class="math inline">\(3 \cdot ((RE_{1} - Red) - 0.2 \cdot (RE_{1} - Green) \cdot (RE_{1}/Red))\)</span></td>
+<td><span class="citation" data-cites="Haboudane2002">Haboudane et al. (<a href="#ref-Haboudane2002" role="doc-biblioref">2002</a>)</span></td>
+</tr>
+<tr class="even">
+<td>10</td>
+<td>S2 - PS</td>
+<td>-</td>
+<td>TCARI/OSAVI</td>
+<td><span class="math inline">\(TCARI/OSAVI\)</span></td>
+<td><span class="citation" data-cites="Haboudane2002">Haboudane et al. (<a href="#ref-Haboudane2002" role="doc-biblioref">2002</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>11</td>
+<td>S2 - PS</td>
+<td>-</td>
+<td>MCARI/OSAVI</td>
+<td><span class="math inline">\(MCARI/OSAVI\)</span></td>
+<td><span class="citation" data-cites="Daughtry2000">Daughtry (<a href="#ref-Daughtry2000" role="doc-biblioref">2000</a>)</span></td>
+</tr>
+<tr class="even">
+<td>12</td>
+<td>S2* - PS</td>
+<td>Simple Ratio</td>
+<td>SR</td>
+<td><span class="math inline">\(NIR/Red\)</span></td>
+<td><span class="citation" data-cites="Tucker1979">Tucker (<a href="#ref-Tucker1979" role="doc-biblioref">1979</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>13</td>
+<td>S2 - PS</td>
+<td>Optimized Soil-Adjusted Vegetation Index</td>
+<td>OSAVI</td>
+<td><span class="math inline">\(\frac{1.16 \cdot (NIR - Red)}{(NIR + Red + 0.16)}\)</span></td>
+<td><span class="citation" data-cites="Rondeaux1996">Rondeaux et al. (<a href="#ref-Rondeaux1996" role="doc-biblioref">1996</a>)</span></td>
+</tr>
+<tr class="even">
+<td>14</td>
+<td>S2 - PS</td>
+<td>Chlorophyll Index - Red</td>
+<td>CI<sub>red</sub></td>
+<td><span class="math inline">\((NIR/Red) - 1\)</span></td>
+<td><span class="citation" data-cites="Clevers2013">Clevers and Gitelson (<a href="#ref-Clevers2013" role="doc-biblioref">2013</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>15</td>
+<td>S2 - PS</td>
+<td>Chlorophyll Vegetation Index</td>
+<td>CVI</td>
+<td><span class="math inline">\((NIR/Green) \cdot (Red/Green)\)</span></td>
+<td><span class="citation" data-cites="Vincini2008">Vincini et al. (<a href="#ref-Vincini2008" role="doc-biblioref">2008</a>)</span></td>
+</tr>
+<tr class="even">
+<td>16</td>
+<td>S2 - PS</td>
+<td>Enhanced Vegetation Index</td>
+<td>EVI</td>
+<td><span class="math inline">\(\frac{2.5*(NIR - Red)}{((NIR + 6*Red - 7.5*Blue) + 1)}\)</span></td>
+<td><span class="citation" data-cites="Jiang2008">Jiang et al. (<a href="#ref-Jiang2008" role="doc-biblioref">2008</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>17</td>
+<td>S2 - PS</td>
+<td>Normalized Difference Vegetation Index</td>
+<td>NDVI</td>
+<td><span class="math inline">\((NIR - Red)/(NIR + Red)\)</span></td>
+<td><span class="citation" data-cites="Rouse1974">Rouse et al. (<a href="#ref-Rouse1974" role="doc-biblioref">1974</a>)</span></td>
+</tr>
+<tr class="even">
+<td>18</td>
+<td>S2 - PS</td>
+<td>Green NDVI</td>
+<td>GNDVI</td>
+<td><span class="math inline">\((NIR - Green)/(NIR + Green)\)</span></td>
+<td><span class="citation" data-cites="Gitelson1996">Gitelson et al. (<a href="#ref-Gitelson1996" role="doc-biblioref">1996</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>19</td>
+<td>S2 - PS</td>
+<td>Normalized Difference Red-edge Index 1</td>
+<td>NDRE1</td>
+<td><span class="math inline">\((NIR - RE_{1})/(NIR + RE_{1})\)</span></td>
+<td><span class="citation" data-cites="Magney2017">Magney et al. (<a href="#ref-Magney2017" role="doc-biblioref">2017</a>)</span></td>
+</tr>
+<tr class="even">
+<td>20</td>
+<td>S2 - PS</td>
+<td>-</td>
+<td>NDRE/NDVI</td>
+<td><span class="math inline">\(NDRE_{1}/NDVI\)</span></td>
+<td><span class="citation" data-cites="Raper2015">Raper and Varco (<a href="#ref-Raper2015" role="doc-biblioref">2015</a>)</span></td>
+</tr>
+<tr class="odd">
+<td>21</td>
+<td>S2 - PS</td>
+<td>Structure Insensitive Pigment Index</td>
+<td>SIPI</td>
+<td><span class="math inline">\((NIR - Blue)/(NIR - Red)\)</span></td>
+<td><span class="citation" data-cites="Penuelas1994">Peñuelas et al. (<a href="#ref-Penuelas1994" role="doc-biblioref">1994</a>)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="modeling-with-machine-learning-algorithms" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="modeling-with-machine-learning-algorithms"><span class="header-section-number">2.3</span> Modeling with Machine Learning Algorithms</h2>
+<section id="overview-of-the-modeling-process" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="overview-of-the-modeling-process"><span class="header-section-number">2.3.1</span> Overview of the modeling process</h3>
+<div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/flowchart_diagram.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: <strong>Methodological scheme of the modeling process by machine learning of the AGB estimation within the growing season (stage 1) and the prediction at harvest at 1, 2, 3, and 4 month lead times (stage 2).</strong>
+</figcaption>
+</figure>
+</div>
+<p>Figure&nbsp;<a href="#fig-3" class="quarto-xref">Figure&nbsp;3</a> shows a general scheme for the modeling process. The dataset for modeling is composed of the in situ AGB data and the remote sensing predictors derived from S1, S2, and PlanetScope, as well as the weather variables. All this data is generated as a time series for each growing season in each site. Then a feature engineering process is applied to the data before running the models. Thereafter, the dataset is used in the first stage to run the ML models to estimate the spatio-temporal variation of AGB within the growing season. After achieving the initial results, we tested the ML prediction models of AGB at harvest by using covariates from four lead times: 1, 2, 3, and 4 months. The ML models for estimation and prediction pass through a hyperparameter optimization and an explainable ML process.</p>
+<p>We tested five machine learning (ML) algorithms to estimate spatio-temporal in-season and AGB (stage 1) and to predict AGB at harvest (stage 2): extreme gradient boosting (XGBoost; <span class="citation" data-cites="Chen2016">(<a href="#ref-Chen2016" role="doc-biblioref">Chen and Guestrin, 2016</a>)</span>), random forest (RF; <span class="citation" data-cites="Ho1995">(<a href="#ref-Ho1995" role="doc-biblioref">Ho, 1995</a>)</span>), regularized generalized linear regression (GLMnet; <span class="citation" data-cites="Hastie2015">(<a href="#ref-Hastie2015" role="doc-biblioref">Hastie et al., 2015</a>)</span>), single layer, feed-forward neural networks (bagMLP; <span class="citation" data-cites="Breiman1996a">(<a href="#ref-Breiman1996a" role="doc-biblioref">Breiman, 1996a</a>)</span>), and K-nearest neighbors (KNN; <span class="citation" data-cites="Hechenbichler2004">(<a href="#ref-Hechenbichler2004" role="doc-biblioref">Hechenbichler and Schliep, 2004</a>)</span>). We also tested an ensemble model which combines the predictions for the five models <span class="citation" data-cites="Breiman1996b Wolpert1992">(<a href="#ref-Breiman1996b" role="doc-biblioref">Breiman, 1996b</a>; <a href="#ref-Wolpert1992" role="doc-biblioref">Wolpert, 1992</a>)</span>. These models were selected based on their robustness in regression tasks, capacity to handle high-dimensional data, interpretability, and for being state-of-the-art.</p>
+</section>
+<section id="defining-dataset-recipes-for-estimation-and-prediction-models" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="defining-dataset-recipes-for-estimation-and-prediction-models"><span class="header-section-number">2.3.2</span> Defining dataset recipes for estimation and prediction models</h3>
+<p>The dataset used for the estimation modeling (stage 1) included covariates derived from soil moisture data, weather variables, remote sensing spectral information, and VIs. The response variable was AGB (t/ha), obtained from field measurements. As a first step, we divided the data into a training and testing dataset; we chose 75% of the data for training and the remaining 25% for testing. Further, we split the predictor variables into different subsets with the aim to evaluate independently how the weather, Sentinel-1, Sentinel-2, and PlanetScope contribute to the estimation of AGB. We called each subset a recipe (rec). Thus, <em>rec1</em> used all the variables, <em>rec2</em> uses only Sentinel-2, <em>rec3</em> uses Sentinel-2 and weather, <em>rec4</em> uses PlanetScope, <em>rec5</em> uses PlanetScope and weather, <em>rec6</em> uses Sentinel-1, <em>rec7</em> uses Sentinel-1 and weather, and <em>rec8</em> uses only weather variables.</p>
+</section>
+<section id="feature-engineering" class="level3" data-number="2.3.3">
+<h3 data-number="2.3.3" class="anchored" data-anchor-id="feature-engineering"><span class="header-section-number">2.3.3</span> Feature engineering</h3>
+<p>Before running the ML modeling for estimation and prediction, we applied different preprocessing methods to the dataset. First, to fill missing data, we imputed it using k-nearest neighbor <span class="citation" data-cites="Gower1971">(<a href="#ref-Gower1971" role="doc-biblioref">Gower, 1971</a>)</span>. All of the predictors were then normalized to have a standard deviation of one and a mean of zero. Also, we applied a filter to eliminate highly correlated variables.</p>
+</section>
+<section id="estimation-models-for-agb-within-the-growing-season" class="level3" data-number="2.3.4">
+<h3 data-number="2.3.4" class="anchored" data-anchor-id="estimation-models-for-agb-within-the-growing-season"><span class="header-section-number">2.3.4</span> Estimation models for AGB within the growing season</h3>
+<p>For the estimation model (stage 1), covariates from the same day as the AGB measured in situ were employed. Thus, we generate a modeling dataset by including the value of the covariates for each sample point. We used a combination of 40 models, corresponding to the eight recipes multiplied by the five ML algorithms. We then ran the models, tuned them through hyperparameter optimization (see section 2.3.4), and used them to estimate AGB spatially for each day and site during the growing season. This process yields a daily spatiotemporal dataset of AGB for each site.</p>
+</section>
+<section id="prediction-models-for-agb-at-harvest" class="level3" data-number="2.3.5">
+<h3 data-number="2.3.5" class="anchored" data-anchor-id="prediction-models-for-agb-at-harvest"><span class="header-section-number">2.3.5</span> Prediction models for AGB at harvest</h3>
+<p>From the estimation modeling (stage 1), we obtained the daily spatio-temporal AGB within the growing season. For prediction, we took the AGB of the harvest date per site as the response variable. As covariates, we selected the remote sensing covariates (S1, S2, and PS variables in Table&nbsp;<a href="#tbl-3" class="quarto-xref">Table&nbsp;3</a>) and weather data, which lagged from one to four months before harvesting as lead time. To generate the dataset for prediction modeling, we took 100 random samples per site for the responses and covariates. In the modeling process, we used hyperparameter optimization to enhance the performance of our models and then applied them to predict aboveground biomass (AGB) at harvest for each lead time.</p>
+</section>
+<section id="hyperparameter-optimization-and-evaluation" class="level3" data-number="2.3.6">
+<h3 data-number="2.3.6" class="anchored" data-anchor-id="hyperparameter-optimization-and-evaluation"><span class="header-section-number">2.3.6</span> Hyperparameter optimization and evaluation</h3>
+<p>To tune each parameter per algorithm for the estimation and prediction modeling, we used hyperparameter optimization, defining ten candidates per parameter. Table&nbsp;<a href="#tbl-4" class="quarto-xref">Table&nbsp;4</a> shows the parameters tuned and their descriptions. For evaluating the models performance, we used cross-validation as a resampling technique (on the training dataset). We used k-fold cross-validation, with k=5 for five folds. We tune the parameters for each fold and then evaluate the model performance in the k-1 fold ten times. In this case, we define no repetitions per fold. The final evaluation of the model was made in the test dataset (25%). We used the mean absolute error (MAE), root mean square error (RMSE), and r-squared (R²) metrics (see Supplementary Material Eqs. S1, S2 &amp; S3).</p>
+<div id="tbl-4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;4: Parameters per machine learning algorithm. RF: random forest. XGBoost: extreme gradient boosting. GLMnet: regularized generalized linear regression. BAGmlp: single layer, feed-forward neural networks. KNN: k-nearest neighbour. *This parameter was not tuned.
+</figcaption>
+<div aria-describedby="tbl-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 36%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Parameter</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Algorithm</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>trees*</td>
+<td>An integer for the number of trees contained in the ensemble. Fixed to 1000 trees.</td>
+<td>XGBoost, RF</td>
+</tr>
+<tr class="even">
+<td>tree_depth</td>
+<td>An integer for the maximum depth of the tree.</td>
+<td>XGBoost, RF</td>
+</tr>
+<tr class="odd">
+<td>min_n</td>
+<td>An integer for the minimum number of data points in a node that is required for the node to be split further.</td>
+<td>XGBoost, RF</td>
+</tr>
+<tr class="even">
+<td>loss_reduction</td>
+<td>A number for the reduction in the loss function required to split further.</td>
+<td>XGBoost</td>
+</tr>
+<tr class="odd">
+<td>sample_size</td>
+<td>A number for the number (or proportion) of data that is exposed to the fitting routine.</td>
+<td>XGBoost</td>
+</tr>
+<tr class="even">
+<td>learn_rate</td>
+<td>A number for the rate at which the boosting algorithm adapts from iteration-to-iteration.</td>
+<td>XGBoost</td>
+</tr>
+<tr class="odd">
+<td>cost</td>
+<td>A positive number for the cost of predicting a sample within or on the wrong side of the margin</td>
+<td>XGBoost</td>
+</tr>
+<tr class="even">
+<td>penalty</td>
+<td>A non-negative number representing the total amount of regularization.</td>
+<td>GLMnet, bagMLP</td>
+</tr>
+<tr class="odd">
+<td>mixture</td>
+<td>A number between zero and one (inclusive) denoting the proportion of L1 regularization (i.e.&nbsp;lasso) in the model.</td>
+<td>GLMnet</td>
+</tr>
+<tr class="even">
+<td>hidden units</td>
+<td>An integer for the number of units in the hidden model.</td>
+<td>bagMLP</td>
+</tr>
+<tr class="odd">
+<td>epochs</td>
+<td>An integer for the number of training iterations.</td>
+<td>BagMLP</td>
+</tr>
+<tr class="even">
+<td>neighbors</td>
+<td>The number of neighbors to consider (often called k)</td>
+<td>KNN</td>
+</tr>
+<tr class="odd">
+<td>weight_func</td>
+<td>A single character for the type of kernel function used to weight distances between samples.</td>
+<td>KNN</td>
+</tr>
+<tr class="even">
+<td>dist_power</td>
+<td>A single number for the parameter used in calculating Minkowski distance.</td>
+<td>KNN</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="explainable-machine-learning-with-dalex" class="level3" data-number="2.3.7">
+<h3 data-number="2.3.7" class="anchored" data-anchor-id="explainable-machine-learning-with-dalex"><span class="header-section-number">2.3.7</span> Explainable Machine Learning with DALEX</h3>
+<p>To assess the contribution of each covariate to the model’s performance, we performed a variable importance analysis. Further, to evaluate how the most important variables impact the model’s predictions, we used partial dependence plots. For this, we used the DALEX (moDel Agnostic Language for Exploration and eXplanation). DALEX provides a model-agnostic framework for interpreting machine learning models by quantifying the impact of individual variables on model predictions. We computed permutation-based variable importance, which evaluates the increase in prediction error after permuting the values of a given variable while keeping all other variables fixed. This approach captures both main effects and interactions and is applicable across diverse model types. For estimation, we analyzed the ensemble model that used all the predictors (recipe <em>rec1</em>), and for prediction, we used the best model for each lead time. For each variable, we calculated the increase in root mean squared error (ΔRMSE) caused by the permutation. Higher ΔRMSE values indicate greater importance of the corresponding variable to model performance. The analysis was repeated over 50 random permutations to ensure stability of the importance rankings. The top predictors were identified by ranking variables based on the mean ΔRMSE. In addition, we calculated a “scaled dropout loss” metric to compare variable influence across lead times in the prediction models.</p>
+</section>
+</section>
+<section id="software" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="software"><span class="header-section-number">2.4</span> Software</h2>
+<p>We utilized the R programming language <span class="citation" data-cites="RCoreTeam2025">(<a href="#ref-RCoreTeam2025" role="doc-biblioref">R Core Team, 2025</a>)</span> for processing satellite data, as well as for data analysis, ML modeling, and visualization. To access satellite data, we employed the {earthdatalogin} package <span class="citation" data-cites="Boettiger2023">(<a href="#ref-Boettiger2023" role="doc-biblioref">Boettiger et al., 2023</a>)</span>. For smoothing the time series of vegetation indices, we applied the {imputeTS} package <span class="citation" data-cites="Moritz2017">(<a href="#ref-Moritz2017" role="doc-biblioref">Moritz and Bartz-Beielstein, 2017</a>)</span>. We used the {terra} package <span class="citation" data-cites="Hijmans2023">(<a href="#ref-Hijmans2023" role="doc-biblioref">Hijmans, 2023</a>)</span> and the {sf} package <span class="citation" data-cites="Pebesma2018">(<a href="#ref-Pebesma2018" role="doc-biblioref">Pebesma, 2018</a>)</span> for processing raster and vectorial data. For data science tasks and visualization, we utilized the {tidyverse} suite <span class="citation" data-cites="Wickham2019">(<a href="#ref-Wickham2019" role="doc-biblioref">Wickham et al., 2019</a>)</span>. For machine learning modeling, we work with the {tidymodels} framework <span class="citation" data-cites="Kuhn2020">(<a href="#ref-Kuhn2020" role="doc-biblioref">Kuhn and Wickham, 2020</a>)</span>. For the variable importance we used {DALEX} <span class="citation" data-cites="Biecek2018">(<a href="#ref-Biecek2018" role="doc-biblioref">Biecek, 2018</a>)</span>. The {tmap} package <span class="citation" data-cites="Tennekes2018">(<a href="#ref-Tennekes2018" role="doc-biblioref">Tennekes, 2018</a>)</span> was employed for mapping purposes.</p>
+</section>
+</section>
+<section id="results" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Results</h1>
+<section id="estimation-model-for-agb-within-the-growing-season" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="estimation-model-for-agb-within-the-growing-season"><span class="header-section-number">3.1</span> Estimation model for AGB within the growing season</h2>
+<section id="selecting-the-best-models" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="selecting-the-best-models"><span class="header-section-number">3.1.1</span> Selecting the best models</h3>
+<p>For AGB estimation, we tested 40 models generated by a combination of machine learning algorithms and the type of predictors used (recipes). The performance for all the models had R² values above 0.65, MAE below 5 t/ha, and RMSE below 6.5 t/ha. Figure&nbsp;<a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a> shows the ranking of the 40 models based on the R², using the training dataset obtained through resampling. The algorithms RF, followed by XGBoost, were the ones that achieved the best (higher R² and lower error), and GLMnet had the lowest performance. The recipe <em>rec3</em>, which uses S1 and weather, ranks first<em>,</em> followed by <em>rec6,</em> which uses S2 and weather, and <em>rec1</em>, which incorporates all the covariates. The algorithm that had the poor performance was the GLMnet with <em>rec4</em>, using only weather, and with <em>rec3,</em> which uses S1 and weather.</p>
+<div id="fig-4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/ranking_estimacion_modelos.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: <strong>Performance metrics for the forty models (five ML algorithms and eight recipes).</strong> We rank the metrics from higher to lower performance. RF: random forest, KNN: k-nearest neighbor, XGBoost: extreme gradient boosting, GLMnet: generalized linear models with regularization, bagMLP: feed-forward neural networks. S1: Sentinel 1, S2: Sentinel 2, PS: PlanetScope, and W: weather.
+</figcaption>
+</figure>
+</div>
+<p>We then select the three models that achieved the highest performance, along with the ensemble model, and run all of them on the testing dataset. The resulting metrics between the models were similar; however, the ensemble model had a higher error (RMSE=3.65 t/ha and R²=0.89), while the RF with <em>rec3</em> (S1+W) had a lower error and a higher R² (Figure&nbsp;<a href="#fig-5" class="quarto-xref">Figure&nbsp;5</a>) with RMSE=3.18 t/ha, and R²=0.91.</p>
+<div id="fig-5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/estimation_vs_observed_AGB_between_models.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: <strong>Comparison of the observed and estimated aboveground biomass obtained by the machine learning models and recipe that reached the best performance.</strong> RF: Random Forest; XGBoost: Extreme Gradient Boosting; Ensemble: Ensemble Model. S1: Sentinel 1, S2: Sentinel 2, and W: weather.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="explainable-machine-learning-with-dalex-1" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="explainable-machine-learning-with-dalex-1"><span class="header-section-number">3.1.2</span> Explainable Machine Learning with DALEX</h3>
+<div id="fig-6" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/variables_importance_estimacion_modelo_ensamblado.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: <strong>GDD and Sentinel-1 show higher impact on the ensemble model performance.</strong> The six most important variables, based on the reduction of RMSE after permutations in the ensemble model using rec1 (all the predictors). The indices preceded by an ∑ indicate they are cumulative indices throughout the growing season.
+</figcaption>
+</figure>
+</div>
+<p>The results of the most important variables identify the ∑GDD as the one that has a higher impact on the estimation model performance. The SAR-derived indices S1<sub>VH</sub>, S1<sub>VV</sub>, and S1<sub>VH/VV</sub> follow, with the weather variables of SM and PP showing a higher impact on the estimation model (Figure&nbsp;<a href="#fig-6" class="quarto-xref">Figure&nbsp;6</a>). The weather variables are retrieved from weather stations and are not represented spatially, unlike the S1, which has spatial representation. The predictors derived from optical sensors (S2 and PS) are the ones that reached the lowest impact on the model estimations.</p>
+<div id="fig-7" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/partial_dependence_plots_estimation.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: <strong>Partial dependence plots illustrating the relationship between the average prediction of the ensemble model and the six most important predictors.</strong> The y-axis represents the marginal effect on the predicted AGB, while the x-axes show the range of each predictor.
+</figcaption>
+</figure>
+</div>
+<p>Partial dependence plots (Figure&nbsp;<a href="#fig-7" class="quarto-xref">Figure&nbsp;7</a>) from the ensemble model reveal complex, often non-linear relationships between key S1 SAR-derived and environmental features and the predicted outcome. Cumulative growing degree-days (ΣGDD) exert a strong positive influence that steepens beyond ~600–700 GDD and approaches a plateau above 1000 GDD, whereas the ΣPP exhibits a clear optimum between approximately 100 and 300 units, with a moderate decline at higher values. Early-season backscatter dynamics in VH polarization (S1<sub>VH</sub>), strongly enhance predictions across its range, reflecting rapid canopy development or high biomass periods. In contrast, prolonged periods of low VH backscatter (S1<sub>VH</sub>) and elevated soil moisture (SM) during sensitive phases impose marked yield penalties, likely linked to delayed emergence or waterlogging risk. The S1<sub>VH/VV</sub> displays an optimum near 0.2–0.4, indicating a beneficial balance of vegetation versus soil-dominated scattering. Together, these profiles demonstrate the model’s ability to capture subtle, non-monotonic interactions among thermal accumulation, radiation, soil moisture, and Sentinel-1 VH and VV polarization signals that drive variation in the AGB.</p>
+</section>
+<section id="spatio-temporal-variation-of-agb-within-the-growing-season" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="spatio-temporal-variation-of-agb-within-the-growing-season"><span class="header-section-number">3.1.3</span> Spatio-temporal variation of AGB within the growing season</h3>
+<p>Finally, we run the models to make a daily spatial estimation of biomass through the growing season at each site. The averaged daily AGB for each site is shown in Figure&nbsp;<a href="#fig-8" class="quarto-xref">Figure&nbsp;8</a>, along with the in-situ AGB measurements.</p>
+<div id="fig-8" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/time_series_AGB_mean_sites.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: <strong>Daily temporal variation of the averaged AGB per site (lines) and the averaged in situ measured AGB per site (points).</strong> For a better comparison, the dates were turned to the same year. S1: Season 2021-2022, S2: Season 2022-2023.
+</figcaption>
+</figure>
+</div>
+<p>The estimation adjusted well for Hidango in both seasons but underestimated in La Cancha from the middle of the season on. For Villa Baviera, the model estimates well for most of the season, but at the end shows an overestimation. In Figure&nbsp;<a href="#fig-9" class="quarto-xref">Figure&nbsp;9</a>, we show the monthly average of AGB per site. In Hidango season 2021-2022 and in La Cancha, the AGB goes from below 2 t/ha to up to 30 t/ha. In Hidango season 2022-2023, the AGB was lower, reaching 22.50 t/ha. In Villa Baviera, the wheat variety has a shorter season, from September to January; the AGB at harvest was up to 30 t/ha. The sites that showed the higher spatial variability were Hidango season 2022-2023 and La Cancha (Figure&nbsp;<a href="#fig-8" class="quarto-xref">Figure&nbsp;8</a> and <a href="#fig-9" class="quarto-xref">Figure&nbsp;9</a>).</p>
+<div id="fig-9" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/mapas_biomasa_mensual_estimada.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: <strong>Monthly averaged above-ground biomass (AGB) estimated with extreme gradient boosting model (XGBoost) with recipe 3 (Sentinel-1+weather) for the sites</strong> (a) Hidango season 2021-2022, (b) Hidalgo season 2022-2023, (c) La Cancha season 2022-2023, and (d) Villa Baviera season 2020-2021.
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="prediction-models-for-agb-at-harvest-1" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="prediction-models-for-agb-at-harvest-1"><span class="header-section-number">3.2</span> Prediction models for AGB at harvest</h2>
+<p>The prediction models were evaluated for lead times of one, two, three, and four months. The R² value decreases from 0.94 at one month to 0.86 at four months. Concurrently, the errors increase, with the MAE rising from 0.85 t/ha and the RMSE from 1.11 t/ha at one month, to MAE of 1.26 t/ha and RMSE of 1.74 t/ha at four months (Figure&nbsp;<a href="#fig-10" class="quarto-xref">Figure&nbsp;10</a>).</p>
+<div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../output/figs/metrics_prediction_lead_times.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;10: <strong>The performance metrics R², MAE (t/ha), and RMSE (t/ha) for the prediction models</strong>—including feed-forward neural networks (bagMLP), regularized generalized linear model (GLMnet), K-nearest neighbor (KNN), random forest (RF), and extreme gradient boosting (XGBoost)—are evaluated on the testing dataset for lead times of 1, 2, 3, and 4 months.
+</figcaption>
+</figure>
+</div>
+<p>Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;5</a> presents the six most significant variables for the four lead time prediction models. Soil moisture (SM) was the leading covariate in three instances. Monthly cumulative precipitation was ranked first for one of the prediction lead times. Covariates derived from Sentinel-1, specifically backscatter VV and VH/VV, as well as VH, ranked second across all four lead times. Additionally, only one optical covariate from the PlanetScope satellite, band three (B3), was ranked fifth for all four lead times.</p>
+<div id="tbl-5" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: The six most important variables for the XGBoost prediction model (extreme gradient boosting) and rec1 (all predictors). N: the times that the variable was in the five most important variables. Mode rank: This refers to the statistical mode of the ranks assigned to the variable. Scaled dropout loss: the average value of the scaled dropout. This statistic considers the summary for the four prediction lead times.
+</figcaption>
+<div aria-describedby="tbl-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th><strong>Variable</strong></th>
+<th><strong>N</strong></th>
+<th><strong>Mode rank</strong></th>
+<th><strong>Scaled dropout loss</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>SM</strong></td>
+<td>3</td>
+<td>1</td>
+<td>1.78</td>
+</tr>
+<tr class="even">
+<td>∑PP</td>
+<td>1</td>
+<td>1</td>
+<td>1.78</td>
+</tr>
+<tr class="odd">
+<td><strong>S1<sub>VV</sub></strong></td>
+<td>4</td>
+<td>3</td>
+<td>-0.403</td>
+</tr>
+<tr class="even">
+<td><strong>S1<sub>VH/VV</sub></strong></td>
+<td>4</td>
+<td>3</td>
+<td>-0.455</td>
+</tr>
+<tr class="odd">
+<td><strong>S1<sub>VH</sub></strong></td>
+<td>4</td>
+<td>2</td>
+<td>-0.355</td>
+</tr>
+<tr class="even">
+<td>PS<sub>B3</sub></td>
+<td>4</td>
+<td>5</td>
+<td>-0.567</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+</section>
+<section id="discussion" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Discussion</h1>
+<section id="models-performance" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="models-performance"><span class="header-section-number">4.1</span> Models performance</h2>
+<p>For the estimation, the RF and XGBoost models achieved high R² values (&gt;0.9) and low errors (RMSE ~3.2 t/ha) for AGB on the test dataset, indicating excellent potential generalization capacity. The results are similar to other studies that used UAV with higher spatial resolution <span class="citation" data-cites="AtkinsonAmorim2022 Liu2024">(<a href="#ref-AtkinsonAmorim2022" role="doc-biblioref">Atkinson Amorim et al., 2022</a>; <a href="#ref-Liu2024" role="doc-biblioref">Liu et al., 2024</a>)</span> and others that used hyperspectral data with wider spectral information <span class="citation" data-cites="Marshall2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>)</span>. The recipes that allowed a higher performance were those using S1 and weather data. The meteorological variables ∑GDD was the most important predictor as expected and has been shown by <span class="citation" data-cites="Liu2025">(<a href="#ref-Liu2025" role="doc-biblioref">Liu and Chen, 2025</a>)</span>. ∑PP, SM were the following most influential weather predictors in the models, which confirms water availability’s fundamental role in crop development. Although weather allows capturing the temporal behavior, they do not reflect the spatial variation on AGB. The mix of weather data and satellite information, especially SAR variables (VH, VV, and VH/VV), had a big effect, proving they are advantageous in areas with many clouds and making S1 a strong addition to optical sensors. It is likely that the results obtained with S1 are supported by its outstanding agreement with the soil dielectric constant, which at the same time is linked to soil moisture variation <span class="citation" data-cites="Wang2023">(<a href="#ref-Wang2023" role="doc-biblioref">Wang et al., 2023</a>)</span>. Despite having a higher spatial resolution, PS has a minor influence on the model response, as does S2, despite its wider spectral resolution.</p>
+<p>We tested the prediction at four lead times; however, the major drawback of this is the low variability of AGB at harvest, because we used only four sites. Nevertheless, the prediction showed a decrease in R² with increasing lead time, from 0.94 (1 month) to 0.86 (4 months). This decrease suggests the increasing difficulty of capturing interannual variability and extreme weather events in advance. However, the results are promising for practical implications for early decision-making. Soil moisture content (SM) was the most relevant variable for three of the four lead times, reaffirming its role as an early indicator of water stress and the well-known interconnection of soil-plant-atmosphere. Only one PS band was significant among the six main covariates. This finding could be attributed to the saturation of optical indices in advanced stages of crops or the high redundancy between accumulated VIs.</p>
+</section>
+<section id="application-for-wheat-yield-management" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="application-for-wheat-yield-management"><span class="header-section-number">4.2</span> Application for wheat yield management</h2>
+<p>The ability to predict AGB with a horizon of up to four months can facilitate irrigation, fertilization, and crop insurance decisions. It is also useful for government agencies in yield monitoring and food security. Incorporating multi-temporal forecasts would allow for the construction of warning systems for low-yield events before harvest. Further, the satisfactory results obtained from S1 suggest that the model is likely to have adequate performance in regions that face cloudy weather during the growing season.</p>
+<p>In contrast to other methodologies that rely on UAVs or hyperspectral data, this approach offers many advantages. One of the most important is the lower cost in equipment and human resources. The public data (S1, S2, and weather) makes the real-time application scalable, allowing for easy expansion to other agroclimatic regions. Thus, a decision support system for yield variation could potentially be implemented, considering minor investments.</p>
+</section>
+<section id="study-limitations" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="study-limitations"><span class="header-section-number">4.3</span> Study limitations</h2>
+<p>Although accurate, the data come from weather stations within or near the fields. In regional or replicable applications, performance would need to be evaluated using weather satellite data (e.g., CHIRPS, ERA5). Additionally, soil moisture (SM) was often the most important variable; however, it posed a challenge because many farmers do not measure it. Nevertheless, the advance in soil moisture estimation from satellites at farm scale would help to address this issue <span class="citation" data-cites="VanHateren2023 Zeyliger2022">(<a href="#ref-VanHateren2023" role="doc-biblioref">Van Hateren et al., 2023</a>; <a href="#ref-Zeyliger2022" role="doc-biblioref">Zeyliger et al., 2022</a>)</span>. Such approaches would facilitate generalization.</p>
+<p>Another limitation is that the study is based on three locations in central Chile with different wheat varieties (winter and spring). For a well-evaluated generalization, the models need to be fed with more data that allows them to be tested in independent sites and seasons. The future direction of the study should move toward expanding the AGB dataset. However, in Chile, reliable and publicly available information on wheat AGB at the farm scale is lacking.</p>
+<p>Other concerns include the speckle noise from Sentinel-1 and its dependence on the angle of incidence, which may make achieving consistent results across different landscapes or farming situations challenging. Finally, the use of cumulative VIs, although useful, could lead to redundancy among predictors. Future research could explore more aggressive variable selection.</p>
+</section>
+</section>
+<section id="conclusion" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Conclusion</h1>
+<p>In this study, we used 40 models in a combination of datasets called recipes (weather, S1, S2, and Planet Scope) and ML algorithms to estimate AGB in wheat within the growing season (stage 1), and the results were very similar to the ensemble model. The models that reached a higher performance were those based on decision trees, highlighting RF and XGBoost. The recipes that improve performance are those that combine S1 and weather predictors (rec3). The variables that stand out are GDD and indices derived from S1, followed by cumulative precipitation and soil moisture, and the indices derived from S2 have minor importance.</p>
+<p>The models for prediction of AGB at harvest (stage 2) are complex because there are only four sites in three locations, limiting AGB variability. Nevertheless, the model reaches an R² of 0.94 at a one-month lead time, which decreases to 0.84 at a four-month lead time. In this case, GDD did not show importance because, at harvest, there is low GDD variability. Thus, PP, SM, and indices derived from S1 were highlighted.</p>
+<p>Despite the prediction models raising some challenges for generalization, the results are promising. The combination of SAR S1 indices under cloudy environments with weather data will allow filling the gaps where the optical sensor fails. Future works should focus on generalization, for example, by replacing in situ weather data with satellite estimates and increasing the collection of in situ AGB data.</p>
+</section>
+<section id="acknowledgements" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Acknowledgements</h1>
+<p>Chile’s National Research and Development Agency (ANID) funded this study through the grants Fondecyt Iniciación N°11190360, FONDEF IdEA I+D ID21I10297, and the drought emergency FSEQ210022. Also, we thank the researcher Dr.&nbsp;Christian Alfaro from the Instituto de Investigaciones Agropecuarias (INIA) from Chile for his support and for providing access to the wheat fields. We also thank Professor Francisco Tapia from Universidad Mayor for his support and his knowledge about wheat development during this research. Finally, we thank Mr.&nbsp;Fabian Llanos, who coordinated the field trips that allowed us to collect the wheat biomass in situ data.</p>
+</section>
+<section id="data-and-code-availability" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Data and code availability</h1>
+<p>The data and code used for the analysis and modeling of above-ground biomass (AGB) in wheat fields is openly available at the following GitHub repository: <a href="https://github.com/FONDECYT-11190360/AGB_wheat_modelling" class="uri">https://github.com/FONDECYT-11190360/AGB_wheat_modelling</a>. This repository contains data, R scripts and documentation for data preprocessing, model development, variable importance analysis, and visualization.</p>
+</section>
+<section id="credit-authorship-contribution-statement" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> CRediT authorship contribution statement</h1>
+<p><strong>Francisco Zambrano</strong>: Project administration, Funding acquisition, Formal analysis, Conceptualization, Methodology, Writing - Original Draft, Writing - Review &amp; Editing, Visualization. <strong>Abel Herrera</strong>: Formal Analysis, Data curation, Visualization, Writing - Original Draft, Writing - Review &amp; Editing. <strong>Mauricio Molina-Rocco:</strong> Conceptualization, Writing - Original Draft, Writing - Review &amp; Editing.</p>
+</section>
+<section id="declaration-of-competing-interest" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Declaration of competing interest</h1>
+<p>The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.</p>
+</section>
+<section id="funding-sources" class="level1" data-number="10">
+<h1 data-number="10"><span class="header-section-number">10</span> Funding Sources</h1>
+<p>Chile’s National Research and Development Agency (ANID) funded this study through the grants Fondecyt de Iniciación N°11190360, FONDEF IdEA I+D ID21I10297, and the drought emergency FSEQ210022. We also like to thank the Instituto de Investigaciones Agropecuarias (INIA), the enterprises Ariztia, and Villa Baviera for giving access to the fields of wheat.</p>
+</section>
+<section id="declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> Declaration of generative AI and AI-assisted technologies in the writing process</h1>
+<p>During the preparation of this work, the authors used ChatGPT-3.5 and Microsoft Copilot to polish the writing of the manuscript. After using this service, the authors reviewed and edited the content as needed and took full responsibility for the publication.</p>
+</section>
+<section id="glossary" class="level1" data-number="12">
+<h1 data-number="12"><span class="header-section-number">12</span> Glossary</h1>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 60%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Abbreviation / Term</strong></th>
+<th><strong>Definition</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AGB</td>
+<td>Above-Ground Biomass. The total mass of living plant material (excluding roots) in a given area, typically measured in tons per hectare (t/ha). It is the primary dependent variable being modeled and forecasted.</td>
+</tr>
+<tr class="even">
+<td>ML</td>
+<td>Machine Learning. A subset of artificial intelligence that provides systems with the ability to automatically learn and improve from experience without being explicitly programmed.</td>
+</tr>
+<tr class="odd">
+<td>SAR</td>
+<td>Synthetic Aperture Radar. A type of radar used in satellite remote sensing (e.g., Sentinel-1) that transmits microwaves and records the backscattered signal, providing data related to surface roughness and moisture, independent of weather and light conditions.</td>
+</tr>
+<tr class="even">
+<td>S1</td>
+<td>Sentinel-1. The European Space Agency (ESA) satellite mission providing C-band Synthetic Aperture Radar (SAR) data. Used for monitoring land and ocean surface dynamics.</td>
+</tr>
+<tr class="odd">
+<td>S2</td>
+<td>Sentinel-2. The European Space Agency (ESA) satellite mission providing high-resolution optical imagery (13 spectral bands). Used for land cover classification and vegetation monitoring.</td>
+</tr>
+<tr class="even">
+<td>PlanetScope</td>
+<td>A constellation of Earth-observing satellites operated by Planet Labs. They provide daily, high-resolution optical imagery, complementing the temporal resolution of Sentinel missions.</td>
+</tr>
+<tr class="odd">
+<td>In-Situ Data</td>
+<td>Data collected directly at the field location, involving physical measurement. In this study, this primarily refers to collected weather variables and soil moisture measurements.</td>
+</tr>
+<tr class="even">
+<td>GDD</td>
+<td>Growing Degree Days. A measure of heat accumulation used to predict the rate of plant development between growing stages (phenological stages). It is calculated based on daily maximum and minimum air temperatures.</td>
+</tr>
+<tr class="odd">
+<td>XGBoost</td>
+<td>eXtreme Gradient Boosting. A highly optimized and efficient open-source implementation of the gradient boosting framework, popular for its speed and performance in structured data prediction.</td>
+</tr>
+<tr class="even">
+<td>GLMnet</td>
+<td>Generalized Linear Model with regularization. A model that applies regularized regression (L1/L2 penalties) to linear models, often used for variable selection and preventing overfitting.</td>
+</tr>
+<tr class="odd">
+<td>KNN</td>
+<td>k-Nearest Neighbors. A non-parametric supervised learning method used for classification and regression. The output is based on the classification or mean value of its nearest neighbors.</td>
+</tr>
+<tr class="even">
+<td>bagMLP</td>
+<td>Bagged Multilayer Perceptron. An ensemble learning technique where multiple Multilayer Perceptron (neural network) models are trained on different subsets of the data (bagging), and their predictions are averaged.</td>
+</tr>
+<tr class="odd">
+<td>Cross-Validation</td>
+<td>A statistical technique used to estimate how accurately a predictive model will perform in practice. It involves partitioning the data into subsets for training and testing.</td>
+</tr>
+<tr class="even">
+<td>R²</td>
+<td>Coefficient of Determination. A statistical measure representing the proportion of the variance for a dependent variable that is explained by the independent variables in a regression model. A value closer to 1 indicates a better fit.</td>
+</tr>
+<tr class="odd">
+<td>RMSE</td>
+<td>Root Mean Square Error. A measure of the average magnitude of the errors. It tells you how concentrated the data is around the line of best fit. It has the same units as the dependent variable (t/ha).</td>
+</tr>
+<tr class="even">
+<td>DALEX</td>
+<td>moDel Agnostic Language for Exploration and eXplanation. A specific framework or library used in this research to provide model-agnostic tools for explaining the behavior of complex ML models (contributing to XAI).</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-AtkinsonAmorim2022" class="csl-entry" role="listitem">
+Atkinson Amorim, J.G., Schreiber, L.V., De Souza, M.R.Q., Negreiros, M., Susin, A., Bredemeier, C., Trentin, C., Vian, A.L., De Oliveira Andrades-Filho, C., Doering, D., Parraga, A., 2022. Biomass estimation of spring wheat with machine learning methods using UAV-based multispectral imaging. Int. J. Remote Sens. 43, 4758–4773. <a href="https://doi.org/10.1080/01431161.2022.2107882">https://doi.org/10.1080/01431161.2022.2107882</a>
+</div>
+<div id="ref-Bahar2020" class="csl-entry" role="listitem">
+Bahar, N.H.A., Lo, M., Sanjaya, M., Van Vianen, J., Alexander, P., Ickowitz, A., Sunderland, T., 2020. Meeting the food security challenge for nine billion people in 2050: What impact on forests? Glob. Environ. Change 62, 102056. <a href="https://doi.org/10.1016/j.gloenvcha.2020.102056">https://doi.org/10.1016/j.gloenvcha.2020.102056</a>
+</div>
+<div id="ref-Bates2021" class="csl-entry" role="listitem">
+Bates, J.S., Montzka, C., Schmidt, M., Jonard, F., 2021. Estimating canopy density parameters time-series for winter wheat using UAS mounted LiDAR. Remote Sens. 13, 710. <a href="https://doi.org/10.3390/rs13040710">https://doi.org/10.3390/rs13040710</a>
+</div>
+<div id="ref-Beck2023" class="csl-entry" role="listitem">
+Beck, H.E., McVicar, T.R., Vergopolan, N., Berg, A., Lutsko, N.J., Dufour, A., Zeng, Z., Jiang, X., Dijk, A.I.J.M. van, Miralles, D.G., 2023. High-resolution (1 km) köppen-geiger maps for 1901–2099 based on constrained CMIP6 projections. Sci. Data 10. <a href="https://doi.org/10.1038/s41597-023-02549-6">https://doi.org/10.1038/s41597-023-02549-6</a>
+</div>
+<div id="ref-Biecek2018" class="csl-entry" role="listitem">
+Biecek, P., 2018. DALEX: Explainers for complex predictive models in r. J. Mach. Learn. Res. 19, 1–5.
+</div>
+<div id="ref-Boettiger2023" class="csl-entry" role="listitem">
+Boettiger, C., López, L., Panda, Y., Lind, B., 2023. Earthdatalogin: NASA "EarthData" login utilities.
+</div>
+<div id="ref-Breiman1996a" class="csl-entry" role="listitem">
+Breiman, L., 1996a. Bagging predictors. Mach. Learn. 24, 123–140. <a href="https://doi.org/10.1007/bf00058655">https://doi.org/10.1007/bf00058655</a>
+</div>
+<div id="ref-Breiman1996b" class="csl-entry" role="listitem">
+Breiman, L., 1996b. Bagging predictors. Mach. Learn. 24, 123–140. <a href="https://doi.org/10.1007/bf00058655">https://doi.org/10.1007/bf00058655</a>
+</div>
+<div id="ref-Brovkina2017" class="csl-entry" role="listitem">
+Brovkina, O., Novotny, J., Cienciala, E., Zemek, F., Russ, R., 2017. Mapping forest aboveground biomass using airborne hyperspectral and LiDAR data in the mountainous conditions of central europe. Ecol. Eng. 100, 219–230. <a href="https://doi.org/10.1016/j.ecoleng.2016.12.004">https://doi.org/10.1016/j.ecoleng.2016.12.004</a>
+</div>
+<div id="ref-ChaconC2019" class="csl-entry" role="listitem">
+Chacón C., G., 2019. Descripción y usos de la red de agrometeorología INIA. Instituto de Investigaciones Agropecuarias, Santiago, Chile.
+</div>
+<div id="ref-Chao2019" class="csl-entry" role="listitem">
+Chao, Z., Liu, N., Zhang, P., Ying, T., Song, K., 2019. Estimation methods developing with remote sensing information for energy crop biomass: A comparative review. Biomass Bioenergy 122, 414–425. <a href="https://doi.org/10.1016/j.biombioe.2019.02.002">https://doi.org/10.1016/j.biombioe.2019.02.002</a>
+</div>
+<div id="ref-Chave2014" class="csl-entry" role="listitem">
+Chave, J., Réjou‐Méchain, M., Búrquez, A., Chidumayo, E., Colgan, M.S., Delitti, W.B.C., Duque, A., Eid, T., Fearnside, P.M., Goodman, R.C., Henry, M., Martínez‐Yrízar, A., Mugasha, W.A., Muller‐Landau, H.C., Mencuccini, M., Nelson, B.W., Ngomanda, A., Nogueira, E.M., Ortiz‐Malavassi, E., Pélissier, R., Ploton, P., Ryan, C.M., Saldarriaga, J.G., Vieilledent, G., 2014. Improved allometric models to estimate the aboveground biomass of tropical trees. Glob. Change Biol. 20, 3177–3190. <a href="https://doi.org/10.1111/gcb.12629">https://doi.org/10.1111/gcb.12629</a>
+</div>
+<div id="ref-Chen2025" class="csl-entry" role="listitem">
+Chen, M., 2025. Food security or climate action. Nat. Clim. Change 15, 354–355. <a href="https://doi.org/10.1038/s41558-025-02297-y">https://doi.org/10.1038/s41558-025-02297-y</a>
+</div>
+<div id="ref-Chen2016" class="csl-entry" role="listitem">
+Chen, T., Guestrin, C., 2016. XGBoost: A scalable tree boosting system, in: Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining. pp. 785–794. <a href="https://doi.org/10.1145/2939672.2939785">https://doi.org/10.1145/2939672.2939785</a>
+</div>
+<div id="ref-Clevers2013" class="csl-entry" role="listitem">
+Clevers, J.G.P.W., Gitelson, A.A., 2013. Remote estimation of crop and grass chlorophyll and nitrogen content using red-edge bands on sentinel-2 and -3. Int. J. Appl. Earth Obs. Geoinformation 23, 344–351. <a href="https://doi.org/10.1016/j.jag.2012.10.008">https://doi.org/10.1016/j.jag.2012.10.008</a>
+</div>
+<div id="ref-Daughtry2000" class="csl-entry" role="listitem">
+Daughtry, C., 2000. Estimating corn leaf chlorophyll concentration from leaf and canopy reflectance. Remote Sens. Environ. 74, 229–239. <a href="https://doi.org/10.1016/s0034-4257(00)00113-9">https://doi.org/10.1016/s0034-4257(00)00113-9</a>
+</div>
+<div id="ref-David2022" class="csl-entry" role="listitem">
+David, R.M., Rosser, N.J., Donoghue, D.N.M., 2022. Improving above ground biomass estimates of southern africa dryland forests by combining sentinel-1 SAR and sentinel-2 multispectral imagery. Remote Sens. Environ. 282, 113232. <a href="https://doi.org/10.1016/j.rse.2022.113232">https://doi.org/10.1016/j.rse.2022.113232</a>
+</div>
+<div id="ref-DelPozo1987" class="csl-entry" role="listitem">
+Del Pozo, A.H., García-Huidobro, J., Novoa, R., Villaseca, S., 1987. Relationship of base temperature to development of spring wheat. Exp. Agric. 23, 21–30. <a href="https://doi.org/10.1017/S0014479700001095">https://doi.org/10.1017/S0014479700001095</a>
+</div>
+<div id="ref-DelPozo2023" class="csl-entry" role="listitem">
+Del Pozo, A., Méndez-Espinoza, A.M., Garriga, M., Estrada, F., Castillo, D., Matus, I., Lobos, G.A., 2023. Phenotypic variation in leaf photosynthetic traits, leaf area index, and carbon discrimination of field-grown wheat genotypes and their relationship with yield performance in mediterranean environments. Planta 258. <a href="https://doi.org/10.1007/s00425-023-04163-7">https://doi.org/10.1007/s00425-023-04163-7</a>
+</div>
+<div id="ref-Dietz2021" class="csl-entry" role="listitem">
+Dietz, K.‐J., Zörb, C., Geilfus, C.‐M., 2021. Drought and crop yield. Plant Biol. 23, 881–893. <a href="https://doi.org/10.1111/plb.13304">https://doi.org/10.1111/plb.13304</a>
+</div>
+<div id="ref-Drusch2012" class="csl-entry" role="listitem">
+Drusch, M., Del Bello, U., Carlier, S., Colin, O., Fernandez, V., Gascon, F., Hoersch, B., Isola, C., Laberinti, P., Martimort, P., Meygret, A., Spoto, F., Sy, O., Marchese, F., Bargellini, P., 2012. Sentinel-2: ESA’s optical high-resolution mission for GMES operational services. Remote Sens. Environ. 120, 25–36. <a href="https://doi.org/10.1016/j.rse.2011.11.026">https://doi.org/10.1016/j.rse.2011.11.026</a>
+</div>
+<div id="ref-Fan2025" class="csl-entry" role="listitem">
+Fan, D., Zhao, T., Jiang, X., García-García, A., Schmidt, T., Samaniego, L., Attinger, S., Wu, H., Jiang, Y., Shi, J., Fan, L., Tang, B.-H., Wagner, W., Dorigo, W., Gruber, A., Mattia, F., Balenzano, A., Brocca, L., Jagdhuber, T., Wigneron, J.-P., Montzka, C., Peng, J., 2025. A sentinel-1 SAR-based global 1-km resolution soil moisture data product: Algorithm and preliminary assessment. Remote Sens. Environ. 318, 114579. <a href="https://doi.org/10.1016/j.rse.2024.114579">https://doi.org/10.1016/j.rse.2024.114579</a>
+</div>
+<div id="ref-FAO2025" class="csl-entry" role="listitem">
+FAO, 2025. Cereal supply and demand brief, july 2025 update.
+</div>
+<div id="ref-FAO2014" class="csl-entry" role="listitem">
+FAO, 2014. World reference base for soil resources 2014: International soil classification system for naming soils and creating legends for soil maps. Food; Agriculture Organization of the United Nations, Rome.
+</div>
+<div id="ref-Fragkos2024" class="csl-entry" role="listitem">
+Fragkos, A., Loukatos, D., Kargas, G., Arvanitis, K.G., 2024. Response of the TEROS 12 soil moisture sensor under different soils and variable electrical conductivity. Sensors 24, 2206. <a href="https://doi.org/10.3390/s24072206">https://doi.org/10.3390/s24072206</a>
+</div>
+<div id="ref-Gardner1980" class="csl-entry" role="listitem">
+Gardner, B., Durost, D., Lin, W., Lu, Y.-C., Nelson, G., Whittlesey, N., 1980. Measurement of US agricultural productivity: A review of current statistics and proposals for change.
+</div>
+<div id="ref-Garrido2013" class="csl-entry" role="listitem">
+Garrido, M., Román, L., Silva, P., Castellaro, G., García De Cortázar, V., Acevedo, E., 2013. Characterization of genetic coefficients of durum wheat (triticum turgidum l. Ssp. Durum) llareta-INIA and corcolén-INIA. Chil. J. Agric. Res. 73, 02–03. <a href="https://doi.org/10.4067/s0718-58392013000200002">https://doi.org/10.4067/s0718-58392013000200002</a>
+</div>
+<div id="ref-Gitelson1996" class="csl-entry" role="listitem">
+Gitelson, A.A., Kaufman, Y.J., Merzlyak, M.N., 1996. Use of a green channel in remote sensing of global vegetation from EOS-MODIS. Remote Sens. Environ. 58, 289–298. <a href="https://doi.org/10.1016/S0034-4257(96)00072-7">https://doi.org/10.1016/S0034-4257(96)00072-7</a>
+</div>
+<div id="ref-Gower1971" class="csl-entry" role="listitem">
+Gower, J.C., 1971. A general coefficient of similarity and some of its properties. Biometrics 27, 857. <a href="https://doi.org/10.2307/2528823">https://doi.org/10.2307/2528823</a>
+</div>
+<div id="ref-Haboudane2002" class="csl-entry" role="listitem">
+Haboudane, D., Miller, J.R., Tremblay, N., Zarco-Tejada, P.J., Dextraze, L., 2002. Integrated narrow-band vegetation indices for prediction of crop chlorophyll content for application to precision agriculture. Remote Sens. Environ. 81, 416–426. <a href="https://doi.org/10.1016/s0034-4257(02)00018-4">https://doi.org/10.1016/s0034-4257(02)00018-4</a>
+</div>
+<div id="ref-Hastie2015" class="csl-entry" role="listitem">
+Hastie, T., Tibshirani, R., Wainwright, M., 2015. Statistical learning with sparsity: The lasso and generalizations. Chapman; Hall/CRC. <a href="https://doi.org/10.1201/b18401">https://doi.org/10.1201/b18401</a>
+</div>
+<div id="ref-He2018" class="csl-entry" role="listitem">
+He, M., Kimball, J., Maneta, M., Maxwell, B., Moreno, A., Beguería, S., Wu, X., He, M., Kimball, J.S., Maneta, M.P., Maxwell, B.D., Moreno, A., Beguería, S., Wu, X., 2018. Regional crop gross primary productivity and yield estimation using fused landsat-MODIS data. Remote Sens. 10, 372. <a href="https://doi.org/10.3390/rs10030372">https://doi.org/10.3390/rs10030372</a>
+</div>
+<div id="ref-Hechenbichler2004" class="csl-entry" role="listitem">
+Hechenbichler, K., Schliep, K., 2004. Weighted k-nearest-neighbor techniques and ordinal classification. <a href="https://doi.org/10.5282/UBM/EPUB.1769">https://doi.org/10.5282/UBM/EPUB.1769</a>
+</div>
+<div id="ref-Herrmann2011" class="csl-entry" role="listitem">
+Herrmann, I., Pimstein, A., Karnieli, A., Cohen, Y., Alchanatis, V., Bonfil, D.J., 2011. LAI assessment of wheat and potato crops by VENμS and sentinel-2 bands. Remote Sens. Environ. 115, 2141–2151. <a href="https://doi.org/10.1016/j.rse.2011.04.018">https://doi.org/10.1016/j.rse.2011.04.018</a>
+</div>
+<div id="ref-Hijmans2023" class="csl-entry" role="listitem">
+Hijmans, R.J., 2023. Terra: Spatial data analysis.
+</div>
+<div id="ref-Ho1995" class="csl-entry" role="listitem">
+Ho, T.K., 1995. Random decision forests, in: Proceedings of 3rd International Conference on Document Analysis and Recognition. pp. 278–282.
+</div>
+<div id="ref-Hu2024" class="csl-entry" role="listitem">
+Hu, X., Li, L., Huang, J., Zeng, Y., Zhang, S., Su, Y., Hong, Y., Hong, Z., 2024. Radar vegetation indices for monitoring surface vegetation: Developments, challenges, and trends. Sci. Total Environ. 945, 173974. <a href="https://doi.org/10.1016/j.scitotenv.2024.173974">https://doi.org/10.1016/j.scitotenv.2024.173974</a>
+</div>
+<div id="ref-Jiang2008" class="csl-entry" role="listitem">
+Jiang, Z., Huete, A., Didan, K., Miura, T., 2008. Development of a two-band enhanced vegetation index without a blue band. Remote Sens. Environ. 112, 3833–3845. <a href="https://doi.org/10.1016/j.rse.2008.06.006">https://doi.org/10.1016/j.rse.2008.06.006</a>
+</div>
+<div id="ref-Jin2020" class="csl-entry" role="listitem">
+Jin, X., Li, Z., Feng, H., Ren, Z., Li, S., 2020. Deep neural network algorithm for estimating maize biomass based on simulated sentinel 2A vegetation indices and leaf area index. Crop J. 8, 87–97. <a href="https://doi.org/10.1016/j.cj.2019.06.005">https://doi.org/10.1016/j.cj.2019.06.005</a>
+</div>
+<div id="ref-Kuhn2020" class="csl-entry" role="listitem">
+Kuhn, M., Wickham, H., 2020. Tidymodels: A collection of packages for modeling and machine learning using tidyverse principles.
+</div>
+<div id="ref-Li2024" class="csl-entry" role="listitem">
+Li, H., Li, F., Xiao, J., Chen, J., Lin, K., Bao, G., Liu, A., Wei, G., 2024. A machine learning scheme for estimating fine-resolution grassland aboveground biomass over china with sentinel-1/2 satellite images. Remote Sens. Environ. 311, 114317. <a href="https://doi.org/10.1016/j.rse.2024.114317">https://doi.org/10.1016/j.rse.2024.114317</a>
+</div>
+<div id="ref-Lischeid2022" class="csl-entry" role="listitem">
+Lischeid, G., Webber, H., Sommer, M., Nendel, C., Ewert, F., 2022. Machine learning in crop yield modelling: A powerful tool, but no substitute for science. Agric. For. Meteorol. 312, 108698. <a href="https://doi.org/10.1016/j.agrformet.2021.108698">https://doi.org/10.1016/j.agrformet.2021.108698</a>
+</div>
+<div id="ref-Liu2025" class="csl-entry" role="listitem">
+Liu, L., Chen, X., 2025. Estimation of the impact of climate warming on spring wheat (triticum aestivum l.) phenology from observations and modelling in the arid region of northwest china. J. Agron. Crop Sci. 211. <a href="https://doi.org/10.1111/jac.70011">https://doi.org/10.1111/jac.70011</a>
+</div>
+<div id="ref-Liu2024" class="csl-entry" role="listitem">
+Liu, T., Yang, T., Zhu, S., Mou, N., Zhang, W., Wu, W., Zhao, Y., Yao, Z., Sun, J., Chen, C., Sun, C., Zhang, Z., 2024. Estimation of wheat biomass based on phenological identification and spectral response. Comput. Electron. Agric. 222, 109076. <a href="https://doi.org/10.1016/j.compag.2024.109076">https://doi.org/10.1016/j.compag.2024.109076</a>
+</div>
+<div id="ref-Lobell2010" class="csl-entry" role="listitem">
+Lobell, D.B., Burke, M.B., 2010. On the use of statistical models to predict crop yield responses to climate change. Agric. For. Meteorol. 150, 1443–1452. <a href="https://doi.org/10.1016/j.agrformet.2010.07.008">https://doi.org/10.1016/j.agrformet.2010.07.008</a>
+</div>
+<div id="ref-Lopes1990" class="csl-entry" role="listitem">
+Lopes, A., Touzi, R., Nezry, E., 1990. Adaptive speckle filters and scene heterogeneity. IEEE Trans. Geosci. Remote Sens. 28, 992–1000. <a href="https://doi.org/10.1109/36.62623">https://doi.org/10.1109/36.62623</a>
+</div>
+<div id="ref-Luo2017" class="csl-entry" role="listitem">
+Luo, S., Wang, C., Xi, X., Pan, F., Peng, D., Zou, J., Nie, S., Qin, H., 2017. Fusion of airborne LiDAR data and hyperspectral imagery for aboveground and belowground forest biomass estimation. Ecol. Indic. 73, 378–387. <a href="https://doi.org/10.1016/j.ecolind.2016.10.001">https://doi.org/10.1016/j.ecolind.2016.10.001</a>
+</div>
+<div id="ref-Maghsoudi2012" class="csl-entry" role="listitem">
+Maghsoudi, Y., Collins, M.J., Leckie, D., 2012. Speckle reduction for the forest mapping analysis of multi-temporal radarsat-1 images. Int. J. Remote Sens. 33, 1349–1359. <a href="https://doi.org/10.1080/01431161.2011.568530">https://doi.org/10.1080/01431161.2011.568530</a>
+</div>
+<div id="ref-Magney2017" class="csl-entry" role="listitem">
+Magney, T.S., Eitel, J.U.H., Vierling, L.A., 2017. Mapping wheat nitrogen uptake from RapidEye vegetation indices. Precis. Agric. 18, 429–451. <a href="https://doi.org/10.1007/s11119-016-9463-8">https://doi.org/10.1007/s11119-016-9463-8</a>
+</div>
+<div id="ref-Marshall2022" class="csl-entry" role="listitem">
+Marshall, M., Belgiu, M., Boschetti, M., Pepe, M., Stein, A., Nelson, A., 2022. Field-level crop yield estimation with PRISMA and sentinel-2. ISPRS J. Photogramm. Remote Sens. 187, 191–210. <a href="https://doi.org/10.1016/j.isprsjprs.2022.03.008">https://doi.org/10.1016/j.isprsjprs.2022.03.008</a>
+</div>
+<div id="ref-Mishra2015" class="csl-entry" role="listitem">
+Mishra, A.K., Ines, A.V.M., Das, N.N., Prakash Khedun, C., Singh, V.P., Sivakumar, B., Hansen, J.W., 2015. Anatomy of a local-scale drought: Application of assimilated remote sensing products, crop model, and statistical methods to an agricultural drought study. J. Hydrol. 526, 15–29. <a href="https://doi.org/10.1016/j.jhydrol.2014.10.038">https://doi.org/10.1016/j.jhydrol.2014.10.038</a>
+</div>
+<div id="ref-Moran1997" class="csl-entry" role="listitem">
+Moran, M.S., Inoue, Y., Barnes, E.M., 1997. Opportunities and limitations for image-based remote sensing in precision crop management. Remote Sens. Environ. 61, 319–346. <a href="https://doi.org/10.1016/S0034-4257(97)00045-X">https://doi.org/10.1016/S0034-4257(97)00045-X</a>
+</div>
+<div id="ref-Moritz2017" class="csl-entry" role="listitem">
+Moritz, S., Bartz-Beielstein, T., 2017. imputeTS: Time series missing value imputation in r. R J. 9, 207–218. <a href="https://doi.org/10.32614/RJ-2017-009">https://doi.org/10.32614/RJ-2017-009</a>
+</div>
+<div id="ref-Naumann2021" class="csl-entry" role="listitem">
+Naumann, G., Cammalleri, C., Mentaschi, L., Feyen, L., 2021. Increased economic drought impacts in europe with anthropogenic warming. Nat. Clim. Change 11, 485–491. <a href="https://doi.org/10.1038/s41558-021-01044-3">https://doi.org/10.1038/s41558-021-01044-3</a>
+</div>
+<div id="ref-Nuthammachot2022" class="csl-entry" role="listitem">
+Nuthammachot, N., Askar, A., Stratoulias, D., Wicaksono, P., 2022. Combined use of sentinel-1 and sentinel-2 data for improving above-ground biomass estimation. Geocarto Int. 37, 366–376. <a href="https://doi.org/10.1080/10106049.2020.1726507">https://doi.org/10.1080/10106049.2020.1726507</a>
+</div>
+<div id="ref-Pebesma2018" class="csl-entry" role="listitem">
+Pebesma, E., 2018. Simple features for r: Standardized support for spatial vector data. R J. 10, 439–446. <a href="https://doi.org/10.32614/RJ-2018-009">https://doi.org/10.32614/RJ-2018-009</a>
+</div>
+<div id="ref-Peng2023" class="csl-entry" role="listitem">
+Peng, J., Zeiner, N., Parsons, D., Féret, J.-B., Söderström, M., Morel, J., 2023. Forage biomass estimation using sentinel-2 imagery at high latitudes. Remote Sens. 15, 2350. <a href="https://doi.org/10.3390/rs15092350">https://doi.org/10.3390/rs15092350</a>
+</div>
+<div id="ref-Penuelas1994" class="csl-entry" role="listitem">
+Peñuelas, J., Gamon, J.A., Fredeen, A.L., Merino, J., Field, C.B., 1994. Reflectance indices associated with physiological changes in nitrogen- and water-limited sunflower leaves. Remote Sens. Environ. 48, 135–146. <a href="https://doi.org/10.1016/0034-4257(94)90136-8">https://doi.org/10.1016/0034-4257(94)90136-8</a>
+</div>
+<div id="ref-Pequeno2024" class="csl-entry" role="listitem">
+Pequeno, D.N.L., Ferreira, T.B., Fernandes, J.M.C., Singh, P.K., Pavan, W., Sonder, K., Robertson, R., Krupnik, T.J., Erenstein, O., Asseng, S., 2024. Production vulnerability to wheat blast disease under climate change. Nat. Clim. Change 14, 178–183. <a href="https://doi.org/10.1038/s41558-023-01902-2">https://doi.org/10.1038/s41558-023-01902-2</a>
+</div>
+<div id="ref-PeroniVenancio2020" class="csl-entry" role="listitem">
+Peroni Venancio, L., Chartuni Mantovani, E., Do Amaral, C.H., Usher Neale, C.M., Zution Gonçalves, I., Filgueiras, R., Coelho Eugenio, F., 2020. Potential of using spectral vegetation indices for corn green biomass estimation based on their relationship with the photosynthetic vegetation sub-pixel fraction. Agric. Water Manag. 236, 106155. <a href="https://doi.org/10.1016/j.agwat.2020.106155">https://doi.org/10.1016/j.agwat.2020.106155</a>
+</div>
+<div id="ref-RCoreTeam2025" class="csl-entry" role="listitem">
+R Core Team, 2025. R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+</div>
+<div id="ref-Raper2015" class="csl-entry" role="listitem">
+Raper, T.B., Varco, J.J., 2015. Canopy-scale wavelength and vegetative index sensitivities to cotton growth parameters and nitrogen status. Precis. Agric. 16, 62–76. <a href="https://doi.org/10.1007/s11119-014-9383-4">https://doi.org/10.1007/s11119-014-9383-4</a>
+</div>
+<div id="ref-Rondeaux1996" class="csl-entry" role="listitem">
+Rondeaux, G., Steven, M., Baret, F., 1996. Optimization of soil-adjusted vegetation indices. Remote Sens. Environ. 55, 95–107. <a href="https://doi.org/10.1016/0034-4257(95)00186-7">https://doi.org/10.1016/0034-4257(95)00186-7</a>
+</div>
+<div id="ref-Rouse1974" class="csl-entry" role="listitem">
+Rouse, J.W., Hass, R.H., Schell, J.A., Deering, D.W., Harlan, J.C., 1974. Monitoring the vernal advancement and retrogradation (green wave effect) of natural vegetation. Texas A&amp;M University.
+</div>
+<div id="ref-Roy2021" class="csl-entry" role="listitem">
+Roy, D.P., Huang, H., Houborg, R., Martins, V.S., 2021. A global analysis of the temporal availability of PlanetScope high spatial resolution multi-spectral imagery. Remote Sens. Environ. 264, 112586. <a href="https://doi.org/10.1016/j.rse.2021.112586">https://doi.org/10.1016/j.rse.2021.112586</a>
+</div>
+<div id="ref-Santini2022" class="csl-entry" role="listitem">
+Santini, M., Noce, S., Antonelli, M., Caporaso, L., 2022. Complex drought patterns robustly explain global yield loss for major crops. Sci. Rep. 12, 5792. <a href="https://doi.org/10.1038/s41598-022-09611-0">https://doi.org/10.1038/s41598-022-09611-0</a>
+</div>
+<div id="ref-Segarra2022" class="csl-entry" role="listitem">
+Segarra, J., Araus, J.L., Kefauver, S.C., 2022. Farming and earth observation: Sentinel-2 data to estimate within-field wheat grain yield. Int. J. Appl. Earth Obs. Geoinformation 107, 102697. <a href="https://doi.org/10.1016/j.jag.2022.102697">https://doi.org/10.1016/j.jag.2022.102697</a>
+</div>
+<div id="ref-Shen2023" class="csl-entry" role="listitem">
+Shen, Y., Zhang, X., Yang, Z., Ye, Y., Wang, J., Gao, S., Liu, Y., Wang, W., Tran, K.H., Ju, J., 2023. Developing an operational algorithm for near-real-time monitoring of crop progress at field scales by fusing harmonized landsat and sentinel-2 time series with geostationary satellite observations. Remote Sens. Environ. 296, 113729. <a href="https://doi.org/10.1016/j.rse.2023.113729">https://doi.org/10.1016/j.rse.2023.113729</a>
+</div>
+<div id="ref-Tennekes2018" class="csl-entry" role="listitem">
+Tennekes, M., 2018. Tmap: Thematic maps in r. J. Stat. Softw. 84, 1–39. <a href="https://doi.org/10.18637/jss.v084.i06">https://doi.org/10.18637/jss.v084.i06</a>
+</div>
+<div id="ref-Torres2012" class="csl-entry" role="listitem">
+Torres, R., Snoeij, P., Geudtner, D., Bibby, D., Davidson, M., Attema, E., Potin, P., Rommen, B., Floury, N., Brown, M., Traver, I.N., Deghaye, P., Duesmann, B., Rosich, B., Miranda, N., Bruno, C., L’Abbate, M., Croci, R., Pietropaolo, A., Huchler, M., Rostan, F., 2012. GMES sentinel-1 mission. Remote Sens. Environ. 120, 9–24. <a href="https://doi.org/10.1016/j.rse.2011.05.028">https://doi.org/10.1016/j.rse.2011.05.028</a>
+</div>
+<div id="ref-Tucker1979" class="csl-entry" role="listitem">
+Tucker, C.J., 1979. Red and photographic infrared linear combinations for monitoring vegetation. Remote Sens. Environ. 8, 127–150. <a href="https://doi.org/10.1016/0034-4257(79)90013-0">https://doi.org/10.1016/0034-4257(79)90013-0</a>
+</div>
+<div id="ref-UN2024" class="csl-entry" role="listitem">
+UN, 2024. World population prospects 2024: Summary of results (No. UN DESA/POP/2024/TR/NO. 9). United Nations, New York.
+</div>
+<div id="ref-Uribeetxebarria2023" class="csl-entry" role="listitem">
+Uribeetxebarria, A., Castellón, A., Aizpurua, A., 2023. Optimizing wheat yield prediction integrating data from sentinel-1 and sentinel-2 with CatBoost algorithm. Remote Sens. 15, 1640. <a href="https://doi.org/10.3390/rs15061640">https://doi.org/10.3390/rs15061640</a>
+</div>
+<div id="ref-VanHateren2023" class="csl-entry" role="listitem">
+Van Hateren, T.C., Chini, M., Matgen, P., Pulvirenti, L., Pierdicca, N., Teuling, A.J., 2023. On the potential of sentinel-1 for sub-field scale soil moisture monitoring. Int. J. Appl. Earth Obs. Geoinformation 120, 103342. <a href="https://doi.org/10.1016/j.jag.2023.103342">https://doi.org/10.1016/j.jag.2023.103342</a>
+</div>
+<div id="ref-Vincini2008" class="csl-entry" role="listitem">
+Vincini, M., Frazzi, E., D’Alessio, P., 2008. A broad-band leaf chlorophyll vegetation index at the canopy scale. Precis. Agric. 9, 303–319. <a href="https://doi.org/10.1007/s11119-008-9075-z">https://doi.org/10.1007/s11119-008-9075-z</a>
+</div>
+<div id="ref-Wang2016" class="csl-entry" role="listitem">
+Wang, C., Nie, S., Xi, X., Luo, S., Sun, X., 2016. Estimating the biomass of maize with hyperspectral and LiDAR data. Remote Sens. 9, 11. <a href="https://doi.org/10.3390/rs9010011">https://doi.org/10.3390/rs9010011</a>
+</div>
+<div id="ref-Wang2022" class="csl-entry" role="listitem">
+Wang, F., Yang, M., Ma, L., Zhang, T., Qin, W., Li, W., Zhang, Y., Sun, Z., Wang, Z., Li, F., Yu, K., 2022. Estimation of above-ground biomass of winter wheat based on consumer-grade multi-spectral UAV. Remote Sens. 14, 1251. <a href="https://doi.org/10.3390/rs14051251">https://doi.org/10.3390/rs14051251</a>
+</div>
+<div id="ref-Wang2023" class="csl-entry" role="listitem">
+Wang, H., Cheng, M., Liao, Z., Guo, J., Zhang, F., Fan, J., Feng, H., Yang, Q., Wu, L., Wang, X., 2023. Performance evaluation of AquaCrop and DSSAT-SUBSTOR-potato models in simulating potato growth, yield and water productivity under various drip fertigation regimes. Agric. Water Manag. 276, 108076. <a href="https://doi.org/10.1016/j.agwat.2022.108076">https://doi.org/10.1016/j.agwat.2022.108076</a>
+</div>
+<div id="ref-Wickham2019" class="csl-entry" role="listitem">
+Wickham, H., Averick, M., Bryan, J., Chang, W., McGowan, L.D., François, R., Grolemund, G., Hayes, A., Henry, L., Hester, J., Kuhn, M., Pedersen, T.L., Miller, E., Bache, S.M., Müller, K., Ooms, J., Robinson, D., Seidel, D.P., Spinu, V., Takahashi, K., Vaughan, D., Wilke, C., Woo, K., Yutani, H., 2019. Welcome to the tidyverse. J. Open Source Softw. 4, 1686. <a href="https://doi.org/10.21105/joss.01686">https://doi.org/10.21105/joss.01686</a>
+</div>
+<div id="ref-Wolpert1992" class="csl-entry" role="listitem">
+Wolpert, D.H., 1992. Stacked generalization. Neural Netw. 5, 241–259. <a href="https://doi.org/10.1016/s0893-6080(05)80023-1">https://doi.org/10.1016/s0893-6080(05)80023-1</a>
+</div>
+<div id="ref-Wu2008" class="csl-entry" role="listitem">
+Wu, C., Niu, Z., Tang, Q., Huang, W., 2008. Estimating chlorophyll content from hyperspectral vegetation indices: Modeling and validation. Agric. For. Meteorol. 148, 1230–1241. <a href="https://doi.org/10.1016/j.agrformet.2008.03.005">https://doi.org/10.1016/j.agrformet.2008.03.005</a>
+</div>
+<div id="ref-Yue2021" class="csl-entry" role="listitem">
+Yue, J., Zhou, C., Guo, W., Feng, H., Xu, K., 2021. Estimation of winter-wheat above-ground biomass using the wavelet analysis of unmanned aerial vehicle-based digital images and hyperspectral crop canopy images. Int. J. Remote Sens. 42, 1602–1622. <a href="https://doi.org/10.1080/01431161.2020.1826057">https://doi.org/10.1080/01431161.2020.1826057</a>
+</div>
+<div id="ref-Zadoks1974" class="csl-entry" role="listitem">
+Zadoks, J.C., Chang, T.T., Konzak, C.F., 1974. A decimal code for the growth stages of cereals. Weed Res. 14, 415–421. <a href="https://doi.org/10.1111/j.1365-3180.1974.tb01084.x">https://doi.org/10.1111/j.1365-3180.1974.tb01084.x</a>
+</div>
+<div id="ref-Zambrano2021" class="csl-entry" role="listitem">
+Zambrano, F., 2021. Four decades of satellite data for agricultural drought monitoring throughout the growing season in central chile, in: Drought. CRC Press.
+</div>
+<div id="ref-Zambrano2016" class="csl-entry" role="listitem">
+Zambrano, F., Lillo-Saavedra, M., Verbist, K., Lagos, O., 2016. Sixteen years of agricultural drought assessment of the biobío region in chile using a 250 m resolution vegetation condition index (VCI). Remote Sens. 8, 1–20. <a href="https://doi.org/10.3390/rs8060530">https://doi.org/10.3390/rs8060530</a>
+</div>
+<div id="ref-Zambrano2018" class="csl-entry" role="listitem">
+Zambrano, F., Vrieling, A., Nelson, A., Meroni, M., Tadesse, T., 2018. Prediction of drought-induced reduction of agricultural productivity in chile from MODIS, rainfall estimates, and climate oscillation indices. Remote Sens. Environ. 219, 15–30. <a href="https://doi.org/10.1016/j.rse.2018.10.006">https://doi.org/10.1016/j.rse.2018.10.006</a>
+</div>
+<div id="ref-Zeyliger2022" class="csl-entry" role="listitem">
+Zeyliger, A.M., Muzalevskiy, K.V., Zinchenko, E.V., Ermolaeva, O.S., 2022. Field test of the surface soil moisture mapping using sentinel-1 radar data. Sci. Total Environ. 807, 151121. <a href="https://doi.org/10.1016/j.scitotenv.2021.151121">https://doi.org/10.1016/j.scitotenv.2021.151121</a>
+</div>
+<div id="ref-Zhang2023" class="csl-entry" role="listitem">
+Zhang, H., Zhang, Y., Liu, K., Lan, S., Gao, T., Li, M., 2023. Winter wheat yield prediction using integrated landsat 8 and sentinel-2 vegetation index time-series data and machine learning algorithms. Comput. Electron. Agric. 213, 108250. <a href="https://doi.org/10.1016/j.compag.2023.108250">https://doi.org/10.1016/j.compag.2023.108250</a>
+</div>
+<div id="ref-Zhao2022" class="csl-entry" role="listitem">
+Zhao, Y., Wang, X., Guo, Y., Hou, X., Dong, L., 2022. Winter wheat phenology variation and its response to climate change in shandong province, china. Remote Sens. 14, 4482. <a href="https://doi.org/10.3390/rs14184482">https://doi.org/10.3390/rs14184482</a>
+</div>
+<div id="ref-Zheng2017" class="csl-entry" role="listitem">
+Zheng, Y., Wu, B., Zhang, M., 2017. Estimating the above ground biomass of winter wheat using the sentinel-2 data. Natl. Remote Sens. Bull. 21, 318–328. <a href="https://doi.org/10.11834/jrs.20176269">https://doi.org/10.11834/jrs.20176269</a>
+</div>
+<div id="ref-Zhu2024" class="csl-entry" role="listitem">
+Zhu, L., Dai, J., Liu, Y., Yuan, S., Qin, T., Walker, J.P., 2024. A cross-resolution transfer learning approach for soil moisture retrieval from sentinel-1 using limited training samples. Remote Sens. Environ. 301, 113944. <a href="https://doi.org/10.1016/j.rse.2023.113944">https://doi.org/10.1016/j.rse.2023.113944</a>
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
