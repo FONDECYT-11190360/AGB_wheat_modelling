@@ -1,0 +1,372 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  english,
+  review,
+  number,
+  sort,compress,
+  authoryear,
+  3p]{elsarticle}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+\ifLuaTeX
+\usepackage[bidi=basic]{babel}
+\else
+\usepackage[bidi=default]{babel}
+\fi
+% get rid of language-specific shorthands (see #6817):
+\let\LanguageShortHands\languageshorthands
+\def\languageshorthands#1{}
+\ifLuaTeX
+  \usepackage[english]{selnolig} % disable illegal ligatures
+\fi
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+\usepackage[]{natbib}
+\bibliographystyle{elsarticle-harv}
+
+
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\journal{Computers and Electronics in Agriculture}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Supplementary Material for: Explainable machine learning for wheat above-ground biomass estimation under spatial cross-validation: sensor contributions and exploratory harvest forecasting},
+  pdfauthor={Francisco Zambrano; Abel Herrera; Mauricio Molina-Rocco},
+  pdflang={en},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\setlength{\parindent}{6pt}
+\begin{document}
+
+\begin{frontmatter}
+\title{Supplementary Material for: Explainable machine learning for
+wheat above-ground biomass estimation under spatial cross-validation:
+sensor contributions and exploratory harvest forecasting}
+\author[1]{Francisco Zambrano%
+%
+}
+
+\author[2]{Abel Herrera%
+%
+}
+
+\author[3]{Mauricio Molina-Rocco%
+%
+}
+
+
+\affiliation[1]{organization={Facultad de Economía, Negocios y Gobierno,
+Universidad San Sebastián, Santiago, Chile},,postcodesep={}}
+\affiliation[2]{organization={Hemera Centro de Observación de la Tierra,
+Facultad de Ciencias, Ingeniería y Tecnología; Universidad Mayor,
+Santiago, Chile},,postcodesep={}}
+\affiliation[3]{organization={Laboratorio de Suelos y Sostenibilidad.
+Departamento de Acuicultura y Recursos Agroalimentarios, Universidad de
+Los Lagos, Osorno, 5311157, Chile},,postcodesep={}}
+
+\cortext[cor1]{Corresponding author}
+
+
+
+        
+
+
+
+
+
+\end{frontmatter}
+    
+
+\section{Table S1: Additional vegetation
+indices}\label{table-s1-additional-vegetation-indices}
+
+Table 3 of the main text lists the 21 vegetation indices (VIs), derived
+from Sentinel-2 (S2) and PlanetScope (PS) spectral bands, that were
+retained as predictors after eliminating highly correlated indices
+(Section 2.2.5 of the main text). Table S1 below lists the remaining 32
+VIs that were part of the same 53-index base candidate set (Section
+2.2.5) but were not retained in Table 3.
+
+As described in the main text, a subset of these S2-derived indices were
+additionally recalculated using the Sentinel-2 Band 8A (narrow
+near-infrared) instead of Band 8 (broad near-infrared), following the
+same formula with the near-infrared (NIR) term replaced by the Band 8A
+reflectance; this is denoted with an asterisk (*) next to the S2 dataset
+code, following the same convention as Table 3 of the main text.
+Together, the 53 base indices (21 in Table 3 and 32 in Table S1) and
+their 36 Band-8A-recalculated counterparts make up the full set of 89
+candidate VIs referenced in Section 2.2.5 of the main text.
+
+Band and index notation follows Table 3 of the main text: Red, Green,
+Blue = visible bands; RE1, RE2, RE3 = S2 red-edge bands 5, 6, and 7; NIR
+= near-infrared band (S2 Band 8 / PS Band 8); SWIR1, SWIR2 = S2
+shortwave-infrared bands 11 and 12; Water vapour = S2 Band 9. Formula
+definitions follow standard vegetation-index literature, including the
+references cited in Section 2.2.5 of the main text for VI selection
+\citep{Peng2023, Segarra2022, Uribeetxebarria2023, Wang2022, Wu2008, Zheng2017};
+the exact implementation of every index listed here and in Table 3 is
+available in the project code repository (script
+\texttt{02\_calcular\_vis.R}).
+
+\textbf{Table S1.} Additional vegetation indices (covariates) derived
+from Sentinel-2 (S2) and PlanetScope (PS) spectral bands, computed as
+part of the 53-index base candidate set (Section 2.2.5 of the main text)
+but not retained in Table 3. Asterisk (*) next to the S2 dataset code
+indicates that the index was also recalculated using Sentinel-2 Band 8A
+(narrow NIR) instead of Band 8 (broad NIR).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0851}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2979}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1277}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2979}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1915}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+N°
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Dataset used
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Abbreviation
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Formula
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & S2 & NDVI Variant (Red-edge 3) & NDVI\textsubscript{2} &
+\((RE_{3} - Red)/(RE_{3} + Red)\) \\
+2 & S2 & Red-edge NDVI (705 nm) & NDVI\textsubscript{705} &
+\((RE_{2} - RE_{1})/(RE_{2} + RE_{1})\) \\
+3 & S2*-PS & Modified Simple Ratio & MSR &
+\((NIR/Red - 1)/\sqrt{(NIR/Red + 1)}\) \\
+4 & S2 & Red-edge Modified Simple Ratio & MSR\textsubscript{705} &
+\((RE_{2}/RE_{1} - 1)/\sqrt{(RE_{2}/RE_{1} + 1)}\) \\
+5 & S2*-PS & Soil-Adjusted Vegetation Index & SAVI &
+\(\frac{1.5 \cdot (NIR - Red)}{(NIR + Red + 0.5)}\) \\
+6 & S2 & SAVI Variant (Red-edge 3) & SAVI\textsubscript{2} &
+\(\frac{1.5 \cdot (RE_{3} - Red)}{(RE_{3} + Red + 0.5)}\) \\
+7 & S2*-PS & Green SAVI & SAVI\textsubscript{green} &
+\(\frac{1.5 \cdot (NIR - Green)}{(NIR + Green + 0.5)}\) \\
+8 & S2*-PS & Green OSAVI & OSAVI\textsubscript{green} &
+\(\frac{1.16 \cdot (NIR - Green)}{(NIR + Green + 0.16)}\) \\
+9 & S2*-PS & Red-edge OSAVI & OSAVI\textsubscript{rededge} &
+\(\frac{1.16 \cdot (NIR - RE_{1})}{(NIR + RE_{1} + 0.16)}\) \\
+10 & S2 & - & TCARI/OSAVI\textsubscript{2} & \(TCARI/{OSAVI}_{2}\) \\
+11 & S2* & SWIR 11 Related OSAVI & OSAVI\textsubscript{SWIR11} &
+\(\frac{1.16 \cdot (NIR - SWIR_{1})}{(NIR + SWIR_{1} + 0.16)}\) \\
+12 & S2 & SWIR 12 Related TCARI & TCARI\textsubscript{SWIR12} &
+\(3 \cdot ((RE_{1} - SWIR_{2}) - 0.2 \cdot (RE_{1} - Green) \cdot (RE_{1}/SWIR_{2}))\) \\
+13 & S2* & SWIR 12 Related OSAVI & OSAVI\textsubscript{SWIR12} &
+\(\frac{1.16 \cdot (NIR - SWIR_{2})}{(NIR + SWIR_{2} + 0.16)}\) \\
+14 & S2*-PS & Chlorophyll Index - Green & CI\textsubscript{green} &
+\((NIR/Green) - 1\) \\
+15 & S2*-PS & Chlorophyll Index - Red-edge & CI\textsubscript{rededge} &
+\((NIR/RE_{1}) - 1\) \\
+16 & S2*-PS & OSAVI x Chlorophyll Index Red-edge & OSAVI x
+CI\textsubscript{rededge} &
+\(\left[\frac{1.16 \cdot (NIR - Red)}{(NIR + Red + 0.16)}\right] \cdot \left[(NIR/RE_{1}) - 1\right]\) \\
+17 & S2*-PS & Difference Vegetation Index & DVI & \(NIR - Red\) \\
+18 & S2*-PS & Green DVI & DVI\textsubscript{green} & \(NIR - Green\) \\
+19 & S2*-PS & Red-edge DVI & DVI\textsubscript{rededge} &
+\(NIR - RE_{1}\) \\
+20 & S2 & Two-Band Enhanced Vegetation Index & EVI2 &
+\(\frac{2.5 \cdot (RE_{3} - Red)}{(1 + RE_{3} + 2.4 \cdot Red)}\) \\
+21 & S2*-PS & Red-edge Vegetation Index 1 & REVI1 & \(NIR - RE_{1}\) \\
+22 & S2* & Red-edge Vegetation Index 2 & REVI2 & \(NIR - RE_{2}\) \\
+23 & S2*-PS & Weighted Difference Vegetation Index & WDVI &
+\(NIR - 0.5 \cdot Red\) \\
+24 & S2-PS & Green-Red Vegetation Index & GRVI &
+\((Green - Red)/(Green + Red)\) \\
+25 & S2*-PS & Green Ratio Vegetation Index & GRVI2 & \(NIR/Green\) \\
+26 & S2*-PS & Green Atmospherically Resistant Index & GARI &
+\(\frac{NIR - (Green - 1.7 \cdot (Blue - Red))}{NIR + (Green - 1.7 \cdot (Blue - Red))}\) \\
+27 & S2*-PS & Leaf Chlorophyll Index & LCI &
+\((NIR - RE_{1})/(NIR - Red)\) \\
+28 & S2 & MERIS Terrestrial Chlorophyll Index & MTCI &
+\((RE_{2} - RE_{1})/(RE_{1} - Red)\) \\
+29 & S2* & Normalized Difference Red-edge Index 2 & NDRE2 &
+\((NIR - RE_{2})/(NIR + RE_{2})\) \\
+30 & S2 & Normalized Difference Red-edge Index (RE3/Green) & NDREI &
+\((RE_{3} - Green)/(RE_{3} + Green)\) \\
+31 & S2* & Normalized Difference Moisture Index & NDMI &
+\((NIR - SWIR_{1})/(NIR + SWIR_{1})\) \\
+32 & S2*-PS & Kernel NDVI & KNDVI &
+\(\dfrac{1 - \exp\left(-\dfrac{(NIR-Red)^2}{2 \cdot 0.15^2}\right)}{1 + \exp\left(-\dfrac{(NIR-Red)^2}{2 \cdot 0.15^2}\right)}\) \\
+\end{longtable}
+
+\section{Equations S1-S3: Performance
+metrics}\label{equations-s1-s3-performance-metrics}
+
+Section 2.3.6 of the main text reports model performance using the mean
+absolute error (MAE), root mean square error (RMSE), and coefficient of
+determination (R²), defined in Equations S1-S3 below, where \(y_i\) and
+\(\hat{y}_i\) are the observed and predicted AGB values for sample
+\(i\), \(\bar{y}\) is the mean observed AGB across the \(n\) samples in
+the evaluation set, and \(n\) is the number of samples.
+
+\[
+MAE = \frac{1}{n}\sum_{i=1}^{n}\left|y_i - \hat{y}_i\right| \tag{S1}
+\]
+
+\[
+RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2} \tag{S2}
+\]
+
+\[
+R^2 = 1 - \frac{\displaystyle\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2}{\displaystyle\sum_{i=1}^{n}\left(y_i - \bar{y}\right)^2} \tag{S3}
+\]
+
+
+\bibliography{references.bib}
+
+
+
+\end{document}

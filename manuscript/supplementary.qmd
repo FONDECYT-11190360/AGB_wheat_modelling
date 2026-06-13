@@ -1,0 +1,86 @@
+---
+title: "Supplementary Material for: Explainable machine learning for wheat above-ground biomass estimation under spatial cross-validation: sensor contributions and exploratory harvest forecasting"
+author:
+  - name: "Francisco Zambrano"
+    affiliation: "Facultad de Economía, Negocios y Gobierno, Universidad San Sebastián, Santiago, Chile"
+  - name: "Abel Herrera"
+    affiliation: "Hemera Centro de Observación de la Tierra, Facultad de Ciencias, Ingeniería y Tecnología; Universidad Mayor, Santiago, Chile"
+  - name: "Mauricio Molina-Rocco"
+    affiliation: "Laboratorio de Suelos y Sostenibilidad. Departamento de Acuicultura y Recursos Agroalimentarios, Universidad de Los Lagos, Osorno, 5311157, Chile"
+date: "2026-06-12"
+bibliography: "references.bib"
+citation-style: "https://www.zotero.org/styles/elsevier-harvard"
+lang: "en"
+format:
+  elsevier-pdf:
+    keep-tex: true
+    journal:
+      name: "Computers and Electronics in Agriculture"
+      model: 3p
+      cite-style: authoryear
+    classoption: ["review", "number", "sort,compress"]
+execute:
+  echo: false
+  warning: false
+---
+
+# Table S1: Additional vegetation indices
+
+Table 3 of the main text lists the 21 vegetation indices (VIs), derived from Sentinel-2 (S2) and PlanetScope (PS) spectral bands, that were retained as predictors after eliminating highly correlated indices (Section 2.2.5 of the main text). Table S1 below lists the remaining 32 VIs that were part of the same 53-index base candidate set (Section 2.2.5) but were not retained in Table 3.
+
+As described in the main text, a subset of these S2-derived indices were additionally recalculated using the Sentinel-2 Band 8A (narrow near-infrared) instead of Band 8 (broad near-infrared), following the same formula with the near-infrared (NIR) term replaced by the Band 8A reflectance; this is denoted with an asterisk (*) next to the S2 dataset code, following the same convention as Table 3 of the main text. Together, the 53 base indices (21 in Table 3 and 32 in Table S1) and their 36 Band-8A-recalculated counterparts make up the full set of 89 candidate VIs referenced in Section 2.2.5 of the main text.
+
+Band and index notation follows Table 3 of the main text: Red, Green, Blue = visible bands; RE1, RE2, RE3 = S2 red-edge bands 5, 6, and 7; NIR = near-infrared band (S2 Band 8 / PS Band 8); SWIR1, SWIR2 = S2 shortwave-infrared bands 11 and 12; Water vapour = S2 Band 9. Formula definitions follow standard vegetation-index literature, including the references cited in Section 2.2.5 of the main text for VI selection [@Peng2023; @Segarra2022; @Uribeetxebarria2023; @Wang2022; @Wu2008; @Zheng2017]; the exact implementation of every index listed here and in Table 3 is available in the project code repository (script `02_calcular_vis.R`).
+
+**Table S1.** Additional vegetation indices (covariates) derived from Sentinel-2 (S2) and PlanetScope (PS) spectral bands, computed as part of the 53-index base candidate set (Section 2.2.5 of the main text) but not retained in Table 3. Asterisk (*) next to the S2 dataset code indicates that the index was also recalculated using Sentinel-2 Band 8A (narrow NIR) instead of Band 8 (broad NIR).
+
+| N° | Dataset used | Name | Abbreviation | Formula |
+|----|--------------|------|--------------|---------|
+| 1 | S2 | NDVI Variant (Red-edge 3) | NDVI~2~ | $(RE_{3} - Red)/(RE_{3} + Red)$ |
+| 2 | S2 | Red-edge NDVI (705 nm) | NDVI~705~ | $(RE_{2} - RE_{1})/(RE_{2} + RE_{1})$ |
+| 3 | S2*-PS | Modified Simple Ratio | MSR | $(NIR/Red - 1)/\sqrt{(NIR/Red + 1)}$ |
+| 4 | S2 | Red-edge Modified Simple Ratio | MSR~705~ | $(RE_{2}/RE_{1} - 1)/\sqrt{(RE_{2}/RE_{1} + 1)}$ |
+| 5 | S2*-PS | Soil-Adjusted Vegetation Index | SAVI | $\frac{1.5 \cdot (NIR - Red)}{(NIR + Red + 0.5)}$ |
+| 6 | S2 | SAVI Variant (Red-edge 3) | SAVI~2~ | $\frac{1.5 \cdot (RE_{3} - Red)}{(RE_{3} + Red + 0.5)}$ |
+| 7 | S2*-PS | Green SAVI | SAVI~green~ | $\frac{1.5 \cdot (NIR - Green)}{(NIR + Green + 0.5)}$ |
+| 8 | S2*-PS | Green OSAVI | OSAVI~green~ | $\frac{1.16 \cdot (NIR - Green)}{(NIR + Green + 0.16)}$ |
+| 9 | S2*-PS | Red-edge OSAVI | OSAVI~rededge~ | $\frac{1.16 \cdot (NIR - RE_{1})}{(NIR + RE_{1} + 0.16)}$ |
+| 10 | S2 | - | TCARI/OSAVI~2~ | $TCARI/{OSAVI}_{2}$ |
+| 11 | S2* | SWIR 11 Related OSAVI | OSAVI~SWIR11~ | $\frac{1.16 \cdot (NIR - SWIR_{1})}{(NIR + SWIR_{1} + 0.16)}$ |
+| 12 | S2 | SWIR 12 Related TCARI | TCARI~SWIR12~ | $3 \cdot ((RE_{1} - SWIR_{2}) - 0.2 \cdot (RE_{1} - Green) \cdot (RE_{1}/SWIR_{2}))$ |
+| 13 | S2* | SWIR 12 Related OSAVI | OSAVI~SWIR12~ | $\frac{1.16 \cdot (NIR - SWIR_{2})}{(NIR + SWIR_{2} + 0.16)}$ |
+| 14 | S2*-PS | Chlorophyll Index - Green | CI~green~ | $(NIR/Green) - 1$ |
+| 15 | S2*-PS | Chlorophyll Index - Red-edge | CI~rededge~ | $(NIR/RE_{1}) - 1$ |
+| 16 | S2*-PS | OSAVI x Chlorophyll Index Red-edge | OSAVI x CI~rededge~ | $\left[\frac{1.16 \cdot (NIR - Red)}{(NIR + Red + 0.16)}\right] \cdot \left[(NIR/RE_{1}) - 1\right]$ |
+| 17 | S2*-PS | Difference Vegetation Index | DVI | $NIR - Red$ |
+| 18 | S2*-PS | Green DVI | DVI~green~ | $NIR - Green$ |
+| 19 | S2*-PS | Red-edge DVI | DVI~rededge~ | $NIR - RE_{1}$ |
+| 20 | S2 | Two-Band Enhanced Vegetation Index | EVI2 | $\frac{2.5 \cdot (RE_{3} - Red)}{(1 + RE_{3} + 2.4 \cdot Red)}$ |
+| 21 | S2*-PS | Red-edge Vegetation Index 1 | REVI1 | $NIR - RE_{1}$ |
+| 22 | S2* | Red-edge Vegetation Index 2 | REVI2 | $NIR - RE_{2}$ |
+| 23 | S2*-PS | Weighted Difference Vegetation Index | WDVI | $NIR - 0.5 \cdot Red$ |
+| 24 | S2-PS | Green-Red Vegetation Index | GRVI | $(Green - Red)/(Green + Red)$ |
+| 25 | S2*-PS | Green Ratio Vegetation Index | GRVI2 | $NIR/Green$ |
+| 26 | S2*-PS | Green Atmospherically Resistant Index | GARI | $\frac{NIR - (Green - 1.7 \cdot (Blue - Red))}{NIR + (Green - 1.7 \cdot (Blue - Red))}$ |
+| 27 | S2*-PS | Leaf Chlorophyll Index | LCI | $(NIR - RE_{1})/(NIR - Red)$ |
+| 28 | S2 | MERIS Terrestrial Chlorophyll Index | MTCI | $(RE_{2} - RE_{1})/(RE_{1} - Red)$ |
+| 29 | S2* | Normalized Difference Red-edge Index 2 | NDRE2 | $(NIR - RE_{2})/(NIR + RE_{2})$ |
+| 30 | S2 | Normalized Difference Red-edge Index (RE3/Green) | NDREI | $(RE_{3} - Green)/(RE_{3} + Green)$ |
+| 31 | S2* | Normalized Difference Moisture Index | NDMI | $(NIR - SWIR_{1})/(NIR + SWIR_{1})$ |
+| 32 | S2*-PS | Kernel NDVI | KNDVI | $\dfrac{1 - \exp\left(-\dfrac{(NIR-Red)^2}{2 \cdot 0.15^2}\right)}{1 + \exp\left(-\dfrac{(NIR-Red)^2}{2 \cdot 0.15^2}\right)}$ |
+
+# Equations S1-S3: Performance metrics
+
+Section 2.3.6 of the main text reports model performance using the mean absolute error (MAE), root mean square error (RMSE), and coefficient of determination (R²), defined in Equations S1-S3 below, where $y_i$ and $\hat{y}_i$ are the observed and predicted AGB values for sample $i$, $\bar{y}$ is the mean observed AGB across the $n$ samples in the evaluation set, and $n$ is the number of samples.
+
+$$
+MAE = \frac{1}{n}\sum_{i=1}^{n}\left|y_i - \hat{y}_i\right| \tag{S1}
+$$
+
+$$
+RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2} \tag{S2}
+$$
+
+$$
+R^2 = 1 - \frac{\displaystyle\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2}{\displaystyle\sum_{i=1}^{n}\left(y_i - \bar{y}\right)^2} \tag{S3}
+$$
