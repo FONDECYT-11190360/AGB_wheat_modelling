@@ -8,7 +8,7 @@
 
 <meta name="author" content="Francisco Zambrano">
 <meta name="author" content="Abel Herrera">
-<meta name="author" content="Mauricio Molina-Roco">
+<meta name="author" content="Mauricio Molina-Rocco">
 <meta name="dcterms.date" content="2026-06-12">
 <meta name="keywords" content="above-ground biomass, Sentinel‑1, Sentinel‑2, PlanetScope, soil moisture, machine learning, precision agriculture">
 
@@ -97,61 +97,7 @@ window.Quarto = {
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a></li>
-  <li><a href="#materials-and-methods" id="toc-materials-and-methods" class="nav-link" data-scroll-target="#materials-and-methods"><span class="header-section-number">2</span> Materials and Methods</a>
-  <ul class="collapse">
-  <li><a href="#study-area" id="toc-study-area" class="nav-link" data-scroll-target="#study-area"><span class="header-section-number">2.1</span> Study Area</a></li>
-  <li><a href="#data-acquisition-and-processing" id="toc-data-acquisition-and-processing" class="nav-link" data-scroll-target="#data-acquisition-and-processing"><span class="header-section-number">2.2</span> Data acquisition and processing</a>
-  <ul class="collapse">
-  <li><a href="#field-data" id="toc-field-data" class="nav-link" data-scroll-target="#field-data"><span class="header-section-number">2.2.1</span> Field data</a></li>
-  <li><a href="#weather-data" id="toc-weather-data" class="nav-link" data-scroll-target="#weather-data"><span class="header-section-number">2.2.2</span> Weather Data</a></li>
-  <li><a href="#remote-sensing-data" id="toc-remote-sensing-data" class="nav-link" data-scroll-target="#remote-sensing-data"><span class="header-section-number">2.2.3</span> Remote Sensing Data</a></li>
-  <li><a href="#preprocessing-of-remote-sensing-data" id="toc-preprocessing-of-remote-sensing-data" class="nav-link" data-scroll-target="#preprocessing-of-remote-sensing-data"><span class="header-section-number">2.2.4</span> Preprocessing of remote sensing data</a></li>
-  <li><a href="#selection-and-processing-of-vis" id="toc-selection-and-processing-of-vis" class="nav-link" data-scroll-target="#selection-and-processing-of-vis"><span class="header-section-number">2.2.5</span> Selection and processing of VIs</a></li>
-  </ul></li>
-  <li><a href="#modeling-with-machine-learning-algorithms" id="toc-modeling-with-machine-learning-algorithms" class="nav-link" data-scroll-target="#modeling-with-machine-learning-algorithms"><span class="header-section-number">2.3</span> Modeling with Machine Learning Algorithms</a>
-  <ul class="collapse">
-  <li><a href="#overview-of-the-modeling-process" id="toc-overview-of-the-modeling-process" class="nav-link" data-scroll-target="#overview-of-the-modeling-process"><span class="header-section-number">2.3.1</span> Overview of the modeling process</a></li>
-  <li><a href="#defining-dataset-recipes-for-estimation-and-prediction-models" id="toc-defining-dataset-recipes-for-estimation-and-prediction-models" class="nav-link" data-scroll-target="#defining-dataset-recipes-for-estimation-and-prediction-models"><span class="header-section-number">2.3.2</span> Defining dataset recipes for estimation and prediction models</a></li>
-  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link" data-scroll-target="#feature-engineering"><span class="header-section-number">2.3.3</span> Feature engineering</a></li>
-  <li><a href="#estimation-models-for-agb-within-the-growing-season" id="toc-estimation-models-for-agb-within-the-growing-season" class="nav-link" data-scroll-target="#estimation-models-for-agb-within-the-growing-season"><span class="header-section-number">2.3.4</span> Estimation models for AGB within the growing season</a></li>
-  <li><a href="#prediction-models-for-agb-at-harvest" id="toc-prediction-models-for-agb-at-harvest" class="nav-link" data-scroll-target="#prediction-models-for-agb-at-harvest"><span class="header-section-number">2.3.5</span> Prediction models for AGB at harvest</a></li>
-  <li><a href="#hyperparameter-optimization-and-evaluation" id="toc-hyperparameter-optimization-and-evaluation" class="nav-link" data-scroll-target="#hyperparameter-optimization-and-evaluation"><span class="header-section-number">2.3.6</span> Hyperparameter optimization and evaluation</a></li>
-  <li><a href="#explainable-machine-learning-with-dalex" id="toc-explainable-machine-learning-with-dalex" class="nav-link" data-scroll-target="#explainable-machine-learning-with-dalex"><span class="header-section-number">2.3.7</span> Explainable Machine Learning with DALEX</a></li>
-  </ul></li>
-  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software"><span class="header-section-number">2.4</span> Software</a></li>
-  </ul></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">3</span> Results</a>
-  <ul class="collapse">
-  <li><a href="#estimation-model-for-agb-within-the-growing-season" id="toc-estimation-model-for-agb-within-the-growing-season" class="nav-link" data-scroll-target="#estimation-model-for-agb-within-the-growing-season"><span class="header-section-number">3.1</span> Estimation model for AGB within the growing season</a>
-  <ul class="collapse">
-  <li><a href="#selecting-the-best-models" id="toc-selecting-the-best-models" class="nav-link" data-scroll-target="#selecting-the-best-models"><span class="header-section-number">3.1.1</span> Selecting the best models</a></li>
-  <li><a href="#explainable-machine-learning-with-dalex-1" id="toc-explainable-machine-learning-with-dalex-1" class="nav-link" data-scroll-target="#explainable-machine-learning-with-dalex-1"><span class="header-section-number">3.1.2</span> Explainable Machine Learning with DALEX</a></li>
-  <li><a href="#spatio-temporal-variation-of-agb-within-the-growing-season" id="toc-spatio-temporal-variation-of-agb-within-the-growing-season" class="nav-link" data-scroll-target="#spatio-temporal-variation-of-agb-within-the-growing-season"><span class="header-section-number">3.1.3</span> Spatio-temporal variation of AGB within the growing season</a></li>
-  </ul></li>
-  <li><a href="#prediction-models-for-agb-at-harvest-1" id="toc-prediction-models-for-agb-at-harvest-1" class="nav-link" data-scroll-target="#prediction-models-for-agb-at-harvest-1"><span class="header-section-number">3.2</span> Prediction models for AGB at harvest</a></li>
-  </ul></li>
-  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"><span class="header-section-number">4</span> Discussion</a>
-  <ul class="collapse">
-  <li><a href="#models-performance" id="toc-models-performance" class="nav-link" data-scroll-target="#models-performance"><span class="header-section-number">4.1</span> Models performance</a></li>
-  <li><a href="#application-for-wheat-yield-management" id="toc-application-for-wheat-yield-management" class="nav-link" data-scroll-target="#application-for-wheat-yield-management"><span class="header-section-number">4.2</span> Application for wheat yield management</a></li>
-  <li><a href="#study-limitations" id="toc-study-limitations" class="nav-link" data-scroll-target="#study-limitations"><span class="header-section-number">4.3</span> Study limitations</a></li>
-  </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">5</span> Conclusion</a></li>
-  <li><a href="#acknowledgements" id="toc-acknowledgements" class="nav-link" data-scroll-target="#acknowledgements"><span class="header-section-number">6</span> Acknowledgements</a></li>
-  <li><a href="#data-and-code-availability" id="toc-data-and-code-availability" class="nav-link" data-scroll-target="#data-and-code-availability"><span class="header-section-number">7</span> Data and code availability</a></li>
-  <li><a href="#credit-authorship-contribution-statement" id="toc-credit-authorship-contribution-statement" class="nav-link" data-scroll-target="#credit-authorship-contribution-statement"><span class="header-section-number">8</span> CRediT authorship contribution statement</a></li>
-  <li><a href="#declaration-of-competing-interest" id="toc-declaration-of-competing-interest" class="nav-link" data-scroll-target="#declaration-of-competing-interest"><span class="header-section-number">9</span> Declaration of competing interest</a></li>
-  <li><a href="#funding-sources" id="toc-funding-sources" class="nav-link" data-scroll-target="#funding-sources"><span class="header-section-number">10</span> Funding Sources</a></li>
-  <li><a href="#declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" id="toc-declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" class="nav-link" data-scroll-target="#declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process"><span class="header-section-number">11</span> Declaration of generative AI and AI-assisted technologies in the writing process</a></li>
-  <li><a href="#glossary" id="toc-glossary" class="nav-link" data-scroll-target="#glossary"><span class="header-section-number">12</span> Glossary</a></li>
-  </ul>
-<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="../manuscript.pdf"><i class="bi bi-file-pdf"></i>PDF</a></li></ul></div></nav>
-</div>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="manuscript.pdf"><i class="bi bi-file-pdf"></i>PDF (elsevier)</a></li></ul></div></div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -181,7 +127,7 @@ window.Quarto = {
           </p>
       </div>
     <div class="quarto-title-meta-contents">
-    <p class="author">Mauricio Molina-Roco </p>
+    <p class="author">Mauricio Molina-Rocco </p>
   </div>
   <div class="quarto-title-meta-contents">
         <p class="affiliation">
@@ -206,8 +152,8 @@ window.Quarto = {
 <div>
   <div class="abstract">
     <div class="block-title">Abstract</div>
-    <p>Global food security faces increasing climate change challenges, making accurate monitoring of crops like wheat (<em>Triticum aestivum</em>) critical. This research introduces an explainable machine learning (ML) framework to estimate and forecast wheat above-ground biomass (AGB) in central Chile across the 2020–2023 growing seasons. Using a two-stage approach—in-season estimation and harvest forecasting—the study integrated in-situ weather data with satellite imagery from Sentinel-1, Sentinel-2, and PlanetScope. We evaluated 41 models across five ML algorithms (Random Forest, XGBoost, GLMnet, bagMLP, KNN) and an ensemble. Model transparency was ensured via the DALEX framework.</p>
-    <p>Results demonstrated high accuracy; Stage 1 models combining Sentinel-1 and weather data achieved an R²&gt;0.91 (RMSE ≈ 3.2 t/ha). Key predictors included accumulated growing degree days, SAR variables, and soil moisture. For Stage 2, soil moisture and SAR data remained critical, enabling harvest forecasting at 1–4 month leads (R²: 0.86–0.94; RMSE: 1.11–1.74 t/ha). This cloud-resilient methodology offers significant value for precision agriculture and risk management. While currently reliant on localized in-situ data, future integration of satellite-derived soil moisture could enhance its global scalability for yield forecasting.</p>
+    <p>Global food security faces increasing challenges under climate change, making accurate monitoring of wheat (<em>Triticum aestivum</em>) critical. This study presents an explainable machine learning (ML) framework to estimate in-season wheat above-ground biomass (AGB) and to explore harvest forecasting one to four months ahead, integrating in-situ weather and soil moisture data with Sentinel-1, Sentinel-2, and PlanetScope imagery across four Mediterranean wheat field-seasons (2020–2023) in central Chile. We evaluated 41 models—40 recipe-algorithm combinations spanning eight sensor-combination recipes and five ML algorithms (Random Forest [RF], XGBoost, GLMnet, bagMLP, and KNN), plus a stacked ensemble—and assessed their spatial transferability with a leave-one-site-out cross-validation (LOSO-CV) scheme across the four site-seasons, with model transparency assessed via the DALEX framework.</p>
+    <p>For in-season estimation (stage 1), the best LOSO-CV configuration (RF using only PlanetScope predictors, <em>rec7</em>) reached R²=0.78 (RMSE=7.87 t/ha, MAE=5.90 t/ha). A sensor-ablation analysis showed that Sentinel-2 reduced RMSE by 23.4% relative to a weather-only baseline, Sentinel-1 added essentially no further skill (+0.5%), and PlanetScope contributed a further 5.7% reduction. DALEX analysis of the stacked ensemble identified a Sentinel-2 SWIR-related chlorophyll index (S2<sub>SWIR12</sub>-MCARI), two PlanetScope band/index predictors, a cumulative Sentinel-2 red-edge index, and the Sentinel-1 VH/VV backscatter ratio as the leading, comparably important predictors, spanning optical, SAR, and accumulated-thermal-time variables. As a secondary, exploratory objective, the same LOSO-CV framework was used to forecast AGB at harvest one to four months in advance; skill (RF, all predictors) was modest and decayed sharply with lead time (R² from 0.46 at one month to 0.10 at four months; RMSE from 4.5 to 6.5 t/ha), highlighting the need for larger multi-site networks to support reliable multi-month forecasting. This multi-sensor, cloud-resilient framework provides a transferable and explainable basis for in-season AGB monitoring in Mediterranean wheat systems.</p>
   </div>
 </div>
 
@@ -221,17 +167,17 @@ window.Quarto = {
 </header>
 
 
-<section id="introduction" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
 <p>As the world population is projected to reach 9.8 billion by 2050 <span class="citation" data-cites="UN2024">(<a href="#ref-UN2024" role="doc-biblioref">UN, 2024</a>)</span>, food security is expected to face significant challenges <span class="citation" data-cites="Bahar2020">(<a href="#ref-Bahar2020" role="doc-biblioref">Bahar et al., 2020</a>)</span>, which are further intensified by climate change <span class="citation" data-cites="Chen2025">(<a href="#ref-Chen2025" role="doc-biblioref">Chen, 2025</a>)</span>. Wheat (<em>Triticum aestivum</em>) is the most consumed crop worldwide, and its production is key for food security <span class="citation" data-cites="FAO2025">(<a href="#ref-FAO2025" role="doc-biblioref">FAO, 2025</a>)</span>. Furthermore, droughts significantly impact agriculture, as evidenced by the decrease in crop yield <span class="citation" data-cites="Santini2022 Naumann2021 Mishra2015">(<a href="#ref-Mishra2015" role="doc-biblioref">Mishra et al., 2015</a>; <a href="#ref-Naumann2021" role="doc-biblioref">Naumann et al., 2021</a>; <a href="#ref-Santini2022" role="doc-biblioref">Santini et al., 2022</a>)</span>. In fact, global wheat production could drop by 13% by mid-century under climate change <span class="citation" data-cites="Pequeno2024">(<a href="#ref-Pequeno2024" role="doc-biblioref">Pequeno et al., 2024</a>)</span>. Quantifying above-ground biomass (AGB) is of utmost importance since it allows us to monitor and optimize agricultural processes <span class="citation" data-cites="Dietz2021">(<a href="#ref-Dietz2021" role="doc-biblioref">Dietz et al., 2021</a>)</span>. Proxies of vegetation productivity derived from vegetation indices can help monitor and predict the impact of drought at a regional scale <span class="citation" data-cites="Zambrano2021 Zambrano2018 Zambrano2016">(<a href="#ref-Zambrano2021" role="doc-biblioref">Zambrano, 2021</a>; <a href="#ref-Zambrano2018" role="doc-biblioref">Zambrano et al., 2018</a>, <a href="#ref-Zambrano2016" role="doc-biblioref">2016</a>)</span>. However, on a farm level, we must quantify this impact using crop yield as a productivity metric, which can aid in determining the economic impact of seasonal variations in crop yield. Generally, the estimation and monitoring of agricultural production is made by using three methods: i) crop growth models <span class="citation" data-cites="Lobell2010 Wang2023">(<a href="#ref-Lobell2010" role="doc-biblioref">Lobell and Burke, 2010</a>; <a href="#ref-Wang2023" role="doc-biblioref">Wang et al., 2023</a>)</span>, ii) surveys <span class="citation" data-cites="Gardner1980">(<a href="#ref-Gardner1980" role="doc-biblioref">Gardner et al., 1980</a>)</span>, and iii) in-situ measurements. The models help predict how crops will grow, yield, and produce under different environmental and management conditions, which is useful for forecasting food supply and understanding how climate change and policy decisions affect global agriculture, but the downside is that they require many different variables to obtain meaningful results. The objective of the surveys is to collect timely and reliable data from the agricultural sector in order to carry out statistical studies of crops, but it provides summaries at administrative units (e.g., states, districts) <span class="citation" data-cites="Gardner1980">(<a href="#ref-Gardner1980" role="doc-biblioref">Gardner et al., 1980</a>)</span>. Additionally, field measurements provide reliable data—known as the ground truth—that can be used for comparison with models and surveys; however, this process is costly and time-consuming.</p>
 <p>The use of empirical models that are based solely on remote sensing sources has become a straightforward option for the estimation of crop yield, especially for cereals <span class="citation" data-cites="Lischeid2022">(<a href="#ref-Lischeid2022" role="doc-biblioref">Lischeid et al., 2022</a>)</span>. There are multiple remote sensing methods to estimate AGB, among which the methods based on multispectral imaging <span class="citation" data-cites="Marshall2022 Segarra2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>; <a href="#ref-Segarra2022" role="doc-biblioref">Segarra et al., 2022</a>)</span>, Synthetic Aperture Radar (SAR) <span class="citation" data-cites="Hu2024 Chao2019">(<a href="#ref-Chao2019" role="doc-biblioref">Chao et al., 2019</a>; <a href="#ref-Hu2024" role="doc-biblioref">Hu et al., 2024</a>)</span>, LiDAR (Light Detection and Ranging) <span class="citation" data-cites="Bates2021">(<a href="#ref-Bates2021" role="doc-biblioref">Bates et al., 2021</a>)</span>, hyperspectral <span class="citation" data-cites="Yue2021">(<a href="#ref-Yue2021" role="doc-biblioref">Yue et al., 2021</a>)</span>, or combination of them <span class="citation" data-cites="Li2024 David2022 Wang2016">(<a href="#ref-David2022" role="doc-biblioref">David et al., 2022</a>; <a href="#ref-Li2024" role="doc-biblioref">Li et al., 2024</a>; <a href="#ref-Wang2016" role="doc-biblioref">Wang et al., 2016</a>)</span>, stand out, offering promising results. Estimation methods based on SAR data focus on the measurement of the structure of the crop, soil moisture, and their temporal variations. An advantage of this technique is that it can penetrate the cloud cover, allowing a constant measurement in the study area; its disadvantage is the angle of observation to the crop and the speckle noise inherent to the signal <span class="citation" data-cites="Lopes1990 Maghsoudi2012 Moran1997">(<a href="#ref-Lopes1990" role="doc-biblioref">Lopes et al., 1990</a>; <a href="#ref-Maghsoudi2012" role="doc-biblioref">Maghsoudi et al., 2012</a>; <a href="#ref-Moran1997" role="doc-biblioref">Moran et al., 1997</a>)</span>. Estimation methods based on LiDAR and hyperspectral data focus on the measurement of the crop structure and phenological monitoring of the crop <span class="citation" data-cites="Brovkina2017 Luo2017 Wang2016">(<a href="#ref-Brovkina2017" role="doc-biblioref">Brovkina et al., 2017</a>; <a href="#ref-Luo2017" role="doc-biblioref">Luo et al., 2017</a>; <a href="#ref-Wang2016" role="doc-biblioref">Wang et al., 2016</a>)</span>. Its main disadvantage is the high cost of implementation, which limits its proliferation. Another common approach is the use of spectral indices (e.g., NDVI, EVI, etc.) derived from optical sensors such as Sentinel-2 <span class="citation" data-cites="David2022">(<a href="#ref-David2022" role="doc-biblioref">David et al., 2022</a>)</span> for specific dates. Furthermore, the use of accumulated spectral indices <span class="citation" data-cites="PeroniVenancio2020">(<a href="#ref-PeroniVenancio2020" role="doc-biblioref">Peroni Venancio et al., 2020</a>)</span> over the growing season has shown improvements in estimating biomass/yield compared with using indices just for specific dates. The main advantage is its simplicity and strong correlation with the observed biomass. Currently, the research about estimating biomass is moving forward integrating Sentinel 1 &amp; 2 <span class="citation" data-cites="Uribeetxebarria2023">(<a href="#ref-Uribeetxebarria2023" role="doc-biblioref">Uribeetxebarria et al., 2023</a>)</span>, LiDAR, hyperspectral, and Landsat missions <span class="citation" data-cites="Zhang2023 He2018">(<a href="#ref-He2018" role="doc-biblioref">He et al., 2018</a>; <a href="#ref-Zhang2023" role="doc-biblioref">Zhang et al., 2023</a>)</span>, which aids in better monitoring of the crop’s growth stages <span class="citation" data-cites="Shen2023">(<a href="#ref-Shen2023" role="doc-biblioref">Shen et al., 2023</a>)</span>.</p>
 <p>Effective machine learning (ML) methods, along with remote sensing data, are increasingly used to estimate the AGB in various cereals, including wheat. In Southern Brazil, <span class="citation" data-cites="AtkinsonAmorim2022">(<a href="#ref-AtkinsonAmorim2022" role="doc-biblioref">Atkinson Amorim et al., 2022</a>)</span> collected images from unmanned aerial vehicles (UAV) and used random forest, support vector regressions, and neural networks to estimate AGB in wheat. Their results reached a R² of 0.90 and a root mean square error (RMSE) of 0.83 t/ha. In another study, <span class="citation" data-cites="Liu2024">(<a href="#ref-Liu2024" role="doc-biblioref">Liu et al., 2024</a>)</span> used spectral data obtained from UAV, phenological information, and multiple machine learning algorithms to estimate AGB on wheat, having results of an R² ranging from 0.84 to 0.91 and an RMSE of 1.69 to 2.11 t/ha. Considering another approach, <span class="citation" data-cites="Marshall2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>)</span> used hyperspectral and Sentinel-2 data and applied random forest and partial least squares to estimate wheat AGB on different stages of the crop. Their results achieve an R²=0.81 and RMSE=3.7 t/ha with the random forest model. Further, for different types of grass cover, Sentinel-1 has been tested to estimate AGB with varied results <span class="citation" data-cites="David2022 Li2024 Nuthammachot2022">(<a href="#ref-David2022" role="doc-biblioref">David et al., 2022</a>; <a href="#ref-Li2024" role="doc-biblioref">Li et al., 2024</a>; <a href="#ref-Nuthammachot2022" role="doc-biblioref">Nuthammachot et al., 2022</a>)</span>. The benefits of SAR Sentinel-1 are that it can gather dependable data even on cloudy days, which is not possible with optical sensors like Sentinel-2 and Landsat. Additionally, Sentinel-1’s backscatter is closely linked to the dielectric constant, making it a proxy of soil moisture <span class="citation" data-cites="Fan2025 Zhu2024">(<a href="#ref-Fan2025" role="doc-biblioref">Fan et al., 2025</a>; <a href="#ref-Zhu2024" role="doc-biblioref">Zhu et al., 2024</a>)</span>, and, therefore, the amount of water crops can absorb from the soil, which affects their growth. Thus, it is worthwhile to explore its usefulness for AGB prediction.</p>
-<p>Here, we aim to evaluate ML models to predict wheat AGB at harvest using remote sensing data from missions Sentinel-1 &amp; 2, and PlanetScope, as well as weather and soil moisture in situ measurements. We will test predictions at lead times from one to four months before harvest. We defined three secondary objectives: i) derive predictors from weather, soil moisture, Sentinel-1 &amp; 2, and PlanetScope data; ii) use ML models to estimate the spatiotemporal variation of wheat AGB through the season; and iii) evaluate ML models for the prediction of AGB at four lead times, one to four months before harvest.</p>
+<p>Here, we aim to develop and evaluate an explainable ML framework for estimating wheat AGB during the growing season from multi-sensor remote sensing (Sentinel-1, Sentinel-2, and PlanetScope) and in-situ weather and soil moisture data, and to assess its spatial transferability under a leave-one-site-out cross-validation (LOSO-CV) scheme across four Mediterranean wheat field-seasons. As a secondary, exploratory objective, we evaluate whether the same predictors and modeling framework support forecasting AGB at harvest one to four months in advance. We defined three specific objectives: i) derive predictors from weather, soil moisture, Sentinel-1, Sentinel-2, and PlanetScope data; ii) apply ML algorithms together with explainable-AI techniques to estimate the spatiotemporal variation of wheat AGB through the growing season and identify which sensors and variables drive model performance; and iii) explore the feasibility of forecasting AGB at harvest at four lead times (one to four months before harvest) using the same modeling and LOSO-CV validation framework.</p>
 </section>
-<section id="materials-and-methods" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Materials and Methods</h1>
-<section id="study-area" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="study-area"><span class="header-section-number">2.1</span> Study Area</h2>
+<section id="materials-and-methods" class="level1">
+<h1>Materials and Methods</h1>
+<section id="study-area" class="level2">
+<h2 class="anchored" data-anchor-id="study-area">Study Area</h2>
 <p>The study was conducted during the 2020–2023 growing seasons (June–January) across four wheat field sites (<em>Triticum</em> <em>aestivum</em>) located in central Chile: i) La Cancha in the Metropolitan region, ii) Hidango in the O’Higgins region (two different fields in two seasons), and iii) Villa Baviera in the Maule region. Sampling took place in delineated fields at each site (Figure&nbsp;<a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a>). In Hidango, separate fields were established for the 2021-2022 and 2022-2023 seasons; in Villa Baviera and La Cancha, sampling occurred during the 2020-2021 and 2022-2023 seasons, respectively. To capture spatial variability and ensure representativeness, sampling points were randomly selected and evenly distributed: five in La Cancha, Villa Baviera, and the first season in Hidango; and six in the second season in Hidango (Figure&nbsp;<a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a>).</p>
 <div id="fig-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -239,16 +185,16 @@ window.Quarto = {
 <img src="../output/figs/area_estudio_v2.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: <strong>Study Area.</strong> The map on the left panel shows the location of the sites in Central Chile. The remaining panels illustrate the field boundaries and sampling points for each site. In Hidalgo, the northern field is from the 2021–2022 season, and the southern one from 2022–2023.
+Figure&nbsp;1: <strong>Study Area.</strong> The map on the left panel shows the location of the sites in Central Chile. The remaining panels illustrate the field boundaries and sampling points for each site. In Hidango, the northern field is from the 2021–2022 season, and the southern one from 2022–2023.
 </figcaption>
 </figure>
 </div>
 <p>A variety of spring wheat was planted in Villa Baviera (Llareta-INIA; <span class="citation" data-cites="Garrido2013">(<a href="#ref-Garrido2013" role="doc-biblioref">Garrido et al., 2013</a>)</span>), while the other sites had winter wheat (Irafen-INIA and Pantera-INIA; <span class="citation" data-cites="DelPozo2023">(<a href="#ref-DelPozo2023" role="doc-biblioref">Del Pozo et al., 2023</a>)</span>). Spring wheat is typically sown in late winter or early spring and harvested within the same year, whereas winter wheat is sown in autumn, requires vernalization, and is harvested the following summer <span class="citation" data-cites="Liu2025 Zhao2022">(<a href="#ref-Liu2025" role="doc-biblioref">Liu and Chen, 2025</a>; <a href="#ref-Zhao2022" role="doc-biblioref">Zhao et al., 2022</a>)</span>. According to the FAO–UNESCO Soil Map of the World <span class="citation" data-cites="FAO2014">(<a href="#ref-FAO2014" role="doc-biblioref">FAO, 2014</a>)</span>; La Cancha is characterized by shallow, fine-textured Regosols on nearly flat terrain; Hidango presents fine-textured Luvisols on gently undulating landscapes; and Villa Baviera features deep, well-structured Nitisols on slightly sloped land. The climate in these regions is Mediterranean with winter rainfall (Csb) under the Köppen–Geiger classification <span class="citation" data-cites="Beck2023">(<a href="#ref-Beck2023" role="doc-biblioref">Beck et al., 2023</a>)</span>; Hidango, however, exhibits an oceanic influence. Mean annual precipitation ranges from 700 to 900 mm, with average temperatures between 11 and 12 °C.</p>
 </section>
-<section id="data-acquisition-and-processing" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="data-acquisition-and-processing"><span class="header-section-number">2.2</span> Data acquisition and processing</h2>
-<section id="field-data" class="level3" data-number="2.2.1">
-<h3 data-number="2.2.1" class="anchored" data-anchor-id="field-data"><span class="header-section-number">2.2.1</span> Field data</h3>
+<section id="data-acquisition-and-processing" class="level2">
+<h2 class="anchored" data-anchor-id="data-acquisition-and-processing">Data acquisition and processing</h2>
+<section id="field-data" class="level3">
+<h3 class="anchored" data-anchor-id="field-data">Field data</h3>
 <p>AGB, defined as the total dry mass of dead and living plant organs per unit ground area <span class="citation" data-cites="Chave2014">(<a href="#ref-Chave2014" role="doc-biblioref">Chave et al., 2014</a>)</span>, was sampled at distinct wheat phenological stages across each season. Phenological stages were identified using the Zadoks scale, which describes 10 principal growth stages from sowing to ripening <span class="citation" data-cites="Zadoks1974">(<a href="#ref-Zadoks1974" role="doc-biblioref">Zadoks et al., 1974</a>)</span>. At each sampling point (Figure&nbsp;<a href="#fig-1" class="quarto-xref">Figure&nbsp;1</a>), biomass from a 0.25 m² area was harvested, dried in a forced-air oven at 70°C for three days, weighed on a precision scale, and converted to t/ha. Sampling intervals were planned to capture variability across growth stages, ensuring representative data for each field and season. The temporal distribution of sampling dates across phenological stages is illustrated in Figure&nbsp;<a href="#fig-2" class="quarto-xref">Figure&nbsp;2</a>, with NDVI time series indicating canopy development over the season. A total of 153 AGB wheat samples were collected: 88 in Hidango (40 in 2021–2022 and 48 in 2022-2023), 35 in La Cancha, and 30 in Villa Baviera.</p>
 <div id="fig-2" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -263,8 +209,8 @@ Figure&nbsp;2: <strong>Above-ground biomass (AGB) sampling dates across the seas
 <p>Additionally, soil moisture was measured using TEROS 12 sensors (METER Group, USA), which operate via a capacitance/frequency domain method to assess dielectric permittivity, achieving ±1% accuracy in typical mineral soils <span class="citation" data-cites="Fragkos2024">(<a href="#ref-Fragkos2024" role="doc-biblioref">Fragkos et al., 2024</a>)</span>. The sensors were installed at a central point within each field’s sampling area at depths of 15, 30, and 45 cm in La Cancha and Villa Baviera, and 15, 50, and 75 cm in Hidango in both seasons. Each sensor recorded data at 30-minute intervals, and daily values were computed by averaging the measurements from each day.</p>
 <p>Soil water content (cm³/cm³) measured by the sensors was converted to water depth (mm) within the 0–55 cm using the specific depth of the profile at which the sensor was installed.</p>
 </section>
-<section id="weather-data" class="level3" data-number="2.2.2">
-<h3 data-number="2.2.2" class="anchored" data-anchor-id="weather-data"><span class="header-section-number">2.2.2</span> Weather Data</h3>
+<section id="weather-data" class="level3">
+<h3 class="anchored" data-anchor-id="weather-data">Weather Data</h3>
 <p>Precipitation and temperature data were obtained from automatic meteorological stations managed by the Red Agrometeorológica de Chile. This national network provides continuous, open-access weather data for agricultural use (http://agromet.inia.cl; http://agrometeorologia.cl), recording several meteorological variables at hourly intervals. Each station is equipped with a Texas Electronics TE525MM-L25 tipping-bucket rain gauge for precipitation and a Vaisala HMP60-L11 sensor for air temperature and relative humidity <span class="citation" data-cites="ChaconC2019">(<a href="#ref-ChaconC2019" role="doc-biblioref">Chacón C., 2019</a>)</span>. For each study site, the nearest meteorological station was selected (Table&nbsp;<a href="#tbl-1" class="quarto-xref">Table&nbsp;1</a>), and hourly precipitation and air temperature data were downloaded starting from the sowing date.</p>
 <div id="tbl-1" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
@@ -333,8 +279,8 @@ Table&nbsp;1: Meteorological stations for each field.
 <p><span class="math display">\[GDD  =  \frac{\left( T_{\max} + T_{\min} \right)}{2} - T_{base}\]</span></p>
 <p>A base temperature of 2°C was applied for the early growth stages (sowing to tillering), while 6°C was used for reproductive stages (stem elongation to ripening) <span class="citation" data-cites="DelPozo1987">(<a href="#ref-DelPozo1987" role="doc-biblioref">Del Pozo et al., 1987</a>)</span>. Negative GDD values were set to zero. Then, the accumulated GDD values were calculated by summing the daily GDD from the start of the season of each field (∑GDD).</p>
 </section>
-<section id="remote-sensing-data" class="level3" data-number="2.2.3">
-<h3 data-number="2.2.3" class="anchored" data-anchor-id="remote-sensing-data"><span class="header-section-number">2.2.3</span> Remote Sensing Data</h3>
+<section id="remote-sensing-data" class="level3">
+<h3 class="anchored" data-anchor-id="remote-sensing-data">Remote Sensing Data</h3>
 <p>Satellite time series imagery from three missions—Sentinel-1, Sentinel-2, and PlanetScope—were used to derive predictors for aboveground biomass (AGB) modeling. These datasets include radar and optical sensors, covering different spectral ranges (SAR, visible, NIR, SWIR) and having different spatial resolutions.</p>
 <p>The Sentinel‑1 (S1) mission, operated by the European Space Agency (ESA), consists of a constellation of C-band synthetic aperture radar (SAR) satellites that operate in several acquisition modes (Interferometric Wide—IW, Extra Wide—EW, and Stripmap—SM), with spatial resolutions ranging from 5 to 40 m and a swath width up to 410 km. Data acquisition is independent of cloud cover or sunlight, enabling consistent time-series generation under any weather condition. We used Level‑1 Ground Range Detected (GRD) products from Sentinel‑1A (S1A), the only satellite of the constellation operational during the study period, as Sentinel‑1B stopped transmitting in 2022 and Sentinel‑1C was not yet launched. GRD products are radiometrically calibrated, multi-looked, and terrain-corrected using a digital elevation model, then projected to the WGS84 datum (Table&nbsp;<a href="#tbl-2" class="quarto-xref">Table&nbsp;2</a>). These products are delivered in dual-polarization (VV, VH or HH, HV), depending on the acquisition mode and region, with a pixel spacing of 10 to 40 m <span class="citation" data-cites="Torres2012">(<a href="#ref-Torres2012" role="doc-biblioref">Torres et al., 2012</a>)</span>.</p>
 <p>Sentinel‑2 (S2) is a dual-satellite optical mission carrying the MultiSpectral Instrument (MSI), which captures 13 spectral bands across the visible, near-infrared (NIR), and shortwave infrared (SWIR) regions. Spatial resolution varies by band (10, 20, or 60 m), and the system provides global coverage with a revisit time of ~5 days at the Equator. We used Level‑2A surface reflectance products, which are atmospherically corrected (bottom-of-atmosphere, BOA) and orthorectified (Table&nbsp;<a href="#tbl-2" class="quarto-xref">Table&nbsp;2</a>). These products include cloud and shadow masks, aerosol optical thickness (AOT), and water vapor content layers, along with scene classification maps and pixel-level quality information <span class="citation" data-cites="Drusch2012">(<a href="#ref-Drusch2012" role="doc-biblioref">Drusch et al., 2012</a>)</span>.</p>
@@ -590,13 +536,13 @@ Table&nbsp;2: Summary of satellite data used to derive predictors for AGB estima
 <p>PlanetScope (PS) is a commercial constellation of ~120 CubeSats operated by Planet Labs, which capture daily multispectral imagery at a nominal resolution of 3 m. The constellation includes different sensor types deployed over time, such as Dove-C (three- or four-band imagers with a split-frame NIR filter), Dove-R (four-band imagers with a butcher-block filter), and SuperDove (eight-band imagers including the visible, NIR, and Red Edge bands). We used Level‑3B Surface Reflectance products, which are orthorectified and atmospherically corrected using Planet’s in-house model based on global aerosol assumptions. Although not fully corrected for haze or thin cirrus clouds, the products are radiometrically calibrated, georeferenced to sub-pixel accuracy, and delivered with metadata and quality indicators <span class="citation" data-cites="Roy2021">(<a href="#ref-Roy2021" role="doc-biblioref">Roy et al., 2021</a>)</span>. Due to the sensor transition that occurred during the study period, both Dove and SuperDove imagery were included. To ensure consistency across the dataset, only the four bands common to all sensor types (Blue, Green, Red, and NIR) were used.</p>
 <p>S1 Ground Range Detected (GRD) imagery was accessed via Google Earth Engine; S2 Level-2A products were obtained from the Planetary Computer; and PS imagery was acquired through the Planet Explorer platform, excluding images with cloud cover over the fields. A total of 185 S1, 208 S2, and 180 PS images were used across the four fields in their respective seasons: Hidango 2021-2022 (S1: 52; S2: 60; PS: 47), Hidango 2022-2023 (S1: 56; S2: 56; PS: 40), La Cancha 2022-2023 (S1: 43; S2: 53; PS: 41), and Villa Baviera 2020-2021 (S1: 34; S2: 39; PS: 52).</p>
 </section>
-<section id="preprocessing-of-remote-sensing-data" class="level3" data-number="2.2.4">
-<h3 data-number="2.2.4" class="anchored" data-anchor-id="preprocessing-of-remote-sensing-data"><span class="header-section-number">2.2.4</span> Preprocessing of remote sensing data</h3>
+<section id="preprocessing-of-remote-sensing-data" class="level3">
+<h3 class="anchored" data-anchor-id="preprocessing-of-remote-sensing-data">Preprocessing of remote sensing data</h3>
 <p>For data preprocessing, Sentinel-1 backscatter values (VV and VH) were first converted from decibels to linear scale, and the VH/VV polarization ratio was then computed. No additional masking was applied to Sentinel-1, as its GRD products undergo standard preprocessing, including radiometric calibration, multi-looking, and orthorectification. For Sentinel-2 and PlanetScope, reflectance values were scaled by dividing by 10,000, and values outside the [0.01, 1] range were discarded. Low-quality Sentinel-2 pixels were identified using the Scene Classification Layer (SCL), excluding classes 0, 1, 2, 3, 8, 9, and 10. For PlanetScope, the Universal Data Mask (UDM) was used to retain only clear-sky pixels.</p>
 <p>All variables were interpolated to create continuous daily time series, ensuring they aligned with AGB sampling dates and allowing for biomass estimation at consistent temporal offsets across different fields and seasons. For Sentinel-1, VV, VH, and VH/VV ratio were temporally extended by duplicating each acquisition across the days until the midpoint to the following observation. For Sentinel-2 and PlanetScope, spectral bands were interpolated using a Kalman smoothing approach <span class="citation" data-cites="Moritz2017">(<a href="#ref-Moritz2017" role="doc-biblioref">Moritz and Bartz-Beielstein, 2017</a>)</span>, and cumulative sums were computed from the start of each season. Daily values from all sources, and cumulative sums for Sentinel-2 and PlanetScope, were extracted at sampling locations and later used as input variables for AGB estimation.</p>
 </section>
-<section id="selection-and-processing-of-vis" class="level3" data-number="2.2.5">
-<h3 data-number="2.2.5" class="anchored" data-anchor-id="selection-and-processing-of-vis"><span class="header-section-number">2.2.5</span> Selection and processing of VIs</h3>
+<section id="selection-and-processing-of-vis" class="level3">
+<h3 class="anchored" data-anchor-id="selection-and-processing-of-vis">Selection and processing of VIs</h3>
 <p>A total of 53 vegetation indices (VIs) were selected to estimate AGB using the daily interpolated S2 and PS data (Table&nbsp;<a href="#tbl-3" class="quarto-xref">Table&nbsp;3</a>). Daily cumulative sums of these VIs were also computed from the start of each season to capture integrated vegetation dynamics. Furthermore, 36 of these 53 VIs originally derived from the B8 band were recalculated using the B8A band (available only for S2) to assess potential differences in vegetation response between these two near-infrared bands, resulting in a total of 89 VIs across both products. The indices were chosen based on their relevance for assessing vegetation status, biomass estimation, and yield prediction in wheat, forage, maize, and similar crops <span class="citation" data-cites="Peng2023 Segarra2022 Uribeetxebarria2023 Wang2022 Wu2008 Zheng2017">(<a href="#ref-Peng2023" role="doc-biblioref">Peng et al., 2023</a>; <a href="#ref-Segarra2022" role="doc-biblioref">Segarra et al., 2022</a>; <a href="#ref-Uribeetxebarria2023" role="doc-biblioref">Uribeetxebarria et al., 2023</a>; <a href="#ref-Wang2022" role="doc-biblioref">Wang et al., 2022</a>; <a href="#ref-Wu2008" role="doc-biblioref">Wu et al., 2008</a>; <a href="#ref-Zheng2017" role="doc-biblioref">Zheng et al., 2017</a>)</span>. Both daily values and cumulative VIs were used as predictor variables in the modeling framework.</p>
 <p>Table&nbsp;<a href="#tbl-3" class="quarto-xref">Table&nbsp;3</a> outlines the vegetation indices (VIs) chosen for the machine learning (ML) model after eliminating those that were highly correlated. To see all the other VIs that were used, please refer to the Supplementary Material Table S1.</p>
 <div id="tbl-3" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -800,10 +746,10 @@ Table&nbsp;3: Vegetation indices (covariates) derived from Sentinel-2 (S2) and P
 </div>
 </section>
 </section>
-<section id="modeling-with-machine-learning-algorithms" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="modeling-with-machine-learning-algorithms"><span class="header-section-number">2.3</span> Modeling with Machine Learning Algorithms</h2>
-<section id="overview-of-the-modeling-process" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="overview-of-the-modeling-process"><span class="header-section-number">2.3.1</span> Overview of the modeling process</h3>
+<section id="modeling-with-machine-learning-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="modeling-with-machine-learning-algorithms">Modeling with Machine Learning Algorithms</h2>
+<section id="overview-of-the-modeling-process" class="level3">
+<h3 class="anchored" data-anchor-id="overview-of-the-modeling-process">Overview of the modeling process</h3>
 <div id="fig-3" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -815,27 +761,31 @@ Figure&nbsp;3: <strong>Methodological scheme of the modeling process by machine 
 </figure>
 </div>
 <p>Figure&nbsp;<a href="#fig-3" class="quarto-xref">Figure&nbsp;3</a> shows a general scheme for the modeling process. The dataset for modeling is composed of the in situ AGB data and the remote sensing predictors derived from S1, S2, and PlanetScope, as well as the weather variables. All this data is generated as a time series for each growing season in each site. Then a feature engineering process is applied to the data before running the models. Thereafter, the dataset is used in the first stage to run the ML models to estimate the spatio-temporal variation of AGB within the growing season. After achieving the initial results, we tested the ML prediction models of AGB at harvest by using covariates from four lead times: 1, 2, 3, and 4 months. The ML models for estimation and prediction pass through a hyperparameter optimization and an explainable ML process.</p>
-<p>We tested five machine learning (ML) algorithms to estimate spatio-temporal in-season and AGB (stage 1) and to predict AGB at harvest (stage 2): extreme gradient boosting (XGBoost; <span class="citation" data-cites="Chen2016">(<a href="#ref-Chen2016" role="doc-biblioref">Chen and Guestrin, 2016</a>)</span>), random forest (RF; <span class="citation" data-cites="Ho1995">(<a href="#ref-Ho1995" role="doc-biblioref">Ho, 1995</a>)</span>), regularized generalized linear regression (GLMnet; <span class="citation" data-cites="Hastie2015">(<a href="#ref-Hastie2015" role="doc-biblioref">Hastie et al., 2015</a>)</span>), single layer, feed-forward neural networks (bagMLP; <span class="citation" data-cites="Breiman1996a">(<a href="#ref-Breiman1996a" role="doc-biblioref">Breiman, 1996a</a>)</span>), and K-nearest neighbors (KNN; <span class="citation" data-cites="Hechenbichler2004">(<a href="#ref-Hechenbichler2004" role="doc-biblioref">Hechenbichler and Schliep, 2004</a>)</span>). We also tested an ensemble model which combines the predictions for the five models <span class="citation" data-cites="Breiman1996b Wolpert1992">(<a href="#ref-Breiman1996b" role="doc-biblioref">Breiman, 1996b</a>; <a href="#ref-Wolpert1992" role="doc-biblioref">Wolpert, 1992</a>)</span>. These models were selected based on their robustness in regression tasks, capacity to handle high-dimensional data, interpretability, and for being state-of-the-art.</p>
+<p>We tested five machine learning (ML) algorithms to estimate spatio-temporal in-season and AGB (stage 1) and to predict AGB at harvest (stage 2): extreme gradient boosting (XGBoost; <span class="citation" data-cites="Chen2016">(<a href="#ref-Chen2016" role="doc-biblioref">Chen and Guestrin, 2016</a>)</span>), random forest (RF; <span class="citation" data-cites="Ho1995">(<a href="#ref-Ho1995" role="doc-biblioref">Ho, 1995</a>)</span>), regularized generalized linear regression (GLMnet; <span class="citation" data-cites="Hastie2015">(<a href="#ref-Hastie2015" role="doc-biblioref">Hastie et al., 2015</a>)</span>), single layer, feed-forward neural networks (bagMLP; <span class="citation" data-cites="Breiman1996a">(<a href="#ref-Breiman1996a" role="doc-biblioref">Breiman, 1996a</a>)</span>), and K-nearest neighbors (KNN; <span class="citation" data-cites="Hechenbichler2004">(<a href="#ref-Hechenbichler2004" role="doc-biblioref">Hechenbichler and Schliep, 2004</a>)</span>). We also tested an ensemble model which combines the predictions for the five models <span class="citation" data-cites="Breiman1996c Wolpert1992">(<a href="#ref-Breiman1996c" role="doc-biblioref">Breiman, 1996b</a>; <a href="#ref-Wolpert1992" role="doc-biblioref">Wolpert, 1992</a>)</span>. These models were selected based on their robustness in regression tasks, capacity to handle high-dimensional data, interpretability, and for being state-of-the-art.</p>
 </section>
-<section id="defining-dataset-recipes-for-estimation-and-prediction-models" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="defining-dataset-recipes-for-estimation-and-prediction-models"><span class="header-section-number">2.3.2</span> Defining dataset recipes for estimation and prediction models</h3>
-<p>The dataset used for the estimation modeling (stage 1) included covariates derived from soil moisture data, weather variables, remote sensing spectral information, and VIs. The response variable was AGB (t/ha), obtained from field measurements. As a first step, we divided the data into a training and testing dataset; we chose 75% of the data for training and the remaining 25% for testing. Further, we split the predictor variables into different subsets with the aim to evaluate independently how the weather, Sentinel-1, Sentinel-2, and PlanetScope contribute to the estimation of AGB. We called each subset a recipe (rec). Thus, <em>rec1</em> used all the variables, <em>rec2</em> uses only Sentinel-2, <em>rec3</em> uses Sentinel-2 and weather, <em>rec4</em> uses PlanetScope, <em>rec5</em> uses PlanetScope and weather, <em>rec6</em> uses Sentinel-1, <em>rec7</em> uses Sentinel-1 and weather, and <em>rec8</em> uses only weather variables.</p>
+<section id="defining-dataset-recipes-for-estimation-and-prediction-models" class="level3">
+<h3 class="anchored" data-anchor-id="defining-dataset-recipes-for-estimation-and-prediction-models">Defining dataset recipes for estimation and prediction models</h3>
+<p>The dataset used for the estimation modeling (stage 1) included covariates derived from soil moisture data, weather variables, remote sensing spectral information, and VIs. The response variable was AGB (t/ha), obtained from field measurements. We split the predictor variables into different subsets with the aim of evaluating independently how weather, Sentinel-1, Sentinel-2, and PlanetScope contribute to the estimation of AGB. We called each subset a recipe (rec). Thus, <em>rec1</em> used all the variables; <em>rec2</em> uses only Sentinel-1; <em>rec3</em> uses Sentinel-1 and weather; <em>rec4</em> uses only weather variables; <em>rec5</em> uses only Sentinel-2; <em>rec6</em> uses Sentinel-2 and weather; <em>rec7</em> uses only PlanetScope; and <em>rec8</em> uses PlanetScope and weather.</p>
 </section>
-<section id="feature-engineering" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="feature-engineering"><span class="header-section-number">2.3.3</span> Feature engineering</h3>
-<p>Before running the ML modeling for estimation and prediction, we applied different preprocessing methods to the dataset. First, to fill missing data, we imputed it using k-nearest neighbor <span class="citation" data-cites="Gower1971">(<a href="#ref-Gower1971" role="doc-biblioref">Gower, 1971</a>)</span>. All of the predictors were then normalized to have a standard deviation of one and a mean of zero. Also, we applied a filter to eliminate highly correlated variables.</p>
+<section id="feature-engineering" class="level3">
+<h3 class="anchored" data-anchor-id="feature-engineering">Feature engineering</h3>
+<p>Before running the ML modeling for estimation and prediction, we applied different preprocessing methods to the dataset. First, to fill missing data, we imputed it using k-nearest neighbor <span class="citation" data-cites="Gower1971">(<a href="#ref-Gower1971" role="doc-biblioref">Gower, 1971</a>)</span>. All of the predictors were then normalized to have a standard deviation of one and a mean of zero. Also, we applied a filter to eliminate highly correlated variables (Pearson |r| ≥ 0.9), which removed one of the 43 candidate predictors (S2<sub>SWIR11</sub>_MCARI) for <em>rec1</em>. To document the residual multicollinearity in the full predictor set, we additionally computed variance inflation factors (VIF) on the 42 remaining predictors and iteratively removed variables with VIF &gt; 10, which reduced the set to 22 variables. This VIF audit was performed for transparency only and was not applied as a modeling step, since the regularized (GLMnet) and tree-based (RF, XGBoost) algorithms used here are tolerant of collinearity among spectral indices; the full audit is provided in the project repository.</p>
 </section>
-<section id="estimation-models-for-agb-within-the-growing-season" class="level3" data-number="2.3.4">
-<h3 data-number="2.3.4" class="anchored" data-anchor-id="estimation-models-for-agb-within-the-growing-season"><span class="header-section-number">2.3.4</span> Estimation models for AGB within the growing season</h3>
+<section id="estimation-models-for-agb-within-the-growing-season" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-models-for-agb-within-the-growing-season">Estimation models for AGB within the growing season</h3>
 <p>For the estimation model (stage 1), covariates from the same day as the AGB measured in situ were employed. Thus, we generate a modeling dataset by including the value of the covariates for each sample point. We used a combination of 40 models, corresponding to the eight recipes multiplied by the five ML algorithms. We then ran the models, tuned them through hyperparameter optimization (see section 2.3.4), and used them to estimate AGB spatially for each day and site during the growing season. This process yields a daily spatiotemporal dataset of AGB for each site.</p>
 </section>
-<section id="prediction-models-for-agb-at-harvest" class="level3" data-number="2.3.5">
-<h3 data-number="2.3.5" class="anchored" data-anchor-id="prediction-models-for-agb-at-harvest"><span class="header-section-number">2.3.5</span> Prediction models for AGB at harvest</h3>
+<section id="prediction-models-for-agb-at-harvest" class="level3">
+<h3 class="anchored" data-anchor-id="prediction-models-for-agb-at-harvest">Prediction models for AGB at harvest</h3>
 <p>From the estimation modeling (stage 1), we obtained the daily spatio-temporal AGB within the growing season. For prediction, we took the AGB of the harvest date per site as the response variable. As covariates, we selected the remote sensing covariates (S1, S2, and PS variables in Table&nbsp;<a href="#tbl-3" class="quarto-xref">Table&nbsp;3</a>) and weather data, which lagged from one to four months before harvesting as lead time. To generate the dataset for prediction modeling, we took 100 random samples per site for the responses and covariates. In the modeling process, we used hyperparameter optimization to enhance the performance of our models and then applied them to predict aboveground biomass (AGB) at harvest for each lead time.</p>
 </section>
-<section id="hyperparameter-optimization-and-evaluation" class="level3" data-number="2.3.6">
-<h3 data-number="2.3.6" class="anchored" data-anchor-id="hyperparameter-optimization-and-evaluation"><span class="header-section-number">2.3.6</span> Hyperparameter optimization and evaluation</h3>
-<p>To tune each parameter per algorithm for the estimation and prediction modeling, we used hyperparameter optimization, defining ten candidates per parameter. Table&nbsp;<a href="#tbl-4" class="quarto-xref">Table&nbsp;4</a> shows the parameters tuned and their descriptions. For evaluating the models performance, we used cross-validation as a resampling technique (on the training dataset). We used k-fold cross-validation, with k=5 for five folds. We tune the parameters for each fold and then evaluate the model performance in the k-1 fold ten times. In this case, we define no repetitions per fold. The final evaluation of the model was made in the test dataset (25%). We used the mean absolute error (MAE), root mean square error (RMSE), and r-squared (R²) metrics (see Supplementary Material Eqs. S1, S2 &amp; S3).</p>
+<section id="hyperparameter-optimization-and-evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="hyperparameter-optimization-and-evaluation">Hyperparameter optimization and evaluation</h3>
+<p>To tune each parameter per algorithm for the estimation and prediction modeling, we used hyperparameter optimization, defining ten random candidates per parameter combination (Table&nbsp;<a href="#tbl-4" class="quarto-xref">Table&nbsp;4</a>). For the estimation models (stage 1), performance was evaluated using a leave-one-site-out cross-validation (LOSO-CV) scheme, in which the data were partitioned into four folds, each corresponding to one of the four site-seasons (Hidango 2021–2022, Hidango 2022–2023, La Cancha 2022–2023, and Villa Baviera 2020–2021). For each recipe-algorithm combination, the ten hyperparameter candidates were fitted on the three remaining site-seasons and evaluated on the held-out site-season; the configuration with the highest mean R² across the four folds was selected, and its corresponding mean R², RMSE, and MAE across folds were retained as the final performance estimate. This LOSO scheme directly evaluates the spatial transferability of each model to a field/season not used for training, which is the most policy-relevant generalization scenario for operational AGB monitoring. For the prediction models (stage 2), the same LOSO-CV scheme was applied to the 100-random-samples-per-site-per-lead-time dataset, using recipe <em>rec1</em> (all predictors) combined with five algorithms (RF, XGBoost, GLMnet, bagMLP, and KNN). For each lead time and algorithm, the ten hyperparameter candidates were evaluated across the four LOSO folds and the configuration with the highest mean R² across folds was retained, with its mean R², RMSE, and MAE across folds reported as the final performance estimate; selected models were then refit on the complete dataset using the chosen hyperparameters. We used the mean absolute error (MAE), root mean square error (RMSE), and r-squared (R²) metrics (see Supplementary Material Eqs. S1, S2 &amp; S3).</p>
+</section>
+<section id="stacked-ensemble-model" class="level3">
+<h3 class="anchored" data-anchor-id="stacked-ensemble-model">Stacked ensemble model</h3>
+<p>In addition to the 40 individual recipe-algorithm combinations evaluated via LOSO-CV, we built a stacked ensemble model following <span class="citation" data-cites="Breiman1996c">(<a href="#ref-Breiman1996c" role="doc-biblioref">Breiman, 1996b</a>)</span> and <span class="citation" data-cites="Wolpert1992">(<a href="#ref-Wolpert1992" role="doc-biblioref">Wolpert, 1992</a>)</span>. Using the {stacks} package <span class="citation" data-cites="Couch2022">(<a href="#ref-Couch2022" role="doc-biblioref">Couch and Kuhn, 2022</a>)</span>, the tuned candidates from the stage 1 workflow set were supplied as ensemble members; a LASSO meta-learner (penalized linear regression) was fitted on their out-of-fold predictions to estimate blending weights, retaining only members with a non-zero coefficient. The selected members were then refit on the complete dataset (all four site-seasons, recipe <em>rec1</em>, all predictors) to produce the final ensemble model, which was used as the basis for the explainable ML analysis described below.</p>
 <div id="tbl-4" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -887,9 +837,9 @@ Table&nbsp;4: Parameters per machine learning algorithm. RF: random forest. XGBo
 <td>XGBoost</td>
 </tr>
 <tr class="odd">
-<td>cost</td>
-<td>A positive number for the cost of predicting a sample within or on the wrong side of the margin</td>
-<td>XGBoost</td>
+<td>mtry</td>
+<td>An integer for the number of predictors that are randomly sampled at each split when creating tree models.</td>
+<td>XGBoost, RF</td>
 </tr>
 <tr class="even">
 <td>penalty</td>
@@ -932,72 +882,118 @@ Table&nbsp;4: Parameters per machine learning algorithm. RF: random forest. XGBo
 </figure>
 </div>
 </section>
-<section id="explainable-machine-learning-with-dalex" class="level3" data-number="2.3.7">
-<h3 data-number="2.3.7" class="anchored" data-anchor-id="explainable-machine-learning-with-dalex"><span class="header-section-number">2.3.7</span> Explainable Machine Learning with DALEX</h3>
+<section id="explainable-machine-learning-with-dalex" class="level3">
+<h3 class="anchored" data-anchor-id="explainable-machine-learning-with-dalex">Explainable Machine Learning with DALEX</h3>
 <p>To assess the contribution of each covariate to the model’s performance, we performed a variable importance analysis. Further, to evaluate how the most important variables impact the model’s predictions, we used partial dependence plots. For this, we used the DALEX (moDel Agnostic Language for Exploration and eXplanation). DALEX provides a model-agnostic framework for interpreting machine learning models by quantifying the impact of individual variables on model predictions. We computed permutation-based variable importance, which evaluates the increase in prediction error after permuting the values of a given variable while keeping all other variables fixed. This approach captures both main effects and interactions and is applicable across diverse model types. For estimation, we analyzed the ensemble model that used all the predictors (recipe <em>rec1</em>), and for prediction, we used the best model for each lead time. For each variable, we calculated the increase in root mean squared error (ΔRMSE) caused by the permutation. Higher ΔRMSE values indicate greater importance of the corresponding variable to model performance. The analysis was repeated over 50 random permutations to ensure stability of the importance rankings. The top predictors were identified by ranking variables based on the mean ΔRMSE. In addition, we calculated a “scaled dropout loss” metric to compare variable influence across lead times in the prediction models.</p>
 </section>
 </section>
-<section id="software" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="software"><span class="header-section-number">2.4</span> Software</h2>
+<section id="software" class="level2">
+<h2 class="anchored" data-anchor-id="software">Software</h2>
 <p>We utilized the R programming language <span class="citation" data-cites="RCoreTeam2025">(<a href="#ref-RCoreTeam2025" role="doc-biblioref">R Core Team, 2025</a>)</span> for processing satellite data, as well as for data analysis, ML modeling, and visualization. To access satellite data, we employed the {earthdatalogin} package <span class="citation" data-cites="Boettiger2023">(<a href="#ref-Boettiger2023" role="doc-biblioref">Boettiger et al., 2023</a>)</span>. For smoothing the time series of vegetation indices, we applied the {imputeTS} package <span class="citation" data-cites="Moritz2017">(<a href="#ref-Moritz2017" role="doc-biblioref">Moritz and Bartz-Beielstein, 2017</a>)</span>. We used the {terra} package <span class="citation" data-cites="Hijmans2023">(<a href="#ref-Hijmans2023" role="doc-biblioref">Hijmans, 2023</a>)</span> and the {sf} package <span class="citation" data-cites="Pebesma2018">(<a href="#ref-Pebesma2018" role="doc-biblioref">Pebesma, 2018</a>)</span> for processing raster and vectorial data. For data science tasks and visualization, we utilized the {tidyverse} suite <span class="citation" data-cites="Wickham2019">(<a href="#ref-Wickham2019" role="doc-biblioref">Wickham et al., 2019</a>)</span>. For machine learning modeling, we work with the {tidymodels} framework <span class="citation" data-cites="Kuhn2020">(<a href="#ref-Kuhn2020" role="doc-biblioref">Kuhn and Wickham, 2020</a>)</span>. For the variable importance we used {DALEX} <span class="citation" data-cites="Biecek2018">(<a href="#ref-Biecek2018" role="doc-biblioref">Biecek, 2018</a>)</span>. The {tmap} package <span class="citation" data-cites="Tennekes2018">(<a href="#ref-Tennekes2018" role="doc-biblioref">Tennekes, 2018</a>)</span> was employed for mapping purposes.</p>
 </section>
 </section>
-<section id="results" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Results</h1>
-<section id="estimation-model-for-agb-within-the-growing-season" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="estimation-model-for-agb-within-the-growing-season"><span class="header-section-number">3.1</span> Estimation model for AGB within the growing season</h2>
-<section id="selecting-the-best-models" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="selecting-the-best-models"><span class="header-section-number">3.1.1</span> Selecting the best models</h3>
-<p>For AGB estimation, we tested 40 models generated by a combination of machine learning algorithms and the type of predictors used (recipes). The performance for all the models had R² values above 0.65, MAE below 5 t/ha, and RMSE below 6.5 t/ha. Figure&nbsp;<a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a> shows the ranking of the 40 models based on the R², using the training dataset obtained through resampling. The algorithms RF, followed by XGBoost, were the ones that achieved the best (higher R² and lower error), and GLMnet had the lowest performance. The recipe <em>rec3</em>, which uses S1 and weather, ranks first<em>,</em> followed by <em>rec6,</em> which uses S2 and weather, and <em>rec1</em>, which incorporates all the covariates. The algorithm that had the poor performance was the GLMnet with <em>rec4</em>, using only weather, and with <em>rec3,</em> which uses S1 and weather.</p>
+<section id="results" class="level1">
+<h1>Results</h1>
+<section id="estimation-model-for-agb-within-the-growing-season" class="level2">
+<h2 class="anchored" data-anchor-id="estimation-model-for-agb-within-the-growing-season">Estimation model for AGB within the growing season</h2>
+<section id="selecting-the-best-models" class="level3">
+<h3 class="anchored" data-anchor-id="selecting-the-best-models">Selecting the best models</h3>
+<p>For AGB estimation, we tested 40 models generated by a combination of five machine learning algorithms and eight recipes, each evaluated using leave-one-site-out cross-validation (LOSO-CV) across the four site-seasons. Across the 40 models, R² ranged from 0.44 to 0.78, MAE from 5.2 to 9.0 t/ha, and RMSE from 6.7 to 10.2 t/ha (Figure <a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a>). RF and XGBoost were generally the best-performing algorithms, while GLMnet was the weakest overall. The recipe <em>rec7</em>, which uses only PlanetScope (PS) predictors, ranked first with RF (R²=0.78, RMSE=7.87 t/ha, MAE=5.90 t/ha) and second with XGBoost (R²=0.77, RMSE=7.55 t/ha, MAE=5.75 t/ha); <em>rec8</em> (PS+weather) ranked third and fourth with XGBoost and RF, respectively. By contrast, <em>rec2</em> (S1 only) consistently ranked among the worst recipes regardless of algorithm (ranks 36-40 of 40, R²=0.44-0.53), with its GLMnet configuration ranking last overall—indicating that Sentinel-1 backscatter alone carries little transferable information about AGB across sites and seasons. The recipe that incorporates all covariates (<em>rec1</em>) did not outperform the PlanetScope-only recipes; its best configuration (bagMLP) ranked sixth overall (R²=0.75, RMSE=6.96 t/ha, MAE=5.34 t/ha). This pattern is corroborated by an independent sensor-ablation analysis (Table <a href="#tbl-6" class="quarto-xref">Table&nbsp;5</a>), in which adding Sentinel-1 to a Sentinel-2+weather model changed RMSE by only -0.5% (i.e., a marginal degradation), whereas adding PlanetScope to a Sentinel-1+Sentinel-2+weather model improved RMSE by 5.7%.</p>
 <div id="fig-4" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../output/figs/ranking_estimacion_modelos.png" class="img-fluid figure-img" style="width:100.0%">
+<img src="../output/figs/ranking_estimacion_modelos_rec.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;4: <strong>Performance metrics for the forty models (five ML algorithms and eight recipes).</strong> We rank the metrics from higher to lower performance. RF: random forest, KNN: k-nearest neighbor, XGBoost: extreme gradient boosting, GLMnet: generalized linear models with regularization, bagMLP: feed-forward neural networks. S1: Sentinel 1, S2: Sentinel 2, PS: PlanetScope, and W: weather.
+Figure&nbsp;4: <strong>Performance metrics (R², MAE, and RMSE) for the forty models (five ML algorithms and eight recipes), ranked from best to worst under leave-one-site-out cross-validation.</strong> RF: random forest, KNN: k-nearest neighbor, XGBoost: extreme gradient boosting, GLMnet: generalized linear models with regularization, bagMLP: feed-forward neural networks. rec1: all predictors, rec2: Sentinel-1 (S1), rec3: S1+weather (W), rec4: weather only, rec5: Sentinel-2 (S2), rec6: S2+W, rec7: PlanetScope (PS), rec8: PS+W.
 </figcaption>
 </figure>
 </div>
-<p>We then select the three models that achieved the highest performance, along with the ensemble model, and run all of them on the testing dataset. The resulting metrics between the models were similar; however, the ensemble model had a higher error (RMSE=3.65 t/ha and R²=0.89), while the RF with <em>rec3</em> (S1+W) had a lower error and a higher R² (Figure&nbsp;<a href="#fig-5" class="quarto-xref">Figure&nbsp;5</a>) with RMSE=3.18 t/ha, and R²=0.91.</p>
+<p>Figure <a href="#fig-5" class="quarto-xref">Figure&nbsp;5</a> compares observed and out-of-fold predicted AGB for the top-ranked configuration (<em>rec7</em>_RF, PlanetScope only), its runner-up (<em>rec7</em>_XGBoost), and a representative all-predictors configuration (<em>rec1</em>_RF, rank 8 overall, R²=0.74, RMSE=7.88 t/ha) for context. The PlanetScope-only models track the 1:1 line closely across the full biomass range, including the high-biomass observations (&gt;25 t/ha) where the all-predictors model shows a tendency to underestimate.</p>
 <div id="fig-5" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../output/figs/estimation_vs_observed_AGB_between_models.png" class="img-fluid figure-img" style="width:100.0%">
+<img src="../output/figs/estimation_vs_observed_AGB_LOSO.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;5: <strong>Comparison of the observed and estimated aboveground biomass obtained by the machine learning models and recipe that reached the best performance.</strong> RF: Random Forest; XGBoost: Extreme Gradient Boosting; Ensemble: Ensemble Model. S1: Sentinel 1, S2: Sentinel 2, and W: weather.
+Figure&nbsp;5: <strong>Comparison of observed and out-of-fold predicted aboveground biomass (LOSO-CV) for the top-ranked models.</strong> R² and RMSE correspond to the official ranking (mean across the four LOSO folds, best hyperparameter configuration).
 </figcaption>
 </figure>
 </div>
+<p>As an independent check on the recipe ranking above, we ran a complementary sensor-ablation analysis with fixed-hyperparameter XGBoost models under the same LOSO-CV scheme, sequentially adding sensor groups to a weather-only baseline (Table <a href="#tbl-6" class="quarto-xref">Table&nbsp;5</a>). Adding Sentinel-2 to the weather-only model reduced RMSE by 23.4%, confirming the strong contribution of optical vegetation indices. Adding Sentinel-1 to the Sentinel-2+weather model produced a negligible change in RMSE (-0.5%, i.e., a slight degradation), while subsequently adding PlanetScope reduced RMSE by a further 5.7%. This independent analysis is consistent with the recipe ranking in Figure <a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a>: optical sensors (Sentinel-2 and PlanetScope) drive most of the predictive performance, whereas Sentinel-1 SAR backscatter contributes little once optical and weather information are available.</p>
+<div id="tbl-6" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;5: Sensor-ablation analysis. Each row reports the change in mean LOSO-CV RMSE (fixed-hyperparameter XGBoost) when a sensor group is added sequentially to the previous model.
+</figcaption>
+<div aria-describedby="tbl-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>Sensor added</strong></th>
+<th><strong>RMSE before (t/ha)</strong></th>
+<th><strong>RMSE after (t/ha)</strong></th>
+<th><strong>RMSE change (%)</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Sentinel-2 (vs.&nbsp;weather only)</td>
+<td>9.96</td>
+<td>7.63</td>
+<td>-23.4</td>
+</tr>
+<tr class="even">
+<td>Sentinel-1 (vs.&nbsp;Sentinel-2 + weather)</td>
+<td>7.63</td>
+<td>7.68</td>
+<td>+0.5</td>
+</tr>
+<tr class="odd">
+<td>PlanetScope (vs.&nbsp;Sentinel-1 + Sentinel-2 + weather)</td>
+<td>7.68</td>
+<td>7.24</td>
+<td>-5.7</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
 </section>
-<section id="explainable-machine-learning-with-dalex-1" class="level3" data-number="3.1.2">
-<h3 data-number="3.1.2" class="anchored" data-anchor-id="explainable-machine-learning-with-dalex-1"><span class="header-section-number">3.1.2</span> Explainable Machine Learning with DALEX</h3>
+<section id="explainable-machine-learning-with-dalex-1" class="level3">
+<h3 class="anchored" data-anchor-id="explainable-machine-learning-with-dalex-1">Explainable Machine Learning with DALEX</h3>
 <div id="fig-6" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../output/figs/variables_importance_estimacion_modelo_ensamblado.png" class="img-fluid figure-img" style="width:100.0%">
+<img src="../output/figs/variables_importance_estimacion_modelo_ensamblado_LOSO.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;6: <strong>GDD and Sentinel-1 show higher impact on the ensemble model performance.</strong> The six most important variables, based on the reduction of RMSE after permutations in the ensemble model using rec1 (all the predictors). The indices preceded by an ∑ indicate they are cumulative indices throughout the growing season.
+Figure&nbsp;6: <strong>Optical (Sentinel-2, PlanetScope), SAR (Sentinel-1), and accumulated thermal-time variables show comparable impact on the LOSO-tuned ensemble model performance.</strong> The twenty most important variables, ranked by the increase in RMSE (dropout loss) after permutation in the stacked ensemble model (recipe <em>rec1</em>, all predictors). Error bars show ±1 standard deviation across 50 permutations. The ∑ symbol indicates cumulative indices computed from the start of the growing season.
 </figcaption>
 </figure>
 </div>
-<p>The results of the most important variables identify the ∑GDD as the one that has a higher impact on the estimation model performance. The SAR-derived indices S1<sub>VH</sub>, S1<sub>VV</sub>, and S1<sub>VH/VV</sub> follow, with the weather variables of SM and PP showing a higher impact on the estimation model (Figure&nbsp;<a href="#fig-6" class="quarto-xref">Figure&nbsp;6</a>). The weather variables are retrieved from weather stations and are not represented spatially, unlike the S1, which has spatial representation. The predictors derived from optical sensors (S2 and PS) are the ones that reached the lowest impact on the model estimations.</p>
+<p>For the LOSO-tuned ensemble (recipe <em>rec1</em>, all predictors), permutation-based variable importance shows a relatively flat ranking across the leading predictors (Figure <a href="#fig-6" class="quarto-xref">Figure&nbsp;6</a>): the Sentinel-2 SWIR-related chlorophyll index S2<sub>SWIR12_MCARI</sub> ranks highest, closely followed by two PlanetScope bands/indices (PS<sub>B5</sub>, PS<sub>GNDVI</sub>), a cumulative Sentinel-2 red-edge index (∑S2<sub>NDRE3_8A</sub>), S2<sub>MCARI</sub>, the Sentinel-1 backscatter ratio S1<sub>VH/VV</sub>, ∑GDD, S1<sub>VH</sub>, S2<sub>B1</sub>, and S2<sub>MCARI/OSAVI2</sub>—all within a narrow range of dropout-loss values (11.4-11.6 RMSE units). Unlike the recipe-level ranking in Figure&nbsp;<a href="#fig-4" class="quarto-xref">Figure&nbsp;4</a>, where PlanetScope-based recipes clearly outperform the others, the ensemble-level importance indicates that optical (S2, PS), SAR (S1), and accumulated thermal-time predictors all contribute comparably once combined in a single model, consistent with the residual collinearity documented by the VIF audit (Section 2.3.3).</p>
 <div id="fig-7" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="../output/figs/partial_dependence_plots_estimation.png" class="img-fluid figure-img" style="width:100.0%">
+<img src="../output/figs/partial_dependence_plots_estimation_LOSO.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;7: <strong>Partial dependence plots illustrating the relationship between the average prediction of the ensemble model and the six most important predictors.</strong> The y-axis represents the marginal effect on the predicted AGB, while the x-axes show the range of each predictor.
+Figure&nbsp;7: <strong>Partial dependence plots for the six leading predictors of the LOSO-tuned ensemble model (recipe <em>rec1</em>, all predictors).</strong> Each panel shows the average predicted AGB (t/ha, y-axis) as a function of the predictor value (x-axis), with all other predictors held at their observed distribution. The ∑ symbol indicates a cumulative index computed from the start of the growing season.
 </figcaption>
 </figure>
 </div>
-<p>Partial dependence plots (Figure&nbsp;<a href="#fig-7" class="quarto-xref">Figure&nbsp;7</a>) from the ensemble model reveal complex, often non-linear relationships between key S1 SAR-derived and environmental features and the predicted outcome. Cumulative growing degree-days (ΣGDD) exert a strong positive influence that steepens beyond ~600–700 GDD and approaches a plateau above 1000 GDD, whereas the ΣPP exhibits a clear optimum between approximately 100 and 300 units, with a moderate decline at higher values. Early-season backscatter dynamics in VH polarization (S1<sub>VH</sub>), strongly enhance predictions across its range, reflecting rapid canopy development or high biomass periods. In contrast, prolonged periods of low VH backscatter (S1<sub>VH</sub>) and elevated soil moisture (SM) during sensitive phases impose marked yield penalties, likely linked to delayed emergence or waterlogging risk. The S1<sub>VH/VV</sub> displays an optimum near 0.2–0.4, indicating a beneficial balance of vegetation versus soil-dominated scattering. Together, these profiles demonstrate the model’s ability to capture subtle, non-monotonic interactions among thermal accumulation, radiation, soil moisture, and Sentinel-1 VH and VV polarization signals that drive variation in the AGB.</p>
+<p>Partial dependence plots for the six leading predictors of the LOSO-tuned ensemble (Figure&nbsp;<a href="#fig-7" class="quarto-xref">Figure&nbsp;7</a>) reveal predominantly negative, near-monotonic relationships for the optical predictors: predicted AGB decreases by roughly 2 t/ha as PS<sub>B5</sub> increases across its observed range, by a similar margin as PS<sub>GNDVI</sub> increases from 0 to 0.8, and more gently for S2<sub>MCARI</sub> and S2<sub>SWIR12_MCARI</sub>. The cumulative red-edge index ∑S2<sub>NDRE3_8A</sub> shows a non-monotonic, oscillating profile with local maxima and minima spanning about 1 t/ha. The Sentinel-1 backscatter ratio S1<sub>VH/VV</sub> displays a shallow U-shape, with higher predicted AGB at both low (~0) and high (&gt;1) ratio values and a minimum around 0.4–0.6. These patterns should be interpreted with caution: given the narrow, largely overlapping importance scores in Figure&nbsp;<a href="#fig-6" class="quarto-xref">Figure&nbsp;6</a> and the residual collinearity among the 42 candidate predictors documented in Section 2.3.3, the marginal effect attributed to any single optical index likely reflects shared variance with co-varying spectral, SAR, and thermal-time predictors rather than an isolated physiological response.</p>
 </section>
-<section id="spatio-temporal-variation-of-agb-within-the-growing-season" class="level3" data-number="3.1.3">
-<h3 data-number="3.1.3" class="anchored" data-anchor-id="spatio-temporal-variation-of-agb-within-the-growing-season"><span class="header-section-number">3.1.3</span> Spatio-temporal variation of AGB within the growing season</h3>
+<section id="spatio-temporal-variation-of-agb-within-the-growing-season" class="level3">
+<h3 class="anchored" data-anchor-id="spatio-temporal-variation-of-agb-within-the-growing-season">Spatio-temporal variation of AGB within the growing season</h3>
 <p>Finally, we run the models to make a daily spatial estimation of biomass through the growing season at each site. The averaged daily AGB for each site is shown in Figure&nbsp;<a href="#fig-8" class="quarto-xref">Figure&nbsp;8</a>, along with the in-situ AGB measurements.</p>
 <div id="fig-8" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -1016,38 +1012,46 @@ Figure&nbsp;8: <strong>Daily temporal variation of the averaged AGB per site (li
 <img src="../output/figs/mapas_biomasa_mensual_estimada.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-9-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;9: <strong>Monthly averaged above-ground biomass (AGB) estimated with extreme gradient boosting model (XGBoost) with recipe 3 (Sentinel-1+weather) for the sites</strong> (a) Hidango season 2021-2022, (b) Hidalgo season 2022-2023, (c) La Cancha season 2022-2023, and (d) Villa Baviera season 2020-2021.
+Figure&nbsp;9: <strong>Monthly averaged above-ground biomass (AGB) estimated with the stacked ensemble model (recipe rec1, all predictors) for the sites</strong> (a) Hidango season 2021-2022, (b) Hidango season 2022-2023, (c) La Cancha season 2022-2023, and (d) Villa Baviera season 2020-2021.
 </figcaption>
 </figure>
 </div>
 </section>
 </section>
-<section id="prediction-models-for-agb-at-harvest-1" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="prediction-models-for-agb-at-harvest-1"><span class="header-section-number">3.2</span> Prediction models for AGB at harvest</h2>
-<p>The prediction models were evaluated for lead times of one, two, three, and four months. The R² value decreases from 0.94 at one month to 0.86 at four months. Concurrently, the errors increase, with the MAE rising from 0.85 t/ha and the RMSE from 1.11 t/ha at one month, to MAE of 1.26 t/ha and RMSE of 1.74 t/ha at four months (Figure&nbsp;<a href="#fig-10" class="quarto-xref">Figure&nbsp;10</a>).</p>
+<section id="prediction-models-for-agb-at-harvest-1" class="level2">
+<h2 class="anchored" data-anchor-id="prediction-models-for-agb-at-harvest-1">Prediction models for AGB at harvest</h2>
+<p>As a secondary, exploratory objective, we used the same leave-one-site-out cross-validation (LOSO-CV) framework (recipe <em>rec1</em>, all predictors) to forecast AGB at harvest one to four months ahead, comparing four fixed-hyperparameter algorithms (RF, XGBoost, KNN, and bagMLP); GLMnet was excluded from this comparison because its cross-fold RMSE was highly unstable (15.5–54.7 t/ha across leads). Random Forest (RF) was the most consistently competitive of the four across lead times and is used as the reference model below. For RF, R² decreased from 0.46 (RMSE=4.52 t/ha, MAE=4.21 t/ha) at a one-month lead to 0.25 (RMSE=5.07 t/ha, MAE=4.73 t/ha) at two months, 0.15 (RMSE=5.09 t/ha, MAE=4.73 t/ha) at three months, and 0.10 (RMSE=6.46 t/ha, MAE=6.13 t/ha) at four months (Figure&nbsp;<a href="#fig-10" class="quarto-xref">Figure&nbsp;10</a>). The other three models followed a broadly similar declining trend. These results indicate modest forecast skill that decays rapidly with lead time under spatially-independent (LOSO-CV) validation.</p>
 <div id="fig-10" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="../output/figs/metrics_prediction_lead_times.png" class="img-fluid figure-img" style="width:100.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-10-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;10: <strong>The performance metrics R², MAE (t/ha), and RMSE (t/ha) for the prediction models</strong>—including feed-forward neural networks (bagMLP), regularized generalized linear model (GLMnet), K-nearest neighbor (KNN), random forest (RF), and extreme gradient boosting (XGBoost)—are evaluated on the testing dataset for lead times of 1, 2, 3, and 4 months.
+Figure&nbsp;10: <strong>LOSO-CV performance metrics (R², MAE, and RMSE, in t/ha) for AGB-at-harvest forecasts one to four months ahead</strong> (recipe <em>rec1</em>, all predictors; best hyperparameter configuration per fold, as in stage 1), for four fixed-hyperparameter algorithms: bagged multilayer perceptron (bagMLP), K-nearest neighbors (KNN), random forest (RF), and extreme gradient boosting (XGBoost). GLMnet was excluded due to highly unstable cross-fold RMSE (15.5–54.7 t/ha). The shaded line shows the overall trend (LOESS smooth) across the four models.
 </figcaption>
 </figure>
 </div>
-<p>Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;5</a> presents the six most significant variables for the four lead time prediction models. Soil moisture (SM) was the leading covariate in three instances. Monthly cumulative precipitation was ranked first for one of the prediction lead times. Covariates derived from Sentinel-1, specifically backscatter VV and VH/VV, as well as VH, ranked second across all four lead times. Additionally, only one optical covariate from the PlanetScope satellite, band three (B3), was ranked fifth for all four lead times.</p>
+<p>Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;6</a> lists the eight variables with the most consistent permutation-based importance across the four lead-time RF models (recipe <em>rec1</em>). Soil moisture (SM) had the lowest (best) overall mean rank (5.75), reflecting its rank-1 importance at the four-month lead and rank-2/3 importance at the two- and three-month leads, despite not appearing among the top six predictors at the one-month lead. By contrast, the cumulative PlanetScope green-red vegetation index (∑PS<sub>GRVI</sub>) showed a strongly lead-dependent pattern: it was by far the most important predictor at one-, two-, and three-month leads (permutation z-scores of 6.2, 4.1, and 4.0, respectively—several times larger than any other variable at those leads)—but fell to near the bottom of the ranking (43rd of 43 variables) at the four-month lead, yielding a middling overall mean rank (11.25). The remaining variables in Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;6</a> (∑S2<sub>B1</sub>, ∑S2<sub>SWIR12_TCARI</sub>, PS<sub>B8</sub>, S2<sub>NDRE_NDVI</sub>, PS<sub>B5</sub>, PS<sub>TCARI_OSAVI</sub>) each appeared among the top six predictors for at most one or two of the four leads. This pronounced rotation in variable importance with lead time—with no single predictor ranking consistently across all four horizons—further illustrates the instability of harvest forecasting under a four-site-season LOSO-CV scheme and reinforces the need for larger multi-site networks to support reliable multi-month forecasting (see Discussion).</p>
 <div id="tbl-5" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;5: The six most important variables for the XGBoost prediction model (extreme gradient boosting) and rec1 (all predictors). N: the times that the variable was in the five most important variables. Mode rank: This refers to the statistical mode of the ranks assigned to the variable. Scaled dropout loss: the average value of the scaled dropout. This statistic considers the summary for the four prediction lead times.
+Table&nbsp;6: The eight most important variables (ranked by mean rank) for the RF prediction model (recipe rec1, all predictors) across the four LOSO-CV lead-time models. N: number of leads (of four) in which the variable was among the five most important. Mode rank: most frequent rank across the four leads. Mean rank: average rank across the four leads (lower values indicate more consistent importance). Scaled dropout loss: mean z-scored permutation-importance loss (RMSE increase after permutation) across the four leads.
 </figcaption>
 <div aria-describedby="tbl-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top table">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 8%">
+<col style="width: 19%">
+<col style="width: 20%">
+<col style="width: 33%">
+</colgroup>
 <thead>
 <tr class="header">
 <th><strong>Variable</strong></th>
 <th><strong>N</strong></th>
 <th><strong>Mode rank</strong></th>
+<th><strong>Mean rank</strong></th>
 <th><strong>Scaled dropout loss</strong></th>
 </tr>
 </thead>
@@ -1056,37 +1060,57 @@ Table&nbsp;5: The six most important variables for the XGBoost prediction model 
 <td><strong>SM</strong></td>
 <td>3</td>
 <td>1</td>
-<td>1.78</td>
+<td>5.75</td>
+<td>1.91</td>
 </tr>
 <tr class="even">
-<td>∑PP</td>
-<td>1</td>
-<td>1</td>
-<td>1.78</td>
-</tr>
-<tr class="odd">
-<td><strong>S1<sub>VV</sub></strong></td>
-<td>4</td>
-<td>3</td>
-<td>-0.403</td>
-</tr>
-<tr class="even">
-<td><strong>S1<sub>VH/VV</sub></strong></td>
-<td>4</td>
-<td>3</td>
-<td>-0.455</td>
-</tr>
-<tr class="odd">
-<td><strong>S1<sub>VH</sub></strong></td>
-<td>4</td>
+<td>∑S2<sub>B1</sub></td>
 <td>2</td>
-<td>-0.355</td>
+<td>2</td>
+<td>8.25</td>
+<td>1.23</td>
+</tr>
+<tr class="odd">
+<td>∑S2<sub>SWIR12_TCARI</sub></td>
+<td>1</td>
+<td>5</td>
+<td>9.75</td>
+<td>-0.11</td>
 </tr>
 <tr class="even">
-<td>PS<sub>B3</sub></td>
-<td>4</td>
+<td><strong>∑PS<sub>GRVI</sub></strong></td>
+<td>3</td>
+<td>1</td>
+<td>11.25</td>
+<td>3.24</td>
+</tr>
+<tr class="odd">
+<td>PS<sub>B8</sub></td>
+<td>0</td>
+<td>8</td>
+<td>11.75</td>
+<td>-0.09</td>
+</tr>
+<tr class="even">
+<td>S2<sub>NDRE_NDVI</sub></td>
+<td>0</td>
+<td>9</td>
+<td>12</td>
+<td>-0.12</td>
+</tr>
+<tr class="odd">
+<td>PS<sub>B5</sub></td>
+<td>2</td>
+<td>2</td>
+<td>12.75</td>
+<td>0.56</td>
+</tr>
+<tr class="even">
+<td>PS<sub>TCARI_OSAVI</sub></td>
+<td>3</td>
 <td>5</td>
-<td>-0.567</td>
+<td>13</td>
+<td>0.45</td>
 </tr>
 </tbody>
 </table>
@@ -1095,57 +1119,61 @@ Table&nbsp;5: The six most important variables for the XGBoost prediction model 
 </div>
 </section>
 </section>
-<section id="discussion" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Discussion</h1>
-<section id="models-performance" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="models-performance"><span class="header-section-number">4.1</span> Models performance</h2>
-<p>For the estimation, the RF and XGBoost models achieved high R² values (&gt;0.9) and low errors (RMSE ~3.2 t/ha) for AGB on the test dataset, indicating excellent potential generalization capacity. The results are similar to other studies that used UAV with higher spatial resolution <span class="citation" data-cites="AtkinsonAmorim2022 Liu2024">(<a href="#ref-AtkinsonAmorim2022" role="doc-biblioref">Atkinson Amorim et al., 2022</a>; <a href="#ref-Liu2024" role="doc-biblioref">Liu et al., 2024</a>)</span> and others that used hyperspectral data with wider spectral information <span class="citation" data-cites="Marshall2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>)</span>. The recipes that allowed a higher performance were those using S1 and weather data. The meteorological variables ∑GDD was the most important predictor as expected and has been shown by <span class="citation" data-cites="Liu2025">(<a href="#ref-Liu2025" role="doc-biblioref">Liu and Chen, 2025</a>)</span>. ∑PP, SM were the following most influential weather predictors in the models, which confirms water availability’s fundamental role in crop development. Although weather allows capturing the temporal behavior, they do not reflect the spatial variation on AGB. The mix of weather data and satellite information, especially SAR variables (VH, VV, and VH/VV), had a big effect, proving they are advantageous in areas with many clouds and making S1 a strong addition to optical sensors. It is likely that the results obtained with S1 are supported by its outstanding agreement with the soil dielectric constant, which at the same time is linked to soil moisture variation <span class="citation" data-cites="Wang2023">(<a href="#ref-Wang2023" role="doc-biblioref">Wang et al., 2023</a>)</span>. Despite having a higher spatial resolution, PS has a minor influence on the model response, as does S2, despite its wider spectral resolution.</p>
-<p>We tested the prediction at four lead times; however, the major drawback of this is the low variability of AGB at harvest, because we used only four sites. Nevertheless, the prediction showed a decrease in R² with increasing lead time, from 0.94 (1 month) to 0.86 (4 months). This decrease suggests the increasing difficulty of capturing interannual variability and extreme weather events in advance. However, the results are promising for practical implications for early decision-making. Soil moisture content (SM) was the most relevant variable for three of the four lead times, reaffirming its role as an early indicator of water stress and the well-known interconnection of soil-plant-atmosphere. Only one PS band was significant among the six main covariates. This finding could be attributed to the saturation of optical indices in advanced stages of crops or the high redundancy between accumulated VIs.</p>
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<section id="models-performance" class="level2">
+<h2 class="anchored" data-anchor-id="models-performance">Models performance</h2>
+<p>For in-season AGB estimation, leave-one-site-out cross-validation (LOSO-CV) provided a stringent test of spatial transferability across four Mediterranean wheat field-seasons spanning three locations, two wheat habits (winter and spring), and distinct soil types. Under this scheme, the best-performing configuration (RF using only PlanetScope predictors, recipe <em>rec7</em>) reached R²=0.78 (RMSE=7.87 t/ha, MAE=5.90 t/ha). This R² is broadly comparable to studies that used UAV imagery <span class="citation" data-cites="AtkinsonAmorim2022 Liu2024">(<a href="#ref-AtkinsonAmorim2022" role="doc-biblioref">Atkinson Amorim et al., 2022</a>; <a href="#ref-Liu2024" role="doc-biblioref">Liu et al., 2024</a>)</span> or hyperspectral data <span class="citation" data-cites="Marshall2022">(<a href="#ref-Marshall2022" role="doc-biblioref">Marshall et al., 2022</a>)</span> (R²=0.81-0.91), despite the more demanding cross-site validation applied here, since those studies typically relied on within-site or random data splits that do not test spatial transferability. The higher absolute RMSE and MAE relative to those single-site studies likely reflect the wider AGB range and greater inter-site/inter-season heterogeneity sampled here (AGB up to ~30 t/ha across winter and spring wheat).</p>
+<p>Contrary to our initial expectation that the all-predictors recipe (<em>rec1</em>) or a Sentinel-1-plus-weather combination (<em>rec3</em>) would perform best, recipes built on PlanetScope alone (<em>rec7</em>) or with weather (<em>rec8</em>) consistently outranked <em>rec1</em>, while the Sentinel-1-only recipe (<em>rec2</em>) was consistently among the worst-performing (R²=0.44-0.53). The complementary sensor-ablation analysis (Table&nbsp;<a href="#tbl-6" class="quarto-xref">Table&nbsp;5</a>) corroborates this pattern: adding Sentinel-2 to a weather-only baseline reduced RMSE by 23.4%, whereas adding Sentinel-1 to a Sentinel-2-plus-weather model left RMSE essentially unchanged (+0.5%), and subsequently adding PlanetScope produced a further 5.7% reduction. Under LOSO-CV, therefore, optical sensors (PlanetScope and Sentinel-2) carry most of the transferable AGB signal, whereas Sentinel-1 backscatter alone adds little once optical and weather data are available—a different picture from within-site evaluations, where SAR-derived indices are often reported among the strongest predictors <span class="citation" data-cites="Wang2023">(<a href="#ref-Wang2023" role="doc-biblioref">Wang et al., 2023</a>)</span>.</p>
+<p>At the ensemble level (recipe <em>rec1</em>, all predictors), permutation-based variable importance (Figure&nbsp;<a href="#fig-6" class="quarto-xref">Figure&nbsp;6</a>) shows a comparatively flat ranking: a Sentinel-2 SWIR-related chlorophyll index (S2<sub>SWIR12_MCARI</sub>) ranks highest, closely followed by two PlanetScope predictors (PS<sub>B5</sub>, PS<sub>GNDVI</sub>), a cumulative Sentinel-2 red-edge index (∑S2<sub>NDRE3_8A</sub>), S2<sub>MCARI</sub>, the Sentinel-1 VH/VV ratio, ∑GDD, S1<sub>VH</sub>, S2<sub>B1</sub>, and S2<sub>MCARI_OSAVI2</sub>—all within a narrow range of dropout-loss values. This indicates that, once combined in a single model, optical, SAR, and accumulated thermal-time predictors carry comparable, partly redundant information, consistent with the residual collinearity documented by the VIF audit (Section 2.3.3). The partial dependence profiles for these leading predictors (Figure&nbsp;<a href="#fig-7" class="quarto-xref">Figure&nbsp;7</a>) are predominantly negative and, for the Sentinel-1 VH/VV ratio, non-monotonic (U-shaped); given this collinearity, we interpret these marginal effects with caution rather than as isolated physiological responses.</p>
+<p>For the secondary, exploratory harvest-forecasting objective (stage 2), the same LOSO-CV scheme applied to the 1-4-month lead-time dataset (recipe <em>rec1</em>, RF as the most stable model across leads) yielded modest and rapidly decaying skill: R² fell from 0.46 (RMSE=4.52 t/ha) at one month to 0.10 (RMSE=6.46 t/ha) at four months. Permutation importance for these RF models (Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;6</a>) showed a pronounced rotation across lead times rather than a stable set of top predictors: the cumulative PlanetScope green-red index (∑PS<sub>GRVI</sub>) dominated at one-, two-, and three-month leads but became unimportant at four months, while soil moisture (SM) became the leading predictor only at the four-month lead. This instability, together with the modest and rapidly decaying R², is consistent with the limited number of independent site-seasons (n=4) available to a leave-one-site-out scheme: each fold trains on only three site-seasons and is evaluated on a fourth, entirely unseen field, season, and (in most folds) wheat habit. We therefore interpret these forecasting results as a proof of concept rather than an operational benchmark, and as a call for larger multi-site, multi-season networks to support reliable multi-month AGB forecasting.</p>
 </section>
-<section id="application-for-wheat-yield-management" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="application-for-wheat-yield-management"><span class="header-section-number">4.2</span> Application for wheat yield management</h2>
-<p>The ability to predict AGB with a horizon of up to four months can facilitate irrigation, fertilization, and crop insurance decisions. It is also useful for government agencies in yield monitoring and food security. Incorporating multi-temporal forecasts would allow for the construction of warning systems for low-yield events before harvest. Further, the satisfactory results obtained from S1 suggest that the model is likely to have adequate performance in regions that face cloudy weather during the growing season.</p>
-<p>In contrast to other methodologies that rely on UAVs or hyperspectral data, this approach offers many advantages. One of the most important is the lower cost in equipment and human resources. The public data (S1, S2, and weather) makes the real-time application scalable, allowing for easy expansion to other agroclimatic regions. Thus, a decision support system for yield variation could potentially be implemented, considering minor investments.</p>
+<section id="application-for-wheat-yield-management" class="level2">
+<h2 class="anchored" data-anchor-id="application-for-wheat-yield-management">Application for wheat yield management</h2>
+<p>The ability to estimate in-season AGB with policy-relevant accuracy (<em>rec7</em>_RF, R²=0.78) can support irrigation, fertilization, and crop-insurance decisions, as well as yield monitoring by government agencies. However, our sensor-ablation results temper one common assumption in the literature: under LOSO-CV, Sentinel-1 backscatter did not improve on an optical-plus-weather baseline (+0.5% RMSE), so SAR should not be regarded as a source of additional accuracy when optical imagery is available. Its practical value is more likely as a substitute rather than a complement: maintaining partial model coverage during persistent cloud cover, when Sentinel-2 or PlanetScope observations are unavailable. Confirming this cloud-substitution role, and quantifying any accuracy trade-off relative to a fully-optical pipeline, would require evaluating model performance under simulated optical data gaps—an analysis beyond the scope of the present study but a natural direction for future work.</p>
+<p>In contrast to UAV- or hyperspectral-based approaches, this framework offers lower equipment and operational costs. The best-performing configuration (<em>rec7</em>_RF) relies on PlanetScope imagery without requiring in-situ soil moisture, and a fully public alternative (Sentinel-2 plus weather, <em>rec6</em>) captures a substantial share of the achievable improvement (a 23.4% RMSE reduction over a weather-only baseline). This suggests two complementary deployment pathways: a fully public Sentinel-2-plus-weather pipeline that is, in principle, transferable to any region with public meteorological data, and a higher-accuracy PlanetScope-based pipeline that requires a commercial imagery subscription. In both cases, however, the framework’s reliance on in-situ weather station data (discussed below) remains the main barrier to low-cost, large-scale deployment, and the LOSO-CV results indicate that performance at new, unmonitored sites would still need to be validated before operational use.</p>
+<p>To place the stage 2 forecasting numbers in a decision-making context: at a one-month lead, an RMSE of 4.5 t/ha on AGB values reaching up to ~30 t/ha corresponds to a relative error of roughly 15%, which could support farm-level triage decisions—for example, flagging fields tracking substantially below their expected biomass trajectory for closer monitoring, supplemental irrigation, or adjusted fertilization timing—but would likely be too coarse for fine-grained input allocation (e.g., variable-rate fertilization) or for individual-field crop-insurance payouts, which typically require errors below ~10%. By four months, the near-zero R² (0.10) and RMSE of 6.5 t/ha indicate that field-level forecasts are not yet reliable enough to inform individual management decisions at this horizon; at that stage, the framework’s value would be limited to regional-scale aggregation, where individual-field errors partly average out, supporting early-warning systems for below-average regional yields rather than field-specific actions.</p>
 </section>
-<section id="study-limitations" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="study-limitations"><span class="header-section-number">4.3</span> Study limitations</h2>
-<p>Although accurate, the data come from weather stations within or near the fields. In regional or replicable applications, performance would need to be evaluated using weather satellite data (e.g., CHIRPS, ERA5). Additionally, soil moisture (SM) was often the most important variable; however, it posed a challenge because many farmers do not measure it. Nevertheless, the advance in soil moisture estimation from satellites at farm scale would help to address this issue <span class="citation" data-cites="VanHateren2023 Zeyliger2022">(<a href="#ref-VanHateren2023" role="doc-biblioref">Van Hateren et al., 2023</a>; <a href="#ref-Zeyliger2022" role="doc-biblioref">Zeyliger et al., 2022</a>)</span>. Such approaches would facilitate generalization.</p>
-<p>Another limitation is that the study is based on three locations in central Chile with different wheat varieties (winter and spring). For a well-evaluated generalization, the models need to be fed with more data that allows them to be tested in independent sites and seasons. The future direction of the study should move toward expanding the AGB dataset. However, in Chile, reliable and publicly available information on wheat AGB at the farm scale is lacking.</p>
-<p>Other concerns include the speckle noise from Sentinel-1 and its dependence on the angle of incidence, which may make achieving consistent results across different landscapes or farming situations challenging. Finally, the use of cumulative VIs, although useful, could lead to redundancy among predictors. Future research could explore more aggressive variable selection.</p>
+<section id="study-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="study-limitations">Study limitations</h2>
+<p>The weather data used here come from stations within or near the study fields. Regional or fully scalable applications would need to evaluate performance using satellite-derived weather products (e.g., CHIRPS, ERA5). Soil moisture (SM) measurements, used as a predictor, require dedicated in-field sensors that many farmers and monitoring programs lack; while SM was not among the leading predictors for in-season estimation (stage 1), it emerged as the most important predictor for four-month-ahead forecasting (stage 2, Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;6</a>), so its availability remains relevant for longer-horizon applications. Advances in satellite-based soil moisture estimation at the farm scale <span class="citation" data-cites="VanHateren2023 Zeyliger2022">(<a href="#ref-VanHateren2023" role="doc-biblioref">Van Hateren et al., 2023</a>; <a href="#ref-Zeyliger2022" role="doc-biblioref">Zeyliger et al., 2022</a>)</span> could help address this dependence and facilitate generalization.</p>
+<p>Another limitation is that this study is based on three locations (four site-seasons) in central Chile, covering winter and spring wheat varieties. The leave-one-site-out cross-validation scheme used throughout this study is, by design, a conservative estimate of transferability to new sites, but with only four site-seasons each LOSO fold trains on just three of them—particularly limiting for the stage 2 forecasting models, where the rotation in variable importance across lead times (Table&nbsp;<a href="#tbl-5" class="quarto-xref">Table&nbsp;6</a>) likely reflects this small sample as much as genuine seasonal dynamics. Expanding the AGB dataset to more sites, seasons, and varieties is the most direct way to improve and properly evaluate generalization; however, in Chile, reliable and publicly available farm-scale wheat AGB data remain scarce.</p>
+<p>A related limitation is that the experimental design confounds wheat habit with location: Villa Baviera is the only spring-wheat site-season, while the other three are winter wheat. As a result, the LOSO fold in which Villa Baviera is held out simultaneously tests transferability to a new location, a new soil type, and a different wheat habit, so it is not possible to fully disentangle whether model performance and the variable-importance patterns reported here reflect generalizable wheat phenology or site-specific (including habit-specific) effects. Resolving this confound would require additional spring-wheat site-seasons at locations other than Villa Baviera, which we identify as a priority for future data collection.</p>
+<p>Other concerns include the speckle noise inherent to Sentinel-1 and its dependence on incidence angle, which may have contributed to its limited marginal contribution under LOSO-CV (Table&nbsp;<a href="#tbl-6" class="quarto-xref">Table&nbsp;5</a>) and could make consistent SAR-based performance across landscapes or farming systems challenging. Finally, the residual collinearity among cumulative vegetation indices, documented by the VIF audit (Section 2.3.3) and reflected in the flat ensemble-level variable importance (Figure&nbsp;<a href="#fig-6" class="quarto-xref">Figure&nbsp;6</a>), suggests that future work could explore more aggressive feature selection or dimensionality reduction without a substantial loss of predictive skill.</p>
 </section>
 </section>
-<section id="conclusion" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Conclusion</h1>
-<p>In this study, we used 40 models in a combination of datasets called recipes (weather, S1, S2, and Planet Scope) and ML algorithms to estimate AGB in wheat within the growing season (stage 1), and the results were very similar to the ensemble model. The models that reached a higher performance were those based on decision trees, highlighting RF and XGBoost. The recipes that improve performance are those that combine S1 and weather predictors (rec3). The variables that stand out are GDD and indices derived from S1, followed by cumulative precipitation and soil moisture, and the indices derived from S2 have minor importance.</p>
-<p>The models for prediction of AGB at harvest (stage 2) are complex because there are only four sites in three locations, limiting AGB variability. Nevertheless, the model reaches an R² of 0.94 at a one-month lead time, which decreases to 0.84 at a four-month lead time. In this case, GDD did not show importance because, at harvest, there is low GDD variability. Thus, PP, SM, and indices derived from S1 were highlighted.</p>
-<p>Despite the prediction models raising some challenges for generalization, the results are promising. The combination of SAR S1 indices under cloudy environments with weather data will allow filling the gaps where the optical sensor fails. Future works should focus on generalization, for example, by replacing in situ weather data with satellite estimates and increasing the collection of in situ AGB data.</p>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>In this study, we evaluated 40 recipe-algorithm combinations—eight sensor-combination recipes (weather, Sentinel-1, Sentinel-2, and PlanetScope, individually and combined) and five ML algorithms—plus a stacked ensemble, to estimate in-season wheat AGB (stage 1) under leave-one-site-out cross-validation across four Mediterranean field-seasons. The best-performing model used only PlanetScope predictors with Random Forest (<em>rec7</em>_RF, R²=0.78, RMSE=7.87 t/ha, MAE=5.90 t/ha); RF and XGBoost were generally the strongest algorithms, while the all-predictors recipe (<em>rec1</em>) and the Sentinel-1-only recipe (<em>rec2</em>) ranked lower. A sensor-ablation analysis confirmed that optical sensors (Sentinel-2, PlanetScope) drive most of the transferable AGB signal, while Sentinel-1 backscatter adds essentially no skill once optical and weather data are available. At the ensemble level, permutation-based variable importance showed a comparatively flat ranking among Sentinel-2 and PlanetScope spectral indices, the Sentinel-1 VH/VV ratio, and accumulated growing degree days, indicating substantial redundancy among the candidate predictors.</p>
+<p>As a secondary, exploratory objective, we used the same LOSO-CV framework to forecast AGB at harvest one to four months ahead (stage 2, recipe <em>rec1</em>, Random Forest as the most stable algorithm across leads). Skill was modest and decayed sharply with lead time, from R²=0.46 (RMSE=4.52 t/ha) at one month to R²=0.10 (RMSE=6.46 t/ha) at four months, and the leading predictors rotated substantially across leads—a cumulative PlanetScope green-red index dominated at one to three months, while soil moisture became most important only at four months. This decay and instability reflect the limited number of independent site-seasons (n=4) available to a leave-one-site-out scheme and underscore that robust multi-month AGB forecasting will require substantially larger multi-site, multi-season networks.</p>
+<p>Overall, these results show that an explainable, multi-sensor ML framework can estimate in-season wheat AGB with policy-relevant accuracy under a spatially-independent (LOSO-CV) validation scheme, with optical sensors (PlanetScope, Sentinel-2) as the primary drivers of transferable skill and Sentinel-1 offering, at most, a complementary role under persistent cloud cover. Harvest forecasting at multi-month leads remains an open challenge that will benefit from larger and more diverse site networks. Future work should focus on (i) expanding the AGB dataset across more sites, seasons, and wheat varieties to enable robust multi-month forecasting; (ii) testing satellite-derived weather and soil moisture products (e.g., ERA5, CHIRPS, SAR-based SM) to reduce dependence on in-situ stations; and (iii) more aggressive feature selection to address the redundancy identified among cumulative vegetation indices.</p>
 </section>
-<section id="acknowledgements" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Acknowledgements</h1>
-<p>Chile’s National Research and Development Agency (ANID) funded this study through the grants Fondecyt Iniciación N°11190360, FONDEF IdEA I+D ID21I10297, and the drought emergency FSEQ210022. Also, we thank the researcher Dr.&nbsp;Christian Alfaro from the Instituto de Investigaciones Agropecuarias (INIA) from Chile for his support and for providing access to the wheat fields. We also thank Professor Francisco Tapia from Universidad Mayor for his support and his knowledge about wheat development during this research. Finally, we thank Mr.&nbsp;Fabian Llanos, who coordinated the field trips that allowed us to collect the wheat biomass in situ data.</p>
+<section id="acknowledgements" class="level1">
+<h1>Acknowledgements</h1>
+<p>We thank Dr.&nbsp;Christian Alfaro from the Instituto de Investigaciones Agropecuarias (INIA) for his support and for providing access to the wheat fields. We also thank Professor Francisco Tapia from Universidad Mayor for his support and his knowledge about wheat development during this research. Finally, we thank Mr.&nbsp;Fabian Llanos, who coordinated the field trips that allowed us to collect the wheat biomass in-situ data.</p>
 </section>
-<section id="data-and-code-availability" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Data and code availability</h1>
+<section id="data-and-code-availability" class="level1">
+<h1>Data and code availability</h1>
 <p>The data and code used for the analysis and modeling of above-ground biomass (AGB) in wheat fields is openly available at the following GitHub repository: <a href="https://github.com/FONDECYT-11190360/AGB_wheat_modelling" class="uri">https://github.com/FONDECYT-11190360/AGB_wheat_modelling</a>. This repository contains data, R scripts and documentation for data preprocessing, model development, variable importance analysis, and visualization.</p>
 </section>
-<section id="credit-authorship-contribution-statement" class="level1" data-number="8">
-<h1 data-number="8"><span class="header-section-number">8</span> CRediT authorship contribution statement</h1>
+<section id="credit-authorship-contribution-statement" class="level1">
+<h1>CRediT authorship contribution statement</h1>
 <p><strong>Francisco Zambrano</strong>: Project administration, Funding acquisition, Formal analysis, Conceptualization, Methodology, Writing - Original Draft, Writing - Review &amp; Editing, Visualization. <strong>Abel Herrera</strong>: Formal Analysis, Data curation, Visualization, Writing - Original Draft, Writing - Review &amp; Editing. <strong>Mauricio Molina-Rocco:</strong> Conceptualization, Writing - Original Draft, Writing - Review &amp; Editing.</p>
 </section>
-<section id="declaration-of-competing-interest" class="level1" data-number="9">
-<h1 data-number="9"><span class="header-section-number">9</span> Declaration of competing interest</h1>
+<section id="declaration-of-competing-interest" class="level1">
+<h1>Declaration of competing interest</h1>
 <p>The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.</p>
 </section>
-<section id="funding-sources" class="level1" data-number="10">
-<h1 data-number="10"><span class="header-section-number">10</span> Funding Sources</h1>
+<section id="funding-sources" class="level1">
+<h1>Funding Sources</h1>
 <p>Chile’s National Research and Development Agency (ANID) funded this study through the grants Fondecyt de Iniciación N°11190360, FONDEF IdEA I+D ID21I10297, and the drought emergency FSEQ210022. We also like to thank the Instituto de Investigaciones Agropecuarias (INIA), the enterprises Ariztia, and Villa Baviera for giving access to the fields of wheat.</p>
 </section>
-<section id="declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" class="level1" data-number="11">
-<h1 data-number="11"><span class="header-section-number">11</span> Declaration of generative AI and AI-assisted technologies in the writing process</h1>
+<section id="declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process" class="level1">
+<h1>Declaration of generative AI and AI-assisted technologies in the writing process</h1>
 <p>During the preparation of this work, the authors used ChatGPT-3.5 and Microsoft Copilot to polish the writing of the manuscript. After using this service, the authors reviewed and edited the content as needed and took full responsibility for the publication.</p>
 </section>
-<section id="glossary" class="level1" data-number="12">
-<h1 data-number="12"><span class="header-section-number">12</span> Glossary</h1>
+<section id="glossary" class="level1">
+<h1>Glossary</h1>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 60%">
@@ -1191,6 +1219,14 @@ Table&nbsp;5: The six most important variables for the XGBoost prediction model 
 <td>Growing Degree Days. A measure of heat accumulation used to predict the rate of plant development between growing stages (phenological stages). It is calculated based on daily maximum and minimum air temperatures.</td>
 </tr>
 <tr class="odd">
+<td>SM</td>
+<td>Soil Moisture. The water content of the soil, measured here with TEROS 12 capacitance sensors and used as both a predictor of crop development and an indicator of water stress.</td>
+</tr>
+<tr class="even">
+<td>RF</td>
+<td>Random Forest. An ensemble learning method that builds multiple decision trees on bootstrapped samples and averages their predictions, widely used for its robustness and resistance to overfitting.</td>
+</tr>
+<tr class="odd">
 <td>XGBoost</td>
 <td>eXtreme Gradient Boosting. A highly optimized and efficient open-source implementation of the gradient boosting framework, popular for its speed and performance in structured data prediction.</td>
 </tr>
@@ -1211,6 +1247,14 @@ Table&nbsp;5: The six most important variables for the XGBoost prediction model 
 <td>A statistical technique used to estimate how accurately a predictive model will perform in practice. It involves partitioning the data into subsets for training and testing.</td>
 </tr>
 <tr class="even">
+<td>LOSO-CV</td>
+<td>Leave-One-Site-Out Cross-Validation. A spatial cross-validation scheme in which each fold corresponds to one entire site-season; models are trained on the remaining site-seasons and evaluated on the held-out one, directly testing spatial transferability.</td>
+</tr>
+<tr class="odd">
+<td>VIF</td>
+<td>Variance Inflation Factor. A diagnostic statistic that quantifies the degree of multicollinearity among predictor variables in a regression model; values above 10 are commonly considered indicative of problematic collinearity.</td>
+</tr>
+<tr class="even">
 <td>R²</td>
 <td>Coefficient of Determination. A statistical measure representing the proportion of the variance for a dependent variable that is explained by the independent variables in a regression model. A value closer to 1 indicates a better fit.</td>
 </tr>
@@ -1219,6 +1263,10 @@ Table&nbsp;5: The six most important variables for the XGBoost prediction model 
 <td>Root Mean Square Error. A measure of the average magnitude of the errors. It tells you how concentrated the data is around the line of best fit. It has the same units as the dependent variable (t/ha).</td>
 </tr>
 <tr class="even">
+<td>MAE</td>
+<td>Mean Absolute Error. The average of the absolute differences between predicted and observed values, expressed in the same units as the dependent variable (t/ha). Less sensitive to large outliers than RMSE.</td>
+</tr>
+<tr class="odd">
 <td>DALEX</td>
 <td>moDel Agnostic Language for Exploration and eXplanation. A specific framework or library used in this research to provide model-agnostic tools for explaining the behavior of complex ML models (contributing to XAI).</td>
 </tr>
@@ -1249,8 +1297,8 @@ Boettiger, C., López, L., Panda, Y., Lind, B., 2023. Earthdatalogin: NASA "Eart
 <div id="ref-Breiman1996a" class="csl-entry" role="listitem">
 Breiman, L., 1996a. Bagging predictors. Mach. Learn. 24, 123–140. <a href="https://doi.org/10.1007/bf00058655">https://doi.org/10.1007/bf00058655</a>
 </div>
-<div id="ref-Breiman1996b" class="csl-entry" role="listitem">
-Breiman, L., 1996b. Bagging predictors. Mach. Learn. 24, 123–140. <a href="https://doi.org/10.1007/bf00058655">https://doi.org/10.1007/bf00058655</a>
+<div id="ref-Breiman1996c" class="csl-entry" role="listitem">
+Breiman, L., 1996b. Stacked regressions. Mach. Learn. 24, 49–64.
 </div>
 <div id="ref-Brovkina2017" class="csl-entry" role="listitem">
 Brovkina, O., Novotny, J., Cienciala, E., Zemek, F., Russ, R., 2017. Mapping forest aboveground biomass using airborne hyperspectral and LiDAR data in the mountainous conditions of central europe. Ecol. Eng. 100, 219–230. <a href="https://doi.org/10.1016/j.ecoleng.2016.12.004">https://doi.org/10.1016/j.ecoleng.2016.12.004</a>
@@ -1272,6 +1320,9 @@ Chen, T., Guestrin, C., 2016. XGBoost: A scalable tree boosting system, in: Proc
 </div>
 <div id="ref-Clevers2013" class="csl-entry" role="listitem">
 Clevers, J.G.P.W., Gitelson, A.A., 2013. Remote estimation of crop and grass chlorophyll and nitrogen content using red-edge bands on sentinel-2 and -3. Int. J. Appl. Earth Obs. Geoinformation 23, 344–351. <a href="https://doi.org/10.1016/j.jag.2012.10.008">https://doi.org/10.1016/j.jag.2012.10.008</a>
+</div>
+<div id="ref-Couch2022" class="csl-entry" role="listitem">
+Couch, S., Kuhn, M., 2022. Stacks: Tidy model stacking.
 </div>
 <div id="ref-Daughtry2000" class="csl-entry" role="listitem">
 Daughtry, C., 2000. Estimating corn leaf chlorophyll concentration from leaf and canopy reflectance. Remote Sens. Environ. 74, 229–239. <a href="https://doi.org/10.1016/s0034-4257(00)00113-9">https://doi.org/10.1016/s0034-4257(00)00113-9</a>
