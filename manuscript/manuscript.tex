@@ -123,8 +123,13 @@
 
 
 \usepackage{setspace}
+\usepackage{siunitx}
 \doublespacing
 \usepackage{lineno}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{longtable}
 \linenumbers
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
@@ -192,7 +197,8 @@ learning, precision agriculture},
 \begin{frontmatter}
 \title{Explainable machine learning for wheat above-ground biomass
 estimation under spatial cross-validation: sensor contributions and
-exploratory harvest forecasting}
+exploratory harvest forecasting \\\large{(This paper is a non-peer
+reviewed preprint submitted to EarthArXiv)} }
 \author[1]{Francisco Zambrano%
 %
 }
@@ -206,8 +212,9 @@ exploratory harvest forecasting}
 }
 
 
-\affiliation[1]{organization={Facultad de Economía, Negocios y Gobierno,
-Universidad San Sebastián, Santiago, Chile},,postcodesep={}}
+\affiliation[1]{organization={Facultad de Medicina Veterinaria y
+Agronomía, Universidad de Las Américas, Santiago,
+Chile},,postcodesep={}}
 \affiliation[2]{organization={Hemera Centro de Observación de la Tierra,
 Facultad de Ciencias, Ingeniería y Tecnología; Universidad Mayor,
 Santiago, Chile},,postcodesep={}}
@@ -470,10 +477,13 @@ across the seasons and fields.} Zadoks scale, with NDVI included to
 illustrate changes in canopy vigor throughout the seasons. S = Sowing,
 SG = Seeding Growth, T = Tillering, SE = Stem Elongation, B = Booting, E
 = Ear Emergence, F = Flowering, M = Milk Development, D = Dough
-Development, and R = Ripening. Sampling dates are marked as Sn, where n
-represents the number of samples collected during the season.
-S\textsubscript{SOS} indicates the start of the season (SOS) when AGB =
-0, and S\textsubscript{final} represents AGB at harvest.}
+Development, and R = Ripening. AGB sampling dates are labeled
+S\textsubscript{1}, S\textsubscript{2}, \ldots, S\textsubscript{n}
+(subscripted), where n is the total number of samples collected during
+the season; these are distinct from the unsubscripted ``S'' (Sowing)
+Zadoks stage label above. S\textsubscript{SOS} indicates the start of
+the season (SOS) when AGB = 0, and S\textsubscript{final} represents AGB
+at harvest.}
 
 \end{figure}%
 
@@ -501,50 +511,33 @@ station is equipped with a Texas Electronics TE525MM-L25 tipping-bucket
 rain gauge for precipitation and a Vaisala HMP60-L11 sensor for air
 temperature and relative humidity \citep{ChaconC2019}. For each study
 site, the nearest meteorological station was selected
-(Table~Table~\ref{tbl-1}), and hourly precipitation and air temperature
-data were downloaded starting from the sowing date.
+(Table~\ref{tbl-1}), and hourly precipitation and air temperature data
+were downloaded starting from the sowing date.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0753}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1438}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1849}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1986}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1986}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1986}}@{}}
-\caption{Meteorological stations for each
-field.}\label{tbl-1}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Field}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Nearest station}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Field}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Nearest station}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-& \textbf{EMA code} & \textbf{Name} & \textbf{Institution} &
-\textbf{Coordinates} & \textbf{Distance to field (km)} \\
-Hidango & 260 & Hidango & INIA & 34.1°S; 71.8°W & 1.03 \\
-La Cancha & 50 & Chocalan & FDF & 33.73°S; 71.21°W & 1.16 \\
-Villa Baviera & 103 & Parral Norte & FDF & 36.23°S; 71.73°W & 20.89 \\
-\end{longtable}
+\begin{table}
+
+\caption{\label{tbl-1}Meteorological stations used for each field, including the station code and name, the operating institution (Inst.), its coordinates, and its distance from the corresponding field (Dist.).}
+
+\centering{
+
+\centering
+
+
+\begin{tabular}{|l|l|l|l|S[table-format=2.2, table-comparator=true] | S[table-format=2.2] | S[table-format=2.2]|}
+\hline
+\textbf{Field} & \textbf{Code} & \textbf{Name} & \textbf{Inst.} & \textbf{Lat (°S)} & \textbf{Lon (°W)} & \textbf{Dist. (km)} \\ \hline
+Hidango & 260 & Hidango & INIA & 34.10 & 71.80 & 1.03 \\ \hline
+La Cancha & 50 & Chocalan & FDF & 33.73 & 71.21 & 1.16 \\ \hline
+Villa Baviera & 103 & Parral Norte & FDF & 36.23 & 71.73 & 20.89 \\ \hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize
+Inst.: institution operating the station; INIA: Instituto de Investigaciones Agropecuarias; FDF: Fundación para el Desarrollo Frutícola. Dist.: distance between the station and the corresponding field.
+\end{flushleft}
+
+}
+
+\end{table}%
 
 Daily precipitation (mm) was cumulatively summed over the growing season
 to obtain daily accumulated precipitation (mm, ∑PP). Daily minimum
@@ -579,10 +572,10 @@ We used Level‑1 Ground Range Detected (GRD) products from Sentinel‑1A
 study period, as Sentinel‑1B stopped transmitting in 2022 and
 Sentinel‑1C was not yet launched. GRD products are radiometrically
 calibrated, multi-looked, and terrain-corrected using a digital
-elevation model, then projected to the WGS84 datum
-(Table~Table~\ref{tbl-2}). These products are delivered in
-dual-polarization (VV, VH or HH, HV), depending on the acquisition mode
-and region, with a pixel spacing of 10 to 40\,m \citep{Torres2012}.
+elevation model, then projected to the WGS84 datum (Table~\ref{tbl-2}).
+These products are delivered in dual-polarization (VV, VH or HH, HV),
+depending on the acquisition mode and region, with a pixel spacing of 10
+to 40\,m \citep{Torres2012}.
 
 Sentinel‑2 (S2) is a dual-satellite optical mission carrying the
 MultiSpectral Instrument (MSI), which captures 13 spectral bands across
@@ -591,88 +584,48 @@ Spatial resolution varies by band (10, 20, or 60\,m), and the system
 provides global coverage with a revisit time of \textasciitilde5 days at
 the Equator. We used Level‑2A surface reflectance products, which are
 atmospherically corrected (bottom-of-atmosphere, BOA) and orthorectified
-(Table~Table~\ref{tbl-2}). These products include cloud and shadow
-masks, aerosol optical thickness (AOT), and water vapor content layers,
-along with scene classification maps and pixel-level quality information
+(Table~\ref{tbl-2}). These products include cloud and shadow masks,
+aerosol optical thickness (AOT), and water vapor content layers, along
+with scene classification maps and pixel-level quality information
 \citep{Drusch2012}.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1111}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1368}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0940}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2479}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1368}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1368}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1368}}@{}}
-\caption{Summary of satellite data used to derive predictors for AGB
-estimation.}\label{tbl-2}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Dataset}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Collection}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Bands}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Central wavelength (nm)}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Resolution}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Dataset}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Collection}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Bands}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Central wavelength (nm)}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Resolution}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-& & & & \textbf{Spatial (m)} & \textbf{Revisit (days)} & \\
-Sentinel-1 & Ground Range Detected (GRD) & VV &
-5.546×10\textsuperscript{7} (C-Band) & 10 & 6 & \\
-& & VH & 5.546×10\textsuperscript{7} (C-Band) & 10 & & \\
-Sentinel-2 & Level-2A & 1 - Coastal aerosol & 442.7 (A) / 442.2 (B) & 60
-& 5 & \\
-& & 2 - Blue & 492.7 (A) / 492.3 (B) & 10 & & \\
-& & 3 - Green & 559.8 (A) / 558.9 (B) & 10 & & \\
-& & 4 - Red & 664.6 (A) / 664.9 (B) & 10 & & \\
-& & 5 - Vegetation Red Edge (RE\textsubscript{1}) & 704.1 (A) / 703.8
-(B) & 20 & & \\
-& & 6 - Vegetation Red Edge (RE\textsubscript{2}) & 740.5 (A) / 739.1
-(B) & 20 & & \\
-& & 7 - Vegetation Red Edge (RE\textsubscript{3}) & 782.8 (A) / 779.7
-(B) & 20 & & \\
-& & 8 - NIR & 832.8 (A) / 832.9 (B) & 10 & & \\
-& & 8A - Vegetation Red Edge & 864.7 (A) / 864.0 (B) & 20 & & \\
-& & 9 - Water vapour & 945.1 (A) / 943.2 (B) & 60 & & \\
-& & 10 - SWIR - Cirrus & 1373.5 (A) / 1376.9 (B) & 60 & & \\
-& & 11 - SWIR (SWIR\textsubscript{1}) & 1613.7 (A) / 1610.4 (B) & 20 &
-& \\
-& & 12 - SWIR (SWIR\textsubscript{2}) & 2202.4 (A) / 2185.7 (B) & 20 &
-& \\
-PlanetScope & Level 3B Surface Reflectance (SR) & 1 - Coastal Blue &
-441.5 & 3 & 1 & \\
-& & 2 - Blue & 490 & 3 & & \\
-& & 3 - Green I & 531 & 3 & & \\
-& & 4 - Green & 565 & 3 & & \\
-& & 5 - Yellow & 610 & 3 & & \\
-& & 6 - Red & 665 & 3 & & \\
-& & 7 - Red Edge & 705 & 3 & & \\
-& & 8 - NIR & 865 & 3 & & \\
-\end{longtable}
+\begin{table}[ht]
+\small
+\centering
+\caption{Summary of satellite data used to derive predictors for AGB estimation. For Sentinel-2, paired wavelength values give the Sentinel-2A / Sentinel-2B central wavelengths, respectively; for Sentinel-1, the C-band wavelength is expressed in nm (5.546e7 nm $\approx$ 5.55 cm) for consistency with the optical sensors. Blank cells in the Revisit (d) column repeat the value given in the first row of each sensor block.}
+\label{tbl-2}
+\begin{tabularx}{\textwidth}{l l l l S[table-format=4.1] S[table-format=1]}
+\toprule
+\textbf{Dataset} & \textbf{Collection} & \textbf{Bands} & \textbf{Wavelength (nm)} & \textbf{Res. (m)} & \textbf{Revisit (d)} \\
+\midrule
+\multirow{2}{*}{Sentinel-1} & \multirow{2}{*}{GRD} & VV & 5.546e7 (C-Band) & 10 & 6 \\
+ &  & VH & 5.546e7 (C-Band) & 10 & \\
+\midrule
+\multirow{13}{*}{Sentinel-2} & \multirow{13}{*}{Level-2A} & 1 - Coastal & 442.7 / 442.2 & 60 & 5 \\
+ &  & 2 - Blue & 492.7 / 492.3 & 10 & \\
+ &  & 3 - Green & 559.8 / 558.9 & 10 & \\
+ &  & 4 - Red & 664.6 / 664.9 & 10 & \\
+ &  & 5 - RE1 & 704.1 / 703.8 & 20 & \\
+ &  & 6 - RE2 & 740.5 / 739.1 & 20 & \\
+ &  & 7 - RE3 & 782.8 / 779.7 & 20 & \\
+ &  & 8 - NIR & 832.8 / 832.9 & 10 & \\
+ &  & 8A - RE & 864.7 / 864.0 & 20 & \\
+ &  & 9 - Water vap. & 945.1 / 943.2 & 60 & \\
+ &  & 10 - Cirrus & 1373.5 / 1376.9 & 60 & \\
+ &  & 11 - SWIR1 & 1613.7 / 1610.4 & 20 & \\
+ &  & 12 - SWIR2 & 2202.4 / 2185.7 & 20 & \\
+\midrule
+\multirow{8}{*}{PlanetScope} & \multirow{8}{*}{Level 3B SR} & 1 - C. Blue & 441.5 & 3 & 1 \\
+ &  & 2 - Blue & 490.0 & 3 & \\
+ &  & 3 - Green I & 531.0 & 3 & \\
+ &  & 4 - Green & 565.0 & 3 & \\
+ &  & 5 - Yellow & 610.0 & 3 & \\
+ &  & 6 - Red & 665.0 & 3 & \\
+ &  & 7 - Red Edge & 705.0 & 3 & \\
+ &  & 8 - NIR & 865.0 & 3 & \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 PlanetScope (PS) is a commercial constellation of \textasciitilde120
 CubeSats operated by Planet Labs, which capture daily multispectral
@@ -736,120 +689,58 @@ sampling plot is fully contained within a single pixel for every sensor.
 VIs}\label{selection-and-processing-of-vis}
 
 A total of 53 vegetation indices (VIs) were selected to estimate AGB
-using the daily interpolated S2 and PS data (Table~Table~\ref{tbl-3}).
-Daily cumulative sums of these VIs were also computed from the start of
-each season to capture integrated vegetation dynamics. Furthermore, 36
-of these 53 VIs originally derived from the B8 band were recalculated
-using the B8A band (available only for S2) to assess potential
-differences in vegetation response between these two near-infrared
-bands, resulting in a total of 89 VIs across both products. The indices
-were chosen based on their relevance for assessing vegetation status,
-biomass estimation, and yield prediction in wheat, forage, maize, and
-similar crops
+using the daily interpolated S2 and PS data (Table~\ref{tbl-3}). Daily
+cumulative sums of these VIs were also computed from the start of each
+season to capture integrated vegetation dynamics. Furthermore, 36 of
+these 53 VIs originally derived from the B8 band were recalculated using
+the B8A band (available only for S2) to assess potential differences in
+vegetation response between these two near-infrared bands, resulting in
+a total of 89 VIs across both products. The indices were chosen based on
+their relevance for assessing vegetation status, biomass estimation, and
+yield prediction in wheat, forage, maize, and similar crops
 \citep{Peng2023, Segarra2022, Uribeetxebarria2023, Wang2022, Wu2008, Zheng2017}.
 Both daily values and cumulative VIs were used as predictor variables in
 the modeling framework.
 
-Table~Table~\ref{tbl-3} outlines the vegetation indices (VIs) chosen for
-the machine learning (ML) model after eliminating those that were highly
+Table~\ref{tbl-3} outlines the vegetation indices (VIs) chosen for the
+machine learning (ML) model after eliminating those that were highly
 correlated. To see all the other VIs that were used, please refer to the
 Supplementary Material Table S1.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.0690}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2414}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1034}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.2414}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1552}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 10\tabcolsep) * \real{0.1897}}@{}}
-\caption{Vegetation indices (covariates) derived from Sentinel-2 (S2)
-and PlanetScope (PS) spectral bands. Asterisk (*) next to the S2 dataset
-indicates that the index was also recalculated using Sentinel-2 Band 8A
-(narrow NIR) instead of Band 8 (broad NIR).}\label{tbl-3}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-N°
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Dataset used
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Abbreviation
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Formula
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Reference
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-N°
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Dataset used
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Abbreviation
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Formula
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Reference
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-1 & S2 & OSAVI Variant & OSAVI\textsubscript{2} &
-\(\frac{1.16 \cdot (RE3 - Red)}{(RE3 + Red + 0.16)}\) &
-\citet{Jin2020} \\
-2 & S2 & - & MCARI/OSAVI\textsubscript{2} & \(MCARI/{OSAVI}_{2}\) &
-\citet{Wu2008} \\
-3 & S2 & SWIR 11 Related MCARI & MCARI\textsubscript{SWIR11} &
-\((\left( RE_{1} - SWIR_{1} \right) - 0.2 \cdot (RE_{1} - Green)) \cdot (RE_{1}/SWIR_{1})\)
-& \citet{Herrmann2011} \\
-4 & S2 & SWIR 11 Related TCARI & TCARI\textsubscript{SWIR11} &
-\(3 \cdot ((RE_{1} - SWIR_{1}) - 0.2 \cdot (RE_{1} - Green) \cdot (RE_{1}/SWIR_{1}))\)
-& \citet{Herrmann2011} \\
-5 & S2 & SWIR 12 Related MCARI & MCARI\textsubscript{SWIR12} &
-\((\left( RE_{1} - SWIR_{2} \right) - 0.2 \cdot (RE_{1} - Green)) \cdot (RE_{1}/SWIR_{2})\)
-& \citet{Herrmann2011} \\
-6 & S2* & Normalized Difference Red-edge Index 3 & NDRE3 &
-\((NIR - RE_{3})/(NIR + RE_{3})\) & \citet{Magney2017} \\
-7 & S2* & Water Index & WI & \(NIR/Water\ vapour\) & \citet{Jin2020} \\
-8 & S2 - PS & Modified Chlorophyll Absorption in Reflectance Index &
-MCARI &
-\((\left( RE_{1} - Red \right) - 0.2 \cdot (RE_{1} - Green)) \cdot (RE_{1}/Red)\)
-& \citet{Daughtry2000} \\
-9 & S2 - PS & Transformed Chlorophyll Absorption in Reflectance Index &
-TCARI &
-\(3 \cdot ((RE_{1} - Red) - 0.2 \cdot (RE_{1} - Green) \cdot (RE_{1}/Red))\)
-& \citet{Haboudane2002} \\
-10 & S2 - PS & - & TCARI/OSAVI & \(TCARI/OSAVI\) &
-\citet{Haboudane2002} \\
-11 & S2 - PS & - & MCARI/OSAVI & \(MCARI/OSAVI\) &
-\citet{Daughtry2000} \\
-12 & S2* - PS & Simple Ratio & SR & \(NIR/Red\) & \citet{Tucker1979} \\
-13 & S2 - PS & Optimized Soil-Adjusted Vegetation Index & OSAVI &
-\(\frac{1.16 \cdot (NIR - Red)}{(NIR + Red + 0.16)}\) &
-\citet{Rondeaux1996} \\
-14 & S2 - PS & Chlorophyll Index - Red & CI\textsubscript{red} &
-\((NIR/Red) - 1\) & \citet{Clevers2013} \\
-15 & S2 - PS & Chlorophyll Vegetation Index & CVI &
-\((NIR/Green) \cdot (Red/Green)\) & \citet{Vincini2008} \\
-16 & S2 - PS & Enhanced Vegetation Index & EVI &
-\(\frac{2.5*(NIR - Red)}{((NIR + 6*Red - 7.5*Blue) + 1)}\) &
-\citet{Jiang2008} \\
-17 & S2 - PS & Normalized Difference Vegetation Index & NDVI &
-\((NIR - Red)/(NIR + Red)\) & \citet{Rouse1974} \\
-18 & S2 - PS & Green NDVI & GNDVI & \((NIR - Green)/(NIR + Green)\) &
-\citet{Gitelson1996} \\
-19 & S2 - PS & Normalized Difference Red-edge Index 1 & NDRE1 &
-\((NIR - RE_{1})/(NIR + RE_{1})\) & \citet{Magney2017} \\
-20 & S2 - PS & - & NDRE/NDVI & \(NDRE_{1}/NDVI\) & \citet{Raper2015} \\
-21 & S2 - PS & Structure Insensitive Pigment Index & SIPI &
-\((NIR - Blue)/(NIR - Red)\) & \citet{Penuelas1994} \\
-\end{longtable}
+\begin{table}[!htbp]
+\footnotesize % Smaller font size
+\centering
+\caption{Vegetation indices selected for AGB modeling after removing highly correlated variables (see Supplementary Material Table S1 for the full candidate set). The Dataset column indicates the source product(s) used to compute each index; an asterisk (*) marks indices for which the Sentinel-2 formula uses the B8A (red-edge) band in place of the standard NIR band B8 (Section ``Selection and processing of VIs'').}
+\label{tbl-3}
+\renewcommand{\arraystretch}{1.1} % Tighter row spacing
+\begin{tabularx}{\textwidth}{@{} c l l l X l @{}}
+\toprule
+\textbf{N°} & \textbf{Dataset} & \textbf{Name} & \textbf{Abbr.} & \textbf{Formula} & \textbf{Ref.} \\
+\midrule
+1 & S2 & OSAVI Variant & OSAVI$_2$ & $\frac{1.16 \cdot (RE_3 - Red)}{(RE_3 + Red + 0.16)}$ & \cite{Jin2020} \\
+2 & S2 & - & MCARI/OSAVI$_2$ & $MCARI/OSAVI_2$ & \cite{Wu2008} \\
+3 & S2 & SWIR 11 MCARI & MCARI$_{SW11}$ & $((RE_1 - SW_1) - 0.2(RE_1 - G)) \cdot (RE_1/SW_1)$ & \cite{Herrmann2011} \\
+4 & S2 & SWIR 11 TCARI & TCARI$_{SW11}$ & $3((RE_1 - SW_1) - 0.2(RE_1 - G) \cdot (RE_1/SW_1))$ & \cite{Herrmann2011} \\
+5 & S2 & SWIR 12 MCARI & MCARI$_{SW12}$ & $((RE_1 - SW_2) - 0.2(RE_1 - G)) \cdot (RE_1/SW_2)$ & \cite{Herrmann2011} \\
+6 & S2* & NDRE 3 & NDRE3 & $(NIR - RE_3)/(NIR + RE_3)$ & \cite{Magney2017} \\
+7 & S2* & Water Index & WI & $NIR/Water\ vapour$ & \cite{Jin2020} \\
+8 & S2-PS & MCARI & MCARI & $((RE_1 - R) - 0.2(RE_1 - G)) \cdot (RE_1/R)$ & \cite{Daughtry2000} \\
+9 & S2-PS & TCARI & TCARI & $3((RE_1 - R) - 0.2(RE_1 - G) \cdot (RE_1/R))$ & \cite{Haboudane2002} \\
+10 & S2-PS & - & TCARI/OSAVI & $TCARI/OSAVI$ & \cite{Haboudane2002} \\
+11 & S2-PS & - & MCARI/OSAVI & $MCARI/OSAVI$ & \cite{Daughtry2000} \\
+12 & S2*-PS & Simple Ratio & SR & $NIR/R$ & \cite{Tucker1979} \\
+13 & S2-PS & OSAVI & OSAVI & $\frac{1.16 \cdot (NIR - R)}{(NIR + R + 0.16)}$ & \cite{Rondeaux1996} \\
+14 & S2-PS & CI-Red & CI$_{red}$ & $(NIR/R) - 1$ & \cite{Clevers2013} \\
+15 & S2-PS & CVI & CVI & $(NIR/G) \cdot (R/G)$ & \cite{Vincini2008} \\
+16 & S2-PS & EVI & EVI & $\frac{2.5(NIR - R)}{(NIR + 6R - 7.5B + 1)}$ & \cite{Jiang2008} \\
+17 & S2-PS & NDVI & NDVI & $(NIR - R)/(NIR + R)$ & \cite{Rouse1974} \\
+18 & S2-PS & GNDVI & GNDVI & $(NIR - G)/(NIR + G)$ & \cite{Gitelson1996} \\
+19 & S2-PS & NDRE 1 & NDRE1 & $(NIR - RE_1)/(NIR + RE_1)$ & \cite{Magney2017} \\
+20 & S2-PS & - & NDRE/NDVI & $NDRE_1/NDVI$ & \cite{Raper2015} \\
+21 & S2-PS & SIPI & SIPI & $(NIR - B)/(NIR - R)$ & \cite{Penuelas1994} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Modeling with Machine Learning
 Algorithms}\label{modeling-with-machine-learning-algorithms}
@@ -868,7 +759,11 @@ process}\label{overview-of-the-modeling-process}
 \caption{\label{fig-3}\textbf{Methodological scheme of the modeling
 process by machine learning of the AGB estimation within the growing
 season (stage 1) and the prediction at harvest at 1, 2, 3, and 4 month
-lead times (stage 2).}}
+lead times (stage 2).} Input data (in-situ AGB and soil moisture,
+weather variables, and Sentinel-1, Sentinel-2, and PlanetScope
+predictors) are combined through a feature engineering step before being
+passed to the two modeling stages, both of which undergo hyperparameter
+optimization and explainable ML (DALEX) analysis.}
 
 \end{figure}%
 
@@ -982,7 +877,7 @@ establishing the latter would require a dedicated destructive-sampling
 campaign at harvest, which was outside the scope of the present field
 campaigns (see Discussion, Study limitations). As covariates, we
 selected the remote sensing covariates (S1, S2, and PS variables in
-Table~Table~\ref{tbl-3}) and weather data, which lagged from one to four
+Table~\ref{tbl-3}) and weather data, which lagged from one to four
 months before harvesting as lead time. To generate the dataset for
 prediction modeling, we took 100 random samples per site for the
 responses and covariates. These 100 samples per site-season capture
@@ -1008,7 +903,7 @@ evaluation}\label{hyperparameter-optimization-and-evaluation}
 
 To tune each parameter per algorithm for the estimation and prediction
 modeling, we used hyperparameter optimization, defining ten random
-candidates per parameter combination (Table~Table~\ref{tbl-4}). For the
+candidates per parameter combination (Table~\ref{tbl-4}). For the
 estimation models (stage 1), performance was evaluated using a
 leave-one-site-out cross-validation (LOSO-CV) scheme, in which the data
 were partitioned into four folds, each corresponding to one of the four
@@ -1036,7 +931,7 @@ primarily as a basis for relative comparison among recipes and
 algorithms---all of which are subject to the same selection procedure
 and thus the same potential bias---rather than as unbiased absolute
 estimates of out-of-sample performance. The complementary
-sensor-ablation analysis (Table Table~\ref{tbl-6}), which uses fixed
+sensor-ablation analysis (Table~\ref{tbl-6}), which uses fixed
 hyperparameters and is therefore not subject to this selection-based
 optimism, corroborates the recipe-level ranking (Section 3.1.1),
 providing some reassurance that the qualitative conclusions are not
@@ -1069,65 +964,37 @@ complete dataset (all four site-seasons, recipe \emph{rec1}, all
 predictors) to produce the final ensemble model, which was used as the
 basis for the explainable ML analysis described below.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3191}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3617}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3191}}@{}}
-\caption{Parameters per machine learning algorithm. RF: random forest.
-XGBoost: extreme gradient boosting. GLMnet: regularized generalized
-linear regression. BAGmlp: single layer, feed-forward neural networks.
-KNN: k-nearest neighbour. *This parameter was not
-tuned.}\label{tbl-4}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Parameter}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Description}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Algorithm}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Parameter}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Description}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Algorithm}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-trees* & An integer for the number of trees contained in the ensemble.
-Fixed to 1000 trees. & XGBoost, RF \\
-tree\_depth & An integer for the maximum depth of the tree. & XGBoost,
-RF \\
-min\_n & An integer for the minimum number of data points in a node that
-is required for the node to be split further. & XGBoost, RF \\
-loss\_reduction & A number for the reduction in the loss function
-required to split further. & XGBoost \\
-sample\_size & A number for the number (or proportion) of data that is
-exposed to the fitting routine. & XGBoost \\
-learn\_rate & A number for the rate at which the boosting algorithm
-adapts from iteration-to-iteration. & XGBoost \\
-mtry & An integer for the number of predictors that are randomly sampled
-at each split when creating tree models. & XGBoost, RF \\
-penalty & A non-negative number representing the total amount of
-regularization. & GLMnet, bagMLP \\
-mixture & A number between zero and one (inclusive) denoting the
-proportion of L1 regularization (i.e.~lasso) in the model. & GLMnet \\
-hidden units & An integer for the number of units in the hidden model. &
-bagMLP \\
-epochs & An integer for the number of training iterations. & BagMLP \\
-neighbors & The number of neighbors to consider (often called k) &
-KNN \\
-weight\_func & A single character for the type of kernel function used
-to weight distances between samples. & KNN \\
-dist\_power & A single number for the parameter used in calculating
-Minkowski distance. & KNN \\
-\end{longtable}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Parameters per machine learning algorithm.}
+\label{tbl-4}
+\begin{tabularx}{\textwidth}{@{} l X l @{}}
+\toprule
+\textbf{Parameter} & \textbf{Description} & \textbf{Algorithm} \\
+\midrule
+trees* & Number of trees in the ensemble (fixed at 1000). & XGBoost, RF \\
+tree\_depth & Maximum depth of the tree. & XGBoost, RF \\
+min\_n & Minimum data points in a node required to split. & XGBoost, RF \\
+loss\_reduction & Reduction in loss function required to split. & XGBoost \\
+sample\_size & Proportion of data exposed to the fitting routine. & XGBoost \\
+learn\_rate & Rate at which boosting adapts iteration-to-iteration. & XGBoost \\
+mtry & Predictors randomly sampled at each split. & XGBoost, RF \\
+penalty & Total amount of regularization. & GLMnet, bagMLP \\
+mixture & Proportion of L1 regularization (lasso). & GLMnet \\
+hidden units & Number of units in the hidden model. & bagMLP \\
+epochs & Number of training iterations. & bagMLP \\
+neighbors & Number of neighbors to consider ($k$). & KNN \\
+weight\_func & Kernel function type to weight distances. & KNN \\
+dist\_power & Parameter for Minkowski distance calculation. & KNN \\
+\bottomrule
+\end{tabularx}
+\begin{flushleft}
+\footnotesize
+RF: random forest; XGBoost: extreme gradient boosting; GLMnet: regularized generalized linear regression; bagMLP: single-layer, feed-forward neural networks; KNN: k-nearest neighbour. \\
+*This parameter was not tuned.
+\end{flushleft}
+\end{table}
 
 \subsubsection{Explainable Machine Learning with
 DALEX}\label{explainable-machine-learning-with-dalex}
@@ -1196,8 +1063,8 @@ little transferable information about AGB across sites and seasons. The
 recipe that incorporates all covariates (\emph{rec1}) did not outperform
 the PlanetScope-only recipes; its best configuration (bagMLP) ranked
 sixth overall (R²=0.75, RMSE=6.96 t/ha, MAE=5.34 t/ha). This pattern is
-corroborated by an independent sensor-ablation analysis (Table
-Table~\ref{tbl-6}), in which adding Sentinel-1 to a Sentinel-2+weather
+corroborated by an independent sensor-ablation analysis
+(Table~\ref{tbl-6}), in which adding Sentinel-1 to a Sentinel-2+weather
 model changed RMSE by only +0.5\% (i.e., a marginal degradation),
 whereas adding PlanetScope to a Sentinel-1+Sentinel-2+weather model
 improved RMSE by 5.7\%.
@@ -1211,13 +1078,16 @@ improved RMSE by 5.7\%.
 }
 
 \caption{\label{fig-4}\textbf{Performance metrics (R², MAE, and RMSE)
-for the forty models (five ML algorithms and eight recipes), ranked from
-best to worst under leave-one-site-out cross-validation.} RF: random
-forest, KNN: k-nearest neighbor, XGBoost: extreme gradient boosting,
-GLMnet: generalized linear models with regularization, bagMLP:
-feed-forward neural networks. rec1: all predictors, rec2: Sentinel-1
-(S1), rec3: S1+weather (W), rec4: weather only, rec5: Sentinel-2 (S2),
-rec6: S2+W, rec7: PlanetScope (PS), rec8: PS+W.}
+for the forty models (five ML algorithms and eight recipes), ranked by
+mean R² across the four LOSO-CV folds from best (rank 1) to worst (rank
+40).} Points and error bars show the mean ±SD across the four folds for
+the best hyperparameter configuration of each recipe-algorithm
+combination. RF: random forest, KNN: k-nearest neighbor, XGBoost:
+extreme gradient boosting, GLMnet: generalized linear models with
+regularization, bagMLP: feed-forward neural networks. \emph{rec1}: all
+predictors, \emph{rec2}: Sentinel-1 (S1), \emph{rec3}: S1+weather (W),
+\emph{rec4}: weather only, \emph{rec5}: Sentinel-2 (S2), \emph{rec6}:
+S2+W, \emph{rec7}: PlanetScope (PS), \emph{rec8}: PS+W.}
 
 \end{figure}%
 
@@ -1251,8 +1121,8 @@ models---fixed hyperparameters were used here, rather than the
 per-recipe tuned configurations underlying Figure~\ref{fig-4}, to
 isolate the marginal effect of each sensor group from
 hyperparameter-tuning variance---under the same LOSO-CV scheme,
-sequentially adding sensor groups to a weather-only baseline (Table
-Table~\ref{tbl-6}). Adding Sentinel-2 to the weather-only model reduced
+sequentially adding sensor groups to a weather-only baseline
+(Table~\ref{tbl-6}). Adding Sentinel-2 to the weather-only model reduced
 RMSE by 23.4\%, confirming the strong contribution of optical vegetation
 indices. Adding Sentinel-1 to the Sentinel-2+weather model produced a
 negligible change in RMSE (+0.5\%, i.e., a slight degradation), while
@@ -1261,53 +1131,35 @@ independent analysis is consistent with the recipe ranking in
 Figure~\ref{fig-4}: optical sensors (Sentinel-2 and PlanetScope) drive
 most of the predictive performance, whereas Sentinel-1 SAR backscatter
 contributes little once optical and weather information are available.
-As Table Table~\ref{tbl-6} shows, the across-fold SD for each
-configuration (2.6-3.4 t/ha) is substantial relative to these mean
-differences, underscoring that with only four LOSO folds these ablation
+As Table~\ref{tbl-6} shows, the across-fold SD for each configuration
+(2.6-3.4 t/ha) is substantial relative to these mean differences,
+underscoring that with only four LOSO folds these ablation
 effects---particularly the near-zero Sentinel-1 contribution---should be
 interpreted as indicative rather than statistically definitive.
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
-\caption{Sensor-ablation analysis. Each row reports the change in mean
-LOSO-CV RMSE (fixed-hyperparameter XGBoost) when a sensor group is added
-sequentially to the previous model. RMSE values are mean ± SD across the
-four LOSO folds.}\label{tbl-6}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Sensor added}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{RMSE before (t/ha)}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{RMSE after (t/ha)}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{RMSE change (\%)}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Sensor added}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{RMSE before (t/ha)}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{RMSE after (t/ha)}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{RMSE change (\%)}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Sentinel-2 (vs.~weather only) & 9.96 ± 2.72 & 7.63 ± 3.43 & -23.4 \\
-Sentinel-1 (vs.~Sentinel-2 + weather) & 7.63 ± 3.43 & 7.68 ± 3.00 &
-+0.5 \\
-PlanetScope (vs.~Sentinel-1 + Sentinel-2 + weather) & 7.68 ± 3.00 & 7.24
-± 2.58 & -5.7 \\
-\end{longtable}
+\begin{table}
+
+\caption{\label{tbl-6}Sensor-ablation analysis. Each row reports the change in mean LOSO-CV RMSE (fixed-hyperparameter XGBoost) when a sensor group is added sequentially to the previous model. RMSE values are mean $\pm$ SD across the four LOSO folds.}
+
+\centering{
+
+\centering
+
+
+\sisetup{separate-uncertainty=true, uncertainty-separator=\pm}
+\begin{tabular}{l S[table-format=2.2, table-comparator=true] S[table-format=2.2] S[table-format=+2.1]}
+\toprule
+\textbf{Sensor added} & \textbf{RMSE before (t/ha)} & \textbf{RMSE after (t/ha)} & \textbf{RMSE change (\%)} \\
+\midrule
+Sentinel-2 (vs. weather only) & 9.96 \pm 2.72 & 7.63 \pm 3.43 & -23.4 \\
+Sentinel-1 (vs. S2 + weather) & 7.63 \pm 3.43 & 7.68 \pm 3.00 & +0.5 \\
+PlanetScope (vs. S1 + S2 + weather) & 7.68 \pm 3.00 & 7.24 \pm 2.58 & -5.7 \\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{table}%
 
 \subsubsection{Explainable Machine Learning with
 DALEX}\label{explainable-machine-learning-with-dalex-1}
@@ -1387,9 +1239,9 @@ collinearity-based caution applies with particular force to the
 Sentinel-1 VH/VV ratio: its comparatively high ensemble-level importance
 in Figure~\ref{fig-6} reflects variance shared with co-varying optical
 and thermal-time predictors, and is therefore not in conflict with the
-sensor-ablation result (Table Table~\ref{tbl-6}), in which Sentinel-1
-added essentially no marginal skill once those optical and weather
-predictors were already present.
+sensor-ablation result (Table~\ref{tbl-6}), in which Sentinel-1 added
+essentially no marginal skill once those optical and weather predictors
+were already present.
 
 \subsubsection{Spatio-temporal variation of AGB within the growing
 season}\label{spatio-temporal-variation-of-agb-within-the-growing-season}
@@ -1409,8 +1261,11 @@ measurements.
 
 \caption{\label{fig-8}\textbf{Daily temporal variation of the averaged
 AGB per site (lines) and the averaged in situ measured AGB per site
-(points).} For a better comparison, the dates were turned to the same
-year. S1: Season 2021-2022, S2: Season 2022-2023.}
+(points).} For a better comparison, the dates were converted to a common
+reference year. In the legend, ``Hidango S1'' and ``Hidango S2'' denote
+the two Hidango site-seasons (2021-2022 and 2022-2023, respectively);
+these season labels are unrelated to the Sentinel-1/Sentinel-2 sensor
+abbreviations used elsewhere in this manuscript.}
 
 \end{figure}%
 
@@ -1435,7 +1290,7 @@ variability were Hidango season 2022-2023 and La Cancha
 }
 
 \caption{\label{fig-9}\textbf{Monthly averaged above-ground biomass
-(AGB) estimated with the stacked ensemble model (recipe rec1, all
+(AGB) estimated with the stacked ensemble model (recipe \emph{rec1}, all
 predictors) for the sites} (a) Hidango season 2021-2022, (b) Hidango
 season 2022-2023, (c) La Cancha season 2022-2023, and (d) Villa Baviera
 season 2020-2021.}
@@ -1452,14 +1307,14 @@ one to four months before harvest are sufficient to reproduce the stage
 1 model's own spatial AGB prediction at the harvest date (Section
 2.3.5)---a self-consistency check on the modeling pipeline rather than
 validation against independent harvest-date measurements---comparing
-four fixed-hyperparameter algorithms (RF, XGBoost, KNN, and bagMLP);
-GLMnet was excluded from this comparison because its cross-fold RMSE was
-highly unstable (15.5--54.7 t/ha across leads). Random Forest (RF) was
-the most consistently competitive of the four across lead times and is
-used as the reference model below. For RF, R² decreased from 0.46
-(RMSE=4.52 t/ha, MAE=4.21 t/ha) at a one-month lead to 0.25 (RMSE=5.07
-t/ha, MAE=4.73 t/ha) at two months, 0.15 (RMSE=5.09 t/ha, MAE=4.73 t/ha)
-at three months, and 0.10 (RMSE=6.46 t/ha, MAE=6.13 t/ha) at four months
+four algorithms (RF, XGBoost, KNN, and bagMLP); GLMnet was excluded from
+this comparison because its cross-fold RMSE was highly unstable
+(15.5--54.7 t/ha across leads). Random Forest (RF) was the most
+consistently competitive of the four across lead times and is used as
+the reference model below. For RF, R² decreased from 0.46 (RMSE=4.52
+t/ha, MAE=4.21 t/ha) at a one-month lead to 0.25 (RMSE=5.07 t/ha,
+MAE=4.73 t/ha) at two months, 0.15 (RMSE=5.09 t/ha, MAE=4.73 t/ha) at
+three months, and 0.10 (RMSE=6.46 t/ha, MAE=6.13 t/ha) at four months
 (Figure~\ref{fig-10}). The other three models followed a broadly similar
 declining trend. These results indicate modest, rapidly decaying
 self-consistency between early-season covariates and the stage 1 model's
@@ -1474,102 +1329,76 @@ direct estimate of skill at forecasting field-measured AGB at harvest.
 
 }
 
-\caption{\label{fig-10}\textbf{LOSO-CV performance metrics (R², MAE, and
-RMSE, in t/ha) for AGB-at-harvest forecasts one to four months ahead}
-(recipe \emph{rec1}, all predictors; best hyperparameter configuration
-per fold, as in stage 1), for four fixed-hyperparameter algorithms:
-bagged multilayer perceptron (bagMLP), K-nearest neighbors (KNN), random
-forest (RF), and extreme gradient boosting (XGBoost). GLMnet was
-excluded due to highly unstable cross-fold RMSE (15.5--54.7 t/ha). The
-shaded line shows the overall trend (LOESS smooth) across the four
-models.}
+\caption{\label{fig-10}\textbf{LOSO-CV performance metrics for
+AGB-at-harvest forecasts one to four months ahead} (recipe \emph{rec1},
+all predictors; best hyperparameter configuration per fold, as in stage
+1), for four algorithms: bagged multilayer perceptron (bagMLP),
+K-nearest neighbors (KNN), random forest (RF), and extreme gradient
+boosting (XGBoost). R² is dimensionless; MAE and RMSE are in t/ha.
+GLMnet was excluded due to highly unstable cross-fold RMSE (15.5--54.7
+t/ha). The shaded line shows the overall trend (LOESS smooth) across the
+four models.}
 
 \end{figure}%
 
-Table~Table~\ref{tbl-5} lists the eight variables with the most
-consistent permutation-based importance across the four lead-time RF
-models (recipe \emph{rec1}). Soil moisture (SM) had the lowest (best)
-overall mean rank (5.75), reflecting its rank-1 importance at the
-four-month lead and rank-2/3 importance at the two- and three-month
-leads, despite not appearing among the top six predictors at the
-one-month lead. By contrast, the cumulative PlanetScope green-red
-vegetation index (∑PS\textsubscript{GRVI}) showed a strongly
-lead-dependent pattern: it was by far the most important predictor at
-one-, two-, and three-month leads (permutation z-scores of 6.2, 4.1, and
-4.0, respectively---several times larger than any other variable at
-those leads)---but fell to near the bottom of the ranking (42nd of 43
-variables) at the four-month lead, yielding a middling overall mean rank
-(11.25). The remaining variables in Table~Table~\ref{tbl-5}
-(∑S2\textsubscript{B1}, ∑S2\textsubscript{SWIR12\_TCARI},
-PS\textsubscript{B8}, S2\textsubscript{NDRE\_NDVI},
-PS\textsubscript{B5}, PS\textsubscript{TCARI\_OSAVI}) each appeared
-among the top six predictors for at most one or two of the four leads.
-Three of these eight variables (∑S2\textsubscript{SWIR12\_TCARI},
-PS\textsubscript{B8}, S2\textsubscript{NDRE\_NDVI}) have negative scaled
-dropout-loss values, meaning that permuting them slightly reduced,
-rather than increased, prediction error on average---a pattern
-consistent with noise rather than genuine predictive signal, and a
-further indication of the instability discussed below. This pronounced
-rotation in variable importance with lead time---with no single
-predictor ranking consistently across all four horizons---further
-illustrates the instability of harvest forecasting under a
-four-site-season LOSO-CV scheme and reinforces the need for larger
-multi-site networks to support reliable multi-month forecasting (see
-Discussion).
+Table~\ref{tbl-5} lists the eight variables with the most consistent
+permutation-based importance across the four lead-time RF models (recipe
+\emph{rec1}). Soil moisture (SM) had the lowest (best) overall mean rank
+(5.75), reflecting its rank-1 importance at the four-month lead and
+rank-2/3 importance at the two- and three-month leads, despite not
+appearing among the top six predictors at the one-month lead. By
+contrast, the cumulative PlanetScope green-red vegetation index
+(∑PS\textsubscript{GRVI}) showed a strongly lead-dependent pattern: it
+was by far the most important predictor at one-, two-, and three-month
+leads (permutation z-scores of 6.2, 4.1, and 4.0, respectively---several
+times larger than any other variable at those leads)---but fell to near
+the bottom of the ranking (42nd of 43 variables) at the four-month lead,
+yielding a middling overall mean rank (11.25). The remaining variables
+in Table~\ref{tbl-5} (∑S2\textsubscript{B1},
+∑S2\textsubscript{SWIR12\_TCARI}, PS\textsubscript{B8},
+S2\textsubscript{NDRE\_NDVI}, PS\textsubscript{B5},
+PS\textsubscript{TCARI\_OSAVI}) each appeared among the top six
+predictors for at most one or two of the four leads. Three of these
+eight variables (∑S2\textsubscript{SWIR12\_TCARI}, PS\textsubscript{B8},
+S2\textsubscript{NDRE\_NDVI}) have negative scaled dropout-loss values,
+meaning that permuting them slightly reduced, rather than increased,
+prediction error on average---a pattern consistent with noise rather
+than genuine predictive signal, and a further indication of the
+instability discussed below. This pronounced rotation in variable
+importance with lead time---with no single predictor ranking
+consistently across all four horizons---further illustrates the
+instability of harvest forecasting under a four-site-season LOSO-CV
+scheme and reinforces the need for larger multi-site networks to support
+reliable multi-month forecasting (see Discussion).
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1795}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.0897}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1923}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2051}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.3333}}@{}}
-\caption{The eight most important variables (ranked by mean rank) for
-the RF prediction model (recipe rec1, all predictors) across the four
-LOSO-CV lead-time models. N: number of leads (of four) in which the
-variable was among the five most important. Mode rank: most frequent
-rank across the four leads. Mean rank: average rank across the four
-leads (lower values indicate more consistent importance). Scaled dropout
-loss: mean z-scored permutation-importance loss (RMSE increase after
-permutation) across the four leads.}\label{tbl-5}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Variable}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{N}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Mode rank}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Mean rank}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Scaled dropout loss}
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Variable}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{N}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Mode rank}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Mean rank}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Scaled dropout loss}
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-\textbf{SM} & 3 & 1 & 5.75 & 1.91 \\
-∑S2\textsubscript{B1} & 2 & 2 & 8.25 & 1.23 \\
-∑S2\textsubscript{SWIR12\_TCARI} & 1 & 5 & 9.75 & -0.11 \\
-\textbf{∑PS\textsubscript{GRVI}} & 3 & 1 & 11.25 & 3.24 \\
-PS\textsubscript{B8} & 0 & 8 & 11.75 & -0.09 \\
-S2\textsubscript{NDRE\_NDVI} & 0 & 9 & 12 & -0.12 \\
-PS\textsubscript{B5} & 2 & 2 & 12.75 & 0.56 \\
-PS\textsubscript{TCARI\_OSAVI} & 3 & 5 & 13 & 0.45 \\
-\end{longtable}
+\begin{table}
+
+\caption{\label{tbl-5}The eight most important variables (ranked by mean rank) for the RF prediction model (recipe rec1, all predictors) across the four LOSO-CV lead-time models. N: number of leads (of four) in which the variable was among the five most important. Mode rank: most frequent rank across the four leads. Mean rank: average rank across the four leads (lower values indicate more consistent importance). Scaled dropout loss: mean z-scored permutation-importance loss (RMSE increase after permutation) across the four leads.}
+
+\centering{
+
+\centering
+\small
+
+
+\begin{tabular}{l S[table-format=1.0] S[table-format=1.0] S[table-format=2.2] S[table-format=-1.2]}
+\toprule
+\textbf{Variable} & {\textbf{N}} & {\textbf{Mode rank}} & {\textbf{Mean rank}} & {\textbf{Scaled dropout loss}} \\
+\midrule
+SM & 3 & 1 & 5.75 & 1.91 \\
+$\sum S2_{B1}$ & 2 & 2 & 8.25 & 1.23 \\
+$\sum S2_{SWIR12\_TCARI}$ & 1 & 5 & 9.75 & -0.11 \\
+$\sum PS_{GRVI}$ & 3 & 1 & 11.25 & 3.24 \\
+$PS_{B8}$ & 0 & 8 & 11.75 & -0.09 \\
+$S2_{NDRE\_NDVI}$ & 0 & 9 & 12.00 & -0.12 \\
+$PS_{B5}$ & 2 & 2 & 12.75 & 0.56 \\
+$PS_{TCARI\_OSAVI}$ & 3 & 5 & 13.00 & 0.45 \\
+\bottomrule
+\end{tabular}
+
+}
+
+\end{table}%
 
 \section{Discussion}\label{discussion}
 
@@ -1606,7 +1435,7 @@ would perform best, recipes built on PlanetScope alone (\emph{rec7}) or
 with weather (\emph{rec8}) consistently outranked \emph{rec1}, while the
 Sentinel-1-only recipe (\emph{rec2}) was consistently among the
 worst-performing (R²=0.44-0.53). The complementary sensor-ablation
-analysis (Table~Table~\ref{tbl-6}) corroborates this pattern: adding
+analysis (Table~\ref{tbl-6}) corroborates this pattern: adding
 Sentinel-2 to a weather-only baseline reduced RMSE by 23.4\%, whereas
 adding Sentinel-1 to a Sentinel-2-plus-weather model left RMSE
 essentially unchanged (+0.5\%), and subsequently adding PlanetScope
@@ -1642,28 +1471,27 @@ RF as the most stable model across leads) yielded modest and rapidly
 decaying self-consistency between early-season covariates and the stage
 1 model's harvest-date prediction: R² fell from 0.46 (RMSE=4.52 t/ha) at
 one month to 0.10 (RMSE=6.46 t/ha) at four months. Permutation
-importance for these RF models (Table~Table~\ref{tbl-5}) showed a
-pronounced rotation across lead times rather than a stable set of top
-predictors: the cumulative PlanetScope green-red index
-(∑PS\textsubscript{GRVI}) dominated at one-, two-, and three-month leads
-but became unimportant at four months, while soil moisture (SM) became
-the leading predictor only at the four-month lead. This instability,
-together with the modest and rapidly decaying R², is consistent with the
-limited number of independent site-seasons (n=4) available to a
-leave-one-site-out scheme: each fold trains on only three site-seasons
-and is evaluated on a fourth, entirely unseen field, season, and (in
-most folds) wheat habit. Beyond this small-sample instability, a more
-fundamental limitation is that the stage 2 target is itself a stage 1
-model output rather than an independent harvest-AGB ground truth
-(Section 2.3.5): even with a larger network of site-seasons, this design
-would remain a test of internal consistency between early- and
-late-season model behavior rather than of true forecasting skill against
-field-measured biomass. We therefore interpret these results as a proof
-of concept for the modeling pipeline rather than as evidence of
-operational forecasting skill, and as a call for both larger multi-site,
-multi-season networks and an independent harvest-date sampling campaign
-to properly evaluate multi-month AGB forecasting (see Study
-limitations).
+importance for these RF models (Table~\ref{tbl-5}) showed a pronounced
+rotation across lead times rather than a stable set of top predictors:
+the cumulative PlanetScope green-red index (∑PS\textsubscript{GRVI})
+dominated at one-, two-, and three-month leads but became unimportant at
+four months, while soil moisture (SM) became the leading predictor only
+at the four-month lead. This instability, together with the modest and
+rapidly decaying R², is consistent with the limited number of
+independent site-seasons (n=4) available to a leave-one-site-out scheme:
+each fold trains on only three site-seasons and is evaluated on a
+fourth, entirely unseen field, season, and (in most folds) wheat habit.
+Beyond this small-sample instability, a more fundamental limitation is
+that the stage 2 target is itself a stage 1 model output rather than an
+independent harvest-AGB ground truth (Section 2.3.5): even with a larger
+network of site-seasons, this design would remain a test of internal
+consistency between early- and late-season model behavior rather than of
+true forecasting skill against field-measured biomass. We therefore
+interpret these results as a proof of concept for the modeling pipeline
+rather than as evidence of operational forecasting skill, and as a call
+for both larger multi-site, multi-season networks and an independent
+harvest-date sampling campaign to properly evaluate multi-month AGB
+forecasting (see Study limitations).
 
 \subsection{Application for wheat yield
 management}\label{application-for-wheat-yield-management}
@@ -1726,7 +1554,7 @@ ERA5). Soil moisture (SM) measurements, used as a predictor, require
 dedicated in-field sensors that many farmers and monitoring programs
 lack; while SM was not among the leading predictors for in-season
 estimation (stage 1), it emerged as the most important predictor for
-four-month-ahead forecasting (stage 2, Table~Table~\ref{tbl-5}), so its
+four-month-ahead forecasting (stage 2, Table~\ref{tbl-5}), so its
 availability remains relevant for longer-horizon applications. Advances
 in satellite-based soil moisture estimation at the farm scale
 \citep{VanHateren2023, Zeyliger2022} could help address this dependence
@@ -1739,11 +1567,11 @@ throughout this study is, by design, a conservative estimate of
 transferability to new sites, but with only four site-seasons each LOSO
 fold trains on just three of them---particularly limiting for the stage
 2 forecasting models, where the rotation in variable importance across
-lead times (Table~Table~\ref{tbl-5}) likely reflects this small sample
-as much as genuine seasonal dynamics. Expanding the AGB dataset to more
-sites, seasons, and varieties is the most direct way to improve and
-properly evaluate generalization; however, in Chile, reliable and
-publicly available farm-scale wheat AGB data remain scarce.
+lead times (Table~\ref{tbl-5}) likely reflects this small sample as much
+as genuine seasonal dynamics. Expanding the AGB dataset to more sites,
+seasons, and varieties is the most direct way to improve and properly
+evaluate generalization; however, in Chile, reliable and publicly
+available farm-scale wheat AGB data remain scarce.
 
 A further methodological limitation concerns the
 hyperparameter-selection procedure described in Section 2.3.6: because
@@ -1755,9 +1583,9 @@ cross-validation, in which hyperparameter tuning would be confined to
 the training folds only. We were unable to implement a nested LOSO-CV
 here because, with only four site-seasons, an inner-loop split would
 leave too few independent units per fold to tune hyperparameters
-meaningfully. The fixed-hyperparameter sensor-ablation analysis (Table
-Table~\ref{tbl-6}), which is not subject to this issue, corroborates the
-recipe-level ranking and the near-zero marginal contribution of
+meaningfully. The fixed-hyperparameter sensor-ablation analysis
+(Table~\ref{tbl-6}), which is not subject to this issue, corroborates
+the recipe-level ranking and the near-zero marginal contribution of
 Sentinel-1, suggesting that the qualitative, relative conclusions of
 this study are more robust than the absolute performance values. We
 recommend that studies with a larger number of site-seasons implement
@@ -1805,18 +1633,18 @@ real-world forecasting performance.
 
 Other concerns include the speckle noise inherent to Sentinel-1 and its
 dependence on incidence angle, which may have contributed to its limited
-marginal contribution under LOSO-CV (Table~Table~\ref{tbl-6}) and could
-make consistent SAR-based performance across landscapes or farming
-systems challenging. Finally, the residual collinearity among cumulative
+marginal contribution under LOSO-CV (Table~\ref{tbl-6}) and could make
+consistent SAR-based performance across landscapes or farming systems
+challenging. Finally, the residual collinearity among cumulative
 vegetation indices, documented by the VIF audit (Section 2.3.3), affects
 not only the flat ensemble-level variable importance
 (Figure~\ref{fig-6}) but the reliability of permutation-based importance
 itself (Section 2.3.3): because permuting one of several correlated
 predictors generates unrealistic, out-of-distribution combinations, the
-rankings in Figure~\ref{fig-6} and Table Table~\ref{tbl-5} should be
-read as identifying groups of mutually-informative predictors rather
-than precisely localized individual importances. Future work should
-re-run the explainability analysis on the VIF-reduced 22-variable set
+rankings in Figure~\ref{fig-6} and Table~\ref{tbl-5} should be read as
+identifying groups of mutually-informative predictors rather than
+precisely localized individual importances. Future work should re-run
+the explainability analysis on the VIF-reduced 22-variable set
 identified here, or apply conditional permutation importance methods
 designed for correlated predictors, before drawing fine-grained
 conclusions about individual variable contributions.
@@ -1944,96 +1772,76 @@ took full responsibility for the publication.
 
 \section{Glossary}\label{glossary}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6098}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3902}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Abbreviation / Term}
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-\textbf{Definition}
-\end{minipage} \\
-\midrule\noalign{}
+\begin{longtable}{|>{\raggedright\arraybackslash}p{0.25\linewidth}|>{\raggedright\arraybackslash}p{0.70\linewidth}|}
+\caption{Abbreviations and definitions} \label{tab:glossary} \\
+\hline
+\textbf{Abbreviation / Term} & \textbf{Definition} \\
+\hline
+\endfirsthead
+\multicolumn{2}{c}%
+{{\tablename\ \thetable{} -- continued from previous page}} \\
+\hline
+\textbf{Abbreviation / Term} & \textbf{Definition} \\
+\hline
 \endhead
-\bottomrule\noalign{}
+\hline
+\multicolumn{2}{r}{{Continued on next page}} \\
+\endfoot
+\hline
 \endlastfoot
-AGB & Above-Ground Biomass. The total mass of living plant material
-(excluding roots) in a given area, typically measured in tons per
-hectare (t/ha). It is the primary dependent variable being modeled and
-forecasted. \\
-ML & Machine Learning. A subset of artificial intelligence that provides
-systems with the ability to automatically learn and improve from
-experience without being explicitly programmed. \\
-SAR & Synthetic Aperture Radar. A type of radar used in satellite remote
-sensing (e.g., Sentinel-1) that transmits microwaves and records the
-backscattered signal, providing data related to surface roughness and
-moisture, independent of weather and light conditions. \\
-S1 & Sentinel-1. The European Space Agency (ESA) satellite mission
-providing C-band Synthetic Aperture Radar (SAR) data. Used for
-monitoring land and ocean surface dynamics. \\
-S2 & Sentinel-2. The European Space Agency (ESA) satellite mission
-providing high-resolution optical imagery (13 spectral bands). Used for
-land cover classification and vegetation monitoring. \\
-PlanetScope & A constellation of Earth-observing satellites operated by
-Planet Labs. They provide daily, high-resolution optical imagery,
-complementing the temporal resolution of Sentinel missions. \\
-In-Situ Data & Data collected directly at the field location, involving
-physical measurement. In this study, this primarily refers to collected
-weather variables and soil moisture measurements. \\
-GDD & Growing Degree Days. A measure of heat accumulation used to
-predict the rate of plant development between growing stages
-(phenological stages). It is calculated based on daily maximum and
-minimum air temperatures. \\
-SM & Soil Moisture. The water content of the soil, measured here with
-TEROS 12 capacitance sensors and used as both a predictor of crop
-development and an indicator of water stress. \\
-RF & Random Forest. An ensemble learning method that builds multiple
-decision trees on bootstrapped samples and averages their predictions,
-widely used for its robustness and resistance to overfitting. \\
-XGBoost & eXtreme Gradient Boosting. A highly optimized and efficient
-open-source implementation of the gradient boosting framework, popular
-for its speed and performance in structured data prediction. \\
-GLMnet & Generalized Linear Model with regularization. A model that
-applies regularized regression (L1/L2 penalties) to linear models, often
-used for variable selection and preventing overfitting. \\
-KNN & k-Nearest Neighbors. A non-parametric supervised learning method
-used for classification and regression. The output is based on the
-classification or mean value of its nearest neighbors. \\
-bagMLP & Bagged Multilayer Perceptron. An ensemble learning technique
-where multiple Multilayer Perceptron (neural network) models are trained
-on different subsets of the data (bagging), and their predictions are
-averaged. \\
-Cross-Validation & A statistical technique used to estimate how
-accurately a predictive model will perform in practice. It involves
-partitioning the data into subsets for training and testing. \\
-LOSO-CV & Leave-One-Site-Out Cross-Validation. A spatial
-cross-validation scheme in which each fold corresponds to one entire
-site-season; models are trained on the remaining site-seasons and
-evaluated on the held-out one, directly testing spatial
-transferability. \\
-VIF & Variance Inflation Factor. A diagnostic statistic that quantifies
-the degree of multicollinearity among predictor variables in a
-regression model; values above 10 are commonly considered indicative of
-problematic collinearity. \\
-R² & Coefficient of Determination. A statistical measure representing
-the proportion of the variance for a dependent variable that is
-explained by the independent variables in a regression model. A value
-closer to 1 indicates a better fit. \\
-RMSE & Root Mean Square Error. A measure of the average magnitude of the
-errors. It tells you how concentrated the data is around the line of
-best fit. It has the same units as the dependent variable (t/ha). \\
-MAE & Mean Absolute Error. The average of the absolute differences
-between predicted and observed values, expressed in the same units as
-the dependent variable (t/ha). Less sensitive to large outliers than
-RMSE. \\
-DALEX & moDel Agnostic Language for Exploration and eXplanation. A
-specific framework or library used in this research to provide
-model-agnostic tools for explaining the behavior of complex ML models
-(contributing to XAI). \\
+AGB & Above-Ground Biomass. The total mass of living plant material (excluding roots) in a given area, typically measured in tons per hectare (t/ha). It is the primary dependent variable being modeled and forecasted. \\
+\hline
+ML & Machine Learning. A subset of artificial intelligence that provides systems with the ability to automatically learn and improve from experience without being explicitly programmed. \\
+\hline
+SAR & Synthetic Aperture Radar. A type of radar used in satellite remote sensing (e.g., Sentinel-1) that transmits microwaves and records the backscattered signal, providing data related to surface roughness and moisture, independent of weather and light conditions. \\
+\hline
+S1 & Sentinel-1. The European Space Agency (ESA) satellite mission providing C-band Synthetic Aperture Radar (SAR) data. Used for monitoring land and ocean surface dynamics. \\
+\hline
+S2 & Sentinel-2. The European Space Agency (ESA) satellite mission providing high-resolution optical imagery (13 spectral bands). Used for land cover classification and vegetation monitoring. \\
+\hline
+PlanetScope & A constellation of Earth-observing satellites operated by Planet Labs. They provide daily, high-resolution optical imagery, complementing the temporal resolution of Sentinel missions. \\
+\hline
+In-Situ Data & Data collected directly at the field location, involving physical measurement. In this study, this primarily refers to collected weather variables and soil moisture measurements. \\
+\hline
+GDD & Growing Degree Days. A measure of heat accumulation used to predict the rate of plant development between growing stages (phenological stages). It is calculated based on daily maximum and minimum air temperatures. \\
+\hline
+SM & Soil Moisture. The water content of the soil, measured here with TEROS 12 capacitance sensors and used as both a predictor of crop development and an indicator of water stress. \\
+\hline
+RF & Random Forest. An ensemble learning method that builds multiple decision trees on bootstrapped samples and averages their predictions, widely used for its robustness and resistance to overfitting. \\
+\hline
+XGBoost & eXtreme Gradient Boosting. A highly optimized and efficient open-source implementation of the gradient boosting framework, popular for its speed and performance in structured data prediction. \\
+\hline
+GLMnet & Generalized Linear Model with regularization. A model that applies regularized regression (L1/L2 penalties) to linear models, often used for variable selection and preventing overfitting. \\
+\hline
+KNN & k-Nearest Neighbors. A non-parametric supervised learning method used for classification and regression. The output is based on the classification or mean value of its nearest neighbors. \\
+\hline
+bagMLP & Bagged Multilayer Perceptron. An ensemble learning technique where multiple Multilayer Perceptron (neural network) models are trained on different subsets of the data (bagging), and their predictions are averaged. \\
+\hline
+Cross-Validation & A statistical technique used to estimate how accurately a predictive model will perform in practice. It involves partitioning the data into subsets for training and testing. \\
+\hline
+LOSO-CV & Leave-One-Site-Out Cross-Validation. A spatial cross-validation scheme in which each fold corresponds to one entire site-season; models are trained on the remaining site-seasons and evaluated on the held-out one, directly testing spatial transferability. \\
+\hline
+VIF & Variance Inflation Factor. A diagnostic statistic that quantifies the degree of multicollinearity among predictor variables in a regression model; values above 10 are commonly considered indicative of problematic collinearity. \\
+\hline
+$R^2$ & Coefficient of Determination. A statistical measure representing the proportion of the variance for a dependent variable that is explained by the independent variables in a regression model. A value closer to 1 indicates a better fit. \\
+\hline
+RMSE & Root Mean Square Error. A measure of the average magnitude of the errors. It tells you how concentrated the data is around the line of best fit. It has the same units as the dependent variable (t/ha). \\
+\hline
+MAE & Mean Absolute Error. The average of the absolute differences between predicted and observed values, expressed in the same units as the dependent variable (t/ha). Less sensitive to large outliers than RMSE. \\
+\hline
+DALEX & moDel Agnostic Language for Exploration and eXplanation. A specific framework or library used in this research to provide model-agnostic tools for explaining the behavior of complex ML models (contributing to XAI). \\
+\hline
 \end{longtable}
 
+\newpage
 
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\renewcommand{\bibsection}{}
 \bibliography{references.bib}
+
+
 
 
 

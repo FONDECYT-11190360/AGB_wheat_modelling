@@ -6,11 +6,10 @@ library(fs)
 #change locale to English
 Sys.setlocale("LC_TIME", "C")
 
-sitios <- dir_ls('data/processed/shp',regexp = 'shp$')
-pol_hids1 <- read_sf(sitios[2]) |> st_transform(32719)
-pol_hids2 <- read_sf(sitios[3]) |> st_transform(32719)
-pol_lc <- read_sf(sitios[4]) |> st_transform(32719)
-pol_vb <- read_sf(sitios[5]) |> st_transform(32719)
+pol_hids1 <- read_sf('data/processed/sitios.gpkg', layer = "a_hidango_2021-2022") |> st_transform(32719)
+pol_hids2 <- read_sf('data/processed/sitios.gpkg', layer = "a_hidango_2022-2023") |> st_transform(32719)
+pol_lc <- read_sf('data/processed/sitios.gpkg', layer = "a_la_cancha_2022-2023") |> st_transform(32719)
+pol_vb <- read_sf('data/processed/sitios.gpkg', layer = "a_villa_baviera_2020-2021") |> st_transform(32719)
 
 dirs <- dir_ls('data/processed/raster/predicciones')
 
@@ -66,11 +65,15 @@ map1 <- tm_shape(hid_s1_mes) +
             ),
             col.legend = tm_legend(
               title = 'AGB (ton/ha)',
-              orientation = "landscape")
+              orientation = "landscape",
+              frame = FALSE,
+              text.size = 0.9,
+              title.size = 1.0)
             ) +
   tm_shape(pol_hids1) +
   tm_borders() +
   tm_facets(nrow = 1,sync = TRUE) +
+  tm_title("(a)", position = tm_pos_out("left", "top")) +
   tm_layout(legend.position = tm_pos_out("center", "bottom", pos.v = "center"),
             panel.label.size   = 1,
             panel.label.bg = FALSE,
@@ -84,11 +87,15 @@ map2 <- tm_shape(hid_s2_mes) +
             ),
             col.legend = tm_legend(
               title = 'AGB (ton/ha)',
-              orientation = "landscape")
+              orientation = "landscape",
+              frame = FALSE,
+              text.size = 0.9,
+              title.size = 1.0)
   ) +
   tm_shape(pol_hids2) +
   tm_borders() +
   tm_facets(nrow = 1,sync = TRUE) +
+  tm_title("(b)", position = tm_pos_out("left", "top")) +
   tm_layout(legend.position = tm_pos_out("center", "bottom", pos.v = "center"),
             panel.label.size   = 1,
             panel.label.bg = FALSE,
@@ -102,15 +109,19 @@ map3 <- tm_shape(vb_mes) +
             ),
             col.legend = tm_legend(
               title = 'AGB (ton/ha)',
-              orientation = "landscape")
+              orientation = "landscape",
+              frame = FALSE,
+              text.size = 0.9,
+              title.size = 1.0)
   ) +
   tm_shape(pol_vb) +
   tm_borders() +
   tm_facets(nrow = 1,sync = TRUE) +
+  tm_title("(d)", position = tm_pos_out("left", "top")) +
   tm_layout(legend.position = tm_pos_out("center", "bottom", pos.v = "center"),
             panel.label.size   = 1,
             panel.label.bg = FALSE,
-            component.autoscale = FALSE)
+              )
 
 map4 <- tm_shape(lc_mes) +
   tm_raster(col.free = FALSE,
@@ -120,16 +131,19 @@ map4 <- tm_shape(lc_mes) +
             ),
             col.legend = tm_legend(
               title = 'AGB (ton/ha)',
-              orientation = "landscape")
-  ) +
+              orientation = "landscape",
+              frame = FALSE,
+              text.size = 0.9,
+              title.size = 1.0)
+   ) +
   tm_shape(pol_lc) +
   tm_borders() +
   tm_facets(nrow = 1,sync = TRUE) +
-  tm_layout(legend.position = tm_pos_out("center", "bottom", pos.v = "center"),
-            panel.label.size   = 1,
+  tm_title("(c)", position = tm_pos_out("left", "top")) +
+  tm_layout(panel.label.size   = 1,
             panel.label.bg = FALSE,
             component.autoscale = FALSE)
 
-mapas_unidos <- tmap_arrange(map1,map2,map4,map3)
+mapas_unidos <- tmap_arrange(map1,map2,map4,map3) 
 tmap_save(mapas_unidos,'output/figs/mapas_biomasa_mensual_estimada.png',
-          scale =1.5,dpi = 300)
+          scale =1,dpi = 300,width=15,height=15)

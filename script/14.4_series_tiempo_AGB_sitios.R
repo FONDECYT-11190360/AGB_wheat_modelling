@@ -80,9 +80,9 @@ data |>
   geom_line() +
   scale_x_date(date_breaks = "1 months",date_labels = '%m-%b') +
   scale_color_manual(values=c('darkred','red','#8ef064','#17a9cd')) +
-  labs(y='AGB (ton/h)') +
+  labs(y='AGB (t/ha)') +
   theme_bw() +
   theme(axis.title.x = element_blank(),
         legend.position = 'bottom',
         legend.title = element_blank())
-ggsave('output/figs/time_series_AGB_mean_sites.png')
+ggsave('output/figs/time_series_AGB_mean_sites.png',width=8,height=5)
