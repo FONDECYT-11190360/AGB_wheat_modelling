@@ -122,6 +122,7 @@
 \bibliographystyle{elsarticle-harv}
 
 
+\usepackage{booktabs}
 \makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
@@ -168,7 +169,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Supplementary Material for: Explainable machine learning for wheat above-ground biomass estimation under spatial cross-validation: sensor contributions and exploratory harvest forecasting},
+  pdftitle={Supplementary Material for: How much do satellite sensors add to thermal time? A leave-one-site-season-out evaluation of Sentinel-1, Sentinel-2, and PlanetScope predictors for wheat above-ground biomass},
   pdfauthor={Francisco Zambrano; Abel Herrera; Mauricio Molina-Rocco},
   pdflang={en},
   colorlinks=true,
@@ -183,9 +184,9 @@
 \begin{document}
 
 \begin{frontmatter}
-\title{Supplementary Material for: Explainable machine learning for
-wheat above-ground biomass estimation under spatial cross-validation:
-sensor contributions and exploratory harvest forecasting}
+\title{Supplementary Material for: How much do satellite sensors add to
+thermal time? A leave-one-site-season-out evaluation of Sentinel-1,
+Sentinel-2, and PlanetScope predictors for wheat above-ground biomass}
 \author[1]{Francisco Zambrano%
 %
 }
@@ -345,12 +346,15 @@ CI\textsubscript{rededge} &
 \section{Equations S1-S3: Performance
 metrics}\label{equations-s1-s3-performance-metrics}
 
-Section 2.3.6 of the main text reports model performance using the mean
+Section 2.3.4 of the main text reports model performance using the mean
 absolute error (MAE), root mean square error (RMSE), and coefficient of
-determination (R²), defined in Equations S1-S3 below, where \(y_i\) and
-\(\hat{y}_i\) are the observed and predicted AGB values for sample
-\(i\), \(\bar{y}\) is the mean observed AGB across the \(n\) samples in
-the evaluation set, and \(n\) is the number of samples.
+determination (R²), defined in Equations S1-S3 below and computed
+separately for each held-out site-season, where \(y_i\) and
+\(\hat{y}_i\) are the observed and out-of-fold predicted AGB values for
+sample \(i\), \(\bar{y}\) is the mean observed AGB of the held-out
+site-season, and \(n\) is the number of samples in that site-season. R²
+computed in this way is negative when the predictions are less accurate
+than the mean of the held-out site-season.
 
 \[
 MAE = \frac{1}{n}\sum_{i=1}^{n}\left|y_i - \hat{y}_i\right| \tag{S1}
@@ -363,6 +367,58 @@ RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2} \tag{S2}
 \[
 R^2 = 1 - \frac{\displaystyle\sum_{i=1}^{n}\left(y_i - \hat{y}_i\right)^2}{\displaystyle\sum_{i=1}^{n}\left(y_i - \bar{y}\right)^2} \tag{S3}
 \]
+
+\section{Table S2: Performance per held-out
+site-season}\label{table-s2-performance-per-held-out-site-season}
+
+Table S2 reports the RMSE and R² of every predictor set and model for
+each of the four held-out site-seasons. Mean and standard deviation
+across site-seasons are given in Table 5 of the main text. The values
+are produced by \texttt{script/31\_loso\_diseno\_limpio.R} and stored in
+\texttt{output/tables/rev2\_loso\_limpio\_por\_fold.csv}.
+
+\textbf{Table S2.} RMSE (t/ha) and, in parentheses, R² (1 − SSE/SST) for
+each held-out site-season under leave-one-site-season-out
+cross-validation. Each value is obtained with a model trained on the
+other three site-seasons.
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{l l c c c c}
+\toprule
+\textbf{Predictor set} & \textbf{Model} & \textbf{Hidango 2021-2022} & \textbf{Hidango 2022-2023} & \textbf{La Cancha 2022-2023} & \textbf{Villa Baviera 2020-2021} \\
+\midrule
+DAS & LM & 5.57 (0.74) & 8.81 ($-$0.66) & 9.95 (0.44) & 7.04 (0.25) \\
+GDD & LM & 6.17 (0.68) & 6.69 (0.04) & 8.77 (0.57) & 3.31 (0.83) \\
+W & LM & 7.24 (0.55) & 7.69 ($-$0.27) & 9.15 (0.53) & 3.97 (0.76) \\
+W & RF & 7.69 (0.50) & 7.64 ($-$0.25) & 7.83 (0.66) & 6.84 (0.29) \\
+W & XGBoost & 7.00 (0.58) & 8.34 ($-$0.49) & 8.31 (0.61) & 6.57 (0.35) \\
+S1 & RF & 12.48 ($-$0.33) & 10.56 ($-$1.39) & 12.67 (0.10) & 7.99 (0.04) \\
+S1 & XGBoost & 12.74 ($-$0.38) & 11.24 ($-$1.71) & 14.49 ($-$0.18) & 10.29 ($-$0.60) \\
+S2 & RF & 8.80 (0.34) & 6.23 (0.17) & 13.09 (0.04) & 4.76 (0.66) \\
+S2 & XGBoost & 9.04 (0.30) & 5.90 (0.25) & 12.93 (0.06) & 4.88 (0.64) \\
+PS & RF & 6.51 (0.64) & 4.91 (0.48) & 8.46 (0.60) & 14.40 ($-$2.13) \\
+PS & XGBoost & 7.40 (0.53) & 5.05 (0.45) & 9.11 (0.53) & 14.64 ($-$2.24) \\
+S1+GDD & RF & 5.35 (0.76) & 6.57 (0.08) & 7.95 (0.65) & 3.34 (0.83) \\
+S1+GDD & XGBoost & 5.69 (0.72) & 7.79 ($-$0.30) & 8.51 (0.59) & 3.69 (0.79) \\
+S2+GDD & RF & 7.48 (0.52) & 7.05 ($-$0.06) & 13.09 (0.04) & 3.61 (0.80) \\
+S2+GDD & XGBoost & 8.13 (0.44) & 6.25 (0.16) & 12.93 (0.06) & 3.78 (0.78) \\
+PS+GDD & RF & 5.53 (0.74) & 5.62 (0.32) & 8.04 (0.64) & 9.41 ($-$0.34) \\
+PS+GDD & XGBoost & 6.48 (0.64) & 5.27 (0.41) & 8.38 (0.61) & 7.35 (0.18) \\
+S1+W & RF & 6.69 (0.62) & 6.85 ($-$0.01) & 6.17 (0.79) & 4.49 (0.70) \\
+S1+W & XGBoost & 5.78 (0.71) & 7.65 ($-$0.26) & 7.64 (0.67) & 4.52 (0.69) \\
+S2+W & RF & 8.05 (0.45) & 7.06 ($-$0.07) & 12.79 (0.08) & 3.22 (0.84) \\
+S2+W & XGBoost & 8.46 (0.39) & 6.73 (0.03) & 11.64 (0.24) & 3.44 (0.82) \\
+PS+W & RF & 6.73 (0.61) & 5.51 (0.35) & 7.32 (0.70) & 10.17 ($-$0.56) \\
+PS+W & XGBoost & 7.51 (0.52) & 5.12 (0.44) & 8.11 (0.63) & 7.12 (0.23) \\
+S2+W+S1 & RF & 7.98 (0.46) & 6.80 (0.01) & 12.62 (0.10) & 2.60 (0.90) \\
+S2+W+S1 & XGBoost & 8.87 (0.33) & 6.95 ($-$0.04) & 12.21 (0.16) & 3.54 (0.81) \\
+All & RF & 7.04 (0.58) & 5.62 (0.32) & 10.78 (0.35) & 3.64 (0.80) \\
+All & XGBoost & 8.50 (0.38) & 6.40 (0.12) & 10.07 (0.43) & 4.32 (0.72) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 
 \bibliography{references.bib}

@@ -95,3 +95,6 @@ tidyverse, glue, agrometR
 ```
 
 `agrometR` provides Chilean AgroMet station data. `earthdatalogin` requires NASA Earthdata credentials (`edl_netrc()`). Planetary Computer access uses `sign_planetary_computer()` from `rstac`.
+
+## Writting restrictions
+- Never use hyphens or dashes in prose writing. Use commas, periods, or new sentences instead.
