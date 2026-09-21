@@ -1,0 +1,97 @@
+── Attaching packages ────────────────────────────────────── tidymodels 1.5.0 ──
+✔ broom        1.0.13     ✔ recipes      1.4.0 
+✔ dials        1.4.4      ✔ rsample      1.3.2 
+✔ dplyr        1.2.1      ✔ tailor       0.1.0 
+✔ ggplot2      4.0.3      ✔ tidyr        1.3.2 
+✔ infer        1.1.0      ✔ tune         2.1.0 
+✔ modeldata    1.6.0      ✔ workflows    1.3.0 
+✔ parsnip      1.6.0      ✔ workflowsets 1.1.1 
+✔ purrr        1.2.2      ✔ yardstick    1.4.0 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::discard() masks scales::discard()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+✖ recipes::step()  masks stats::step()
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ lubridate 1.9.5     ✔ tibble    3.3.1
+✔ readr     2.2.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ readr::col_factor() masks scales::col_factor()
+✖ purrr::discard()    masks scales::discard()
+✖ dplyr::filter()     masks stats::filter()
+✖ stringr::fixed()    masks recipes::fixed()
+✖ dplyr::lag()        masks stats::lag()
+✖ readr::spec()       masks yardstick::spec()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Loading LOSO-CV results...
+Aviso:
+Unknown or uninitialised column: `workflow_set`. 
+Aviso:
+Unknown or uninitialised column: `resamples`. 
+
+Extracting predictors retained per fold...
+Note: Using 'all_predictors_RF' configuration as representative example
+
+Avisos:
+1: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 1: no applicable method for 'filter' applied to an object of class "NULL"
+2: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 2: no applicable method for 'filter' applied to an object of class "NULL"
+3: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 3: no applicable method for 'filter' applied to an object of class "NULL"
+4: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 4: no applicable method for 'filter' applied to an object of class "NULL"
+
+=== Per-Fold Predictor Summary ===
+# A tibble: 4 × 6
+   Fold Site_Season             Total_Predictors_Input Predictors_After_step_c…¹
+  <int> <chr>                                    <dbl> <lgl>                    
+1     1 Hidango 2021-2022                           54 NA                       
+2     2 Hidango 2022-2023                           54 NA                       
+3     3 La Cancha 2022-2023                         54 NA                       
+4     4 Villa Baviera 2020-2021                     54 NA                       
+# ℹ abbreviated name: ¹​Predictors_After_step_corr
+# ℹ 2 more variables: Predictors_Removed <lgl>, Removal_Rate_Percent <dbl>
+
+Summary table saved to: output/tables/supplementary_table_step_corr.csv
+
+=== Analyzing frequently removed predictors ===
+Avisos:
+1: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 1: no applicable method for 'filter' applied to an object of class "NULL"
+2: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 2: no applicable method for 'filter' applied to an object of class "NULL"
+3: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 3: no applicable method for 'filter' applied to an object of class "NULL"
+4: In value[[3L]](cond) :
+  Could not extract for all_predictors_RF, fold 4: no applicable method for 'filter' applied to an object of class "NULL"
+Error in `rename()` at dplyr/R/mutate.R:146:3:
+! Can't rename columns that don't exist.
+✖ Column `Freq` doesn't exist.
+Backtrace:
+     ▆
+  1. ├─... %>% arrange(desc(Removal_Count))
+  2. ├─dplyr::arrange(., desc(Removal_Count))
+  3. ├─dplyr::mutate(...) at dplyr/R/arrange.R:83:3
+  4. ├─dplyr::rename(., Predictor = 1, Removal_Count = Freq) at dplyr/R/mutate.R:146:3
+  5. ├─dplyr:::rename.data.frame(., Predictor = 1, Removal_Count = Freq) at dplyr/R/rename.R:64:3
+  6. │ └─tidyselect::eval_rename(expr(c(...)), .data) at dplyr/R/rename.R:69:3
+  7. │   └─tidyselect:::rename_impl(...) at tidyselect/R/eval-rename.R:16:3
+  8. │     └─tidyselect:::eval_select_impl(...) at tidyselect/R/eval-rename.R:39:3
+  9. │       ├─tidyselect:::with_subscript_errors(...) at tidyselect/R/eval-select.R:181:3
+ 10. │       │ └─base::withCallingHandlers(...) at tidyselect/R/conditions.R:2:3
+ 11. │       └─tidyselect:::vars_select_eval(...) at tidyselect/R/eval-select.R:181:3
+ 12. │         └─tidyselect:::walk_data_tree(expr, data_mask, context_mask) at tidyselect/R/eval-walk.R:83:3
+ 13. │           └─tidyselect:::eval_c(expr, data_mask, context_mask) at tidyselect/R/eval-walk.R:154:3
+ 14. │             └─tidyselect:::reduce_sels(node, data_mask, context_mask, init = init) at tidyselect/R/eval-c.R:15:3
+ 15. │               └─tidyselect:::walk_data_tree(new, data_mask, context_mask) at tidyselect/R/eval-c.R:33:5
+ 16. │                 └─tidyselect:::as_indices_sel_impl(...) at tidyselect/R/eval-walk.R:180:3
+ 17. │                   └─tidyselect:::as_indices_impl(...) at tidyselect/R/eval-walk.R:225:3
+ 18. │                     └─tidyselect:::chr_as_locations(x, vars, call = call, arg = arg) at tidyselect/R/eval-walk.R:260:3
+ 19. │                       └─vctrs::vec_as_location(...) at tidyselect/R/eval-walk.R:270:3
+ 20. └─vctrs (local) `<fn>`() at vctrs/R/subscript-loc.R:84:3
+ 21.   └─vctrs:::stop_subscript_oob(...)
+ 22.     └─vctrs:::stop_subscript(...) at vctrs/R/subscript-loc.R:503:3
+ 23.       └─rlang::abort(...) at vctrs/R/subscript.R:150:3
+Ejecución interrumpida

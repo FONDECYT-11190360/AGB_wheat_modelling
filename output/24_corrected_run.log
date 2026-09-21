@@ -1,0 +1,214 @@
+── Attaching packages ────────────────────────────────────── tidymodels 1.5.0 ──
+✔ broom        1.0.13     ✔ recipes      1.4.0 
+✔ dials        1.4.4      ✔ rsample      1.3.2 
+✔ dplyr        1.2.1      ✔ tailor       0.1.0 
+✔ ggplot2      4.0.3      ✔ tidyr        1.3.2 
+✔ infer        1.1.0      ✔ tune         2.1.0 
+✔ modeldata    1.6.0      ✔ workflows    1.3.0 
+✔ parsnip      1.6.0      ✔ workflowsets 1.1.1 
+✔ purrr        1.2.2      ✔ yardstick    1.4.0 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::discard() masks scales::discard()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+✖ recipes::step()  masks stats::step()
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ lubridate 1.9.5     ✔ tibble    3.3.1
+✔ readr     2.2.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ readr::col_factor() masks scales::col_factor()
+✖ purrr::discard()    masks scales::discard()
+✖ dplyr::filter()     masks stats::filter()
+✖ stringr::fixed()    masks recipes::fixed()
+✖ dplyr::lag()        masks stats::lag()
+✖ readr::spec()       masks yardstick::spec()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+=== CORRECTED PREDICTOR SELECTION ===
+Total predictors: 54 
+  Weather: 3 
+  Sentinel-1: 3 
+  Sentinel-2: 36 
+  PlanetScope: 12 
+
+VIs RESTORED (15 total):
+  S2: OSAVI, OSAVI2, SR, EVI, GNDVI, SIPI, CI_red
+      MCARI_OSAVI, TCARI_OSAVI, TCARI_OSAVI2, NDRE1, NDRE2, MCARI_OSAVI_8A
+  PS: OSAVI, CI_red
+
+PS red edge EXCLUDED (unavailable): 4
+  PS_B5, PS_TCARI_OSAVI, PS_MCARI_OSAVI, PS_NDRE_NDVI
+
+Data loaded: 153 samples
+Samples/predictor ratio: 2.83 
+
+LOSO-CV folds:
+[1] "la_cancha_2022-2023"     "hidango_2022-2023"      
+[3] "hidango_2021-2022"       "villa_baviera_2020-2021"
+
+Running LOSO-CV with 9 workflows (3 recipes × 3 models)...
+This will take several hours.
+
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+i Resample1: preprocessor 1/1
+i Resample1: preprocessor 1/1 (prediction data)
+i Resample1: preprocessor 1/1, model 1/1
+i Resample1: preprocessor 1/1, model 1/1 (predictions)
+i Resample2: preprocessor 1/1
+i Resample2: preprocessor 1/1 (prediction data)
+i Resample2: preprocessor 1/1, model 1/1
+i Resample2: preprocessor 1/1, model 1/1 (predictions)
+i Resample3: preprocessor 1/1
+i Resample3: preprocessor 1/1 (prediction data)
+i Resample3: preprocessor 1/1, model 1/1
+i Resample3: preprocessor 1/1, model 1/1 (predictions)
+i Resample4: preprocessor 1/1
+i Resample4: preprocessor 1/1 (prediction data)
+i Resample4: preprocessor 1/1, model 1/1
+i Resample4: preprocessor 1/1, model 1/1 (predictions)
+Filas en metrics_per_fold: 108 (esperado: 108 = 9 workflows × 4 folds × 3 métricas)
+Filas en ablation_summary: 9 (esperado: 9 = 3 recetas × 3 modelos)
+Mejora de PlanetScope en RMSE (fusion vs radar, XGBoost): 7.8%
+
+=== ANALYSIS COMPLETE ===
+Results saved to:
+  - data/processed/modelos/loso_results_CORRECTED.rds
+  - data/processed/modelos/loso_metrics_per_fold_CORRECTED.rds
+  - data/processed/modelos/loso_oof_predictions_CORRECTED.rds
+  - output/tables/ablation_loso_summary_CORRECTED.csv
+  - output/figs/loso_ablation_metrics_CORRECTED.png
+  - output/figs/loso_metricas_por_sitio_CORRECTED.png
+
+Next steps:
+  1. Compare CORRECTED vs original ablation results
+  2. Update manuscript with corrected metrics
+  3. Prepare response letter to reviewers
+

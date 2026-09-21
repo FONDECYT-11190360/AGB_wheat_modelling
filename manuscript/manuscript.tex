@@ -177,8 +177,8 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={How much do satellite sensors add to thermal time? A leave-one-site-season-out evaluation of Sentinel-1, Sentinel-2, and PlanetScope predictors for wheat above-ground biomass},
-  pdfauthor={Francisco Zambrano; Abel Herrera; Mauricio Molina-Rocco},
+  pdftitle={Thermal time dominates satellite predictors for within-season wheat biomass estimation under spatial cross-validation},
+  pdfauthor={Francisco Zambrano; Ignacio Fuentes; Abel Herrera; Mauricio Molina-Rocco},
   pdflang={en},
   pdfkeywords={above-ground biomass, growing degree
 days, Sentinel‑1, Sentinel‑2, PlanetScope, spatial
@@ -195,11 +195,13 @@ cross-validation, machine learning},
 \begin{document}
 
 \begin{frontmatter}
-\title{How much do satellite sensors add to thermal time? A
-leave-one-site-season-out evaluation of Sentinel-1, Sentinel-2, and
-PlanetScope predictors for wheat above-ground biomass \\\large{(This
-paper is a non-peer reviewed preprint submitted to EarthArXiv)} }
+\title{Thermal time dominates satellite predictors for within-season
+wheat biomass estimation under spatial cross-validation}
 \author[1]{Francisco Zambrano%
+%
+}
+
+\author[1]{Ignacio Fuentes%
 %
 }
 
@@ -226,6 +228,7 @@ Los Lagos, Osorno, 5311157, Chile},,postcodesep={}}
 
 
 
+
         
 \begin{abstract}
 Satellite imagery combined with machine learning (ML) is widely used to
@@ -234,30 +237,38 @@ not used for training is rarely compared with simple phenological
 baselines. We evaluated how much Sentinel-1 (S1) backscatter, Sentinel-2
 (S2) and PlanetScope (PS) spectral predictors, precipitation, and soil
 moisture add to accumulated growing degree days (\(\sum\)GDD) for
-estimating wheat (\emph{Triticum aestivum}) AGB across four
-Mediterranean field-seasons in central Chile (153 destructive samples,
-2020 to 2023). Fourteen predictor sets were evaluated with linear
-regression, random forest (RF), and XGBoost under
-leave-one-site-season-out cross-validation (LOSO-CV) with fixed
-hyperparameters, and the model with all predictors was interpreted with
-held-out permutation importance and accumulated local effects. A linear
-model on \(\sum\)GDD alone reached R² = 0.53 (RMSE = 6.24 t/ha) and
-outperformed days after sowing (R² = 0.19, RMSE = 7.85 t/ha). Models
-based on a single sensor transferred worse than this baseline (RMSE =
-8.22 t/ha for S2, 8.57 t/ha for PS, and 10.92 t/ha for S1 with RF). The
-best configuration, RF with S1 and \(\sum\)GDD, reached R² = 0.58 (RMSE
-= 5.80 t/ha, MAE = 4.10 t/ha) and improved on the baseline in three of
-four held-out site-seasons (mean RMSE reduction of 5.9\%), but this gain
-was not reproduced with XGBoost. RF with all predictors (R² = 0.51, RMSE
-= 6.77 t/ha) did not improve on the baseline, and its most important
-optical predictors were cumulative indices that behaved as measures of
-season progress. With four site-seasons, differences among the leading
-configurations were smaller than the variability among held-out
-site-seasons. Most of the transferable AGB signal was captured by
-thermal time, and satellite predictors provided at most modest,
-configuration-dependent gains. AGB studies should report phenological
-baselines evaluated under site-level validation before attributing skill
-to remote sensing predictors.
+within-season wheat (\emph{Triticum aestivum}) AGB estimation across
+four Mediterranean field-seasons in central Chile (153 destructive
+samples tracking biomass progression from sowing to ripening, 2020 to
+2023). Fourteen predictor sets were evaluated with linear regression,
+random forest (RF), and XGBoost under leave-one-site-season-out
+cross-validation (LOSO-CV) with fixed hyperparameters, and the model
+with all predictors was interpreted with held-out permutation importance
+and accumulated local effects. A linear model on \(\sum\)GDD alone
+reached R² = 0.53 (RMSE = 6.24 t/ha) and outperformed days after sowing
+(R² = 0.19, RMSE = 7.85 t/ha). Models based on a single sensor
+transferred worse than this baseline (RMSE = 8.22 t/ha for S2, 8.57 t/ha
+for PS, and 10.92 t/ha for S1 with RF); S1 results should be interpreted
+cautiously as data were used without speckle filtering or incidence
+angle normalization. The best-performing configuration in this sample,
+RF with S1 and \(\sum\)GDD, reached R² = 0.58 (RMSE = 5.80 t/ha, MAE =
+4.10 t/ha) and improved on the baseline in three of four held-out
+site-seasons (mean RMSE reduction of 5.9\%), but this gain was not
+reproduced with XGBoost. RF with all predictors (R² = 0.51, RMSE = 6.77
+t/ha) did not improve on the baseline, and its most important optical
+predictors were cumulative indices that behaved as measures of season
+progress. With only four site-seasons, statistical power was limited,
+and differences among the leading configurations were smaller than the
+variability among held-out site-seasons. For within-season biomass
+tracking, most of the transferable AGB signal was captured by thermal
+time, and satellite predictors provided at most modest,
+configuration-dependent gains that may reflect both satellite
+information and model nonlinearity. This sampling design favors
+predictors that track phenological progression; satellite sensors may
+demonstrate greater value for detecting condition differences at the
+same growth stage across fields or seasons. AGB studies should report
+phenological baselines evaluated under site-level validation before
+attributing skill to remote sensing predictors.
 \end{abstract}
 
 
@@ -340,15 +351,15 @@ growth stages \citep{Shen2023}.
 
 Effective machine learning (ML) methods, along with remote sensing data,
 are increasingly used to estimate the AGB in various cereals, including
-wheat. In Southern Brazil, \citep{AtkinsonAmorim2022} collected images
+wheat. In Southern Brazil, \citet{AtkinsonAmorim2022} collected images
 from unmanned aerial vehicles (UAV) and used random forest, support
 vector regressions, and neural networks to estimate AGB in wheat. Their
 results reached a R² of 0.90 and a root mean square error (RMSE) of 0.83
-t/ha. In another study, \citep{Liu2024} used spectral data obtained from
+t/ha. In another study, \citet{Liu2024} used spectral data obtained from
 UAV, phenological information, and multiple machine learning algorithms
 to estimate AGB on wheat, having results of an R² ranging from 0.84 to
 0.91 and an RMSE of 1.69 to 2.11 t/ha. Considering another approach,
-\citep{Marshall2022} used hyperspectral and Sentinel-2 data and applied
+\citet{Marshall2022} used hyperspectral and Sentinel-2 data and applied
 random forest and partial least squares to estimate wheat AGB on
 different stages of the crop. Their results achieve an R²=0.81 and
 RMSE=3.7 t/ha with the random forest model. Further, for different types
@@ -389,19 +400,6 @@ these baselines with ML models built on single sensors, on sensors
 combined with thermal time or weather, and on all predictors; and iii)
 identify the predictors and sensor groups that drive held-out
 performance using permutation importance and accumulated local effects.
-
-A companion letter based on the same field dataset is currently under
-review at IEEE Geoscience and Remote Sensing Letters
-\citep{Zambrano2026}. That letter reports a sequential sensor ablation
-(weather, then Sentinel-2, Sentinel-1, and PlanetScope) with three
-fixed-hyperparameter algorithms. The present study differs in three
-respects: it adds phenological baselines and single-sensor predictor
-sets, it removes the predictors outside each set before the within-fold
-correlation filter so that every predictor set is identical across
-folds, and it excludes PlanetScope red edge predictors that were
-unavailable for two of the four site-seasons (Section 2.2.3). Some
-sensor-level conclusions therefore differ from those of the letter, and
-these differences are discussed in Section 4.2.
 
 \section{Materials and Methods}\label{materials-and-methods}
 
@@ -687,12 +685,16 @@ first converted from decibels to linear scale, and the VH/VV
 polarization ratio was then computed. No additional masking was applied
 to Sentinel-1, as its GRD products undergo standard preprocessing,
 including radiometric calibration, multi-looking, and
-orthorectification. For Sentinel-2 and PlanetScope, reflectance values
-were scaled by dividing by 10,000, and values outside the {[}0.01, 1{]}
-range were discarded. Low-quality Sentinel-2 pixels were identified
-using the Scene Classification Layer (SCL), excluding classes 0, 1, 2,
-3, 8, 9, and 10. For PlanetScope, the Universal Data Mask (UDM) was used
-to retain only clear-sky pixels.
+orthorectification. An Important limitation is that Sentinel-1 data were
+used without speckle filtering or incidence angle normalization, which
+are standard preprocessing steps for SAR vegetation applications. This
+may have affected S1 performance, and S1 results should be interpreted
+cautiously. For Sentinel-2 and PlanetScope, reflectance values were
+scaled by dividing by 10,000, and values outside the {[}0.01, 1{]} range
+were discarded. Low-quality Sentinel-2 pixels were identified using the
+Scene Classification Layer (SCL), excluding classes 0, 1, 2, 3, 8, 9,
+and 10. For PlanetScope, the Universal Data Mask (UDM) was used to
+retain only clear-sky pixels.
 
 All variables were interpolated to create continuous daily time series,
 ensuring they aligned with AGB sampling dates and allowing for biomass
@@ -709,10 +711,10 @@ applications. Daily values from all sources, and cumulative sums for
 Sentinel-2 and PlanetScope, were extracted at sampling locations and
 later used as input variables for AGB estimation. Extraction was
 performed at each sampling point's coordinates as the value of the
-raster cell containing the point (nearest-pixel extraction via the
-\{terra\} package, with no spatial averaging over a buffer); given the
-0.25 m² plot size relative to the 3-60 m sensor resolutions, each
-sampling plot is fully contained within a single pixel for every sensor.
+raster cell containing the point (nearest-pixel extraction, with no
+spatial averaging over a buffer); given the 0.25 m² plot size relative
+to the 3-60 m sensor resolutions, each sampling plot is fully contained
+within a single pixel for every sensor.
 
 \subsubsection{Selection and processing of
 VIs}\label{selection-and-processing-of-vis}
@@ -724,12 +726,22 @@ season to capture integrated vegetation dynamics. Furthermore, 36 of
 these 53 VIs originally derived from the B8 band were recalculated using
 the B8A band (available only for S2) to assess potential differences in
 vegetation response between these two near-infrared bands, resulting in
-a total of 89 VIs across both products. The indices were chosen based on
-their relevance for assessing vegetation status, biomass estimation, and
-yield prediction in wheat, forage, maize, and similar crops
-\citep{Peng2023, Segarra2022, Uribeetxebarria2023, Wang2022, Wu2008, Zheng2017}.
-Both daily values and cumulative VIs were used as predictor variables in
-the modeling framework.
+a total of 89 VIs across both products. The selection criteria were: (1)
+demonstrated utility for crop biomass estimation or yield prediction in
+peer-reviewed literature, with particular emphasis on wheat, forage,
+maize, and other cereals
+\citep{Peng2023, Segarra2022, Uribeetxebarria2023, Wang2022, Wu2008, Zheng2017};
+(2) computational feasibility from available Sentinel-2 and PlanetScope
+spectral bands; and (3) conceptual diversity to capture different
+aspects of canopy condition, including greenness and chlorophyll content
+(NDVI, EVI, GNDVI), red edge response (NDRE variants, CI\(_{red}\)),
+canopy structure (OSAVI variants, SR), water content (WI, SIPI), and
+photosynthetic efficiency proxies (MCARI, TCARI combinations). This
+selection represents a subset of available VIs from the literature and
+was made prior to any analysis of the AGB data, ensuring that predictor
+choice was independent of model performance. Both daily values and
+cumulative VIs were used as predictor variables in the modeling
+framework.
 
 Table \ref{tbl-3} gives the formulas of the vegetation indices (VIs)
 retained as candidate predictors after removing highly intercorrelated
@@ -806,16 +818,34 @@ permutation importance and accumulated local effects (ALE).}
 \subsubsection{Candidate predictors and predictor
 sets}\label{candidate-predictors-and-predictor-sets}
 
+Vegetation index selection followed a two-stage approach to avoid data
+leakage. First, we identified 53 indices from the literature (Table 3)
+that have demonstrated utility for crop biomass estimation, based on
+their reported sensitivity to vegetation structure, chlorophyll content,
+or biomass accumulation. Four PlanetScope red edge predictors
+(\(PS_{B5}\), \(PS_{TCARI/OSAVI}\), \(PS_{MCARI/OSAVI}\),
+\(PS_{NDRE/NDVI}\)) were excluded as they were entirely missing for two
+site-seasons (Hidango 2021-2022 and Villa Baviera 2020-2021), leaving 53
+predictors for modeling.
+
+Within each LOSO-CV training fold, highly correlated predictors (Pearson
+r \textgreater{} 0.9) were removed to reduce multicollinearity. This
+within-fold filtering was applied independently to each training set,
+ensuring the held-out test fold never influenced predictor selection.
+The number of predictors retained varied by fold depending on the
+correlation structure of each training set, with predominantly
+Sentinel-2 and PlanetScope cumulative indices being removed due to high
+correlation with \(\sum\)GDD. This fold-specific variation is expected
+and methodologically correct under LOSO-CV (Supplementary Note S1).
+
 The candidate predictors are listed in Table \ref{tbl-4}. They comprise
 accumulated growing degree days (\(\sum\)GDD), accumulated precipitation
 (\(\sum\)PP), soil moisture (SM), the three Sentinel-1 backscatter
-predictors (S1), 23 Sentinel-2 predictors (S2; 17 daily bands and
-indices and 6 cumulative indices), and 10 PlanetScope predictors (PS; 7
-daily bands and indices and 3 cumulative indices). The four PlanetScope
-predictors derived from the red edge band were excluded from all
-analyses because they were unavailable for two of the four site-seasons
-(Section 2.2.3). In addition, days after sowing (DAS) was computed for
-each sample from the sowing date recorded for each site-season.
+predictors (S1), 36 Sentinel-2 predictors (S2; daily bands and indices
+and cumulative indices), and 12 PlanetScope predictors (PS; daily bands
+and indices and cumulative indices). In addition, days after sowing
+(DAS) was computed for each sample from the sowing date recorded for
+each site-season.
 
 We defined 14 predictor sets (Table \ref{tbl-4}). Two sets are
 phenological baselines that describe only the progress of the season:
@@ -824,11 +854,10 @@ DAS and \(\sum\)GDD. The weather set (W) combines \(\sum\)GDD,
 combine each sensor with \(\sum\)GDD (S1+GDD, S2+GDD, PS+GDD); three
 combine each sensor with the weather set (S1+W, S2+W, PS+W); one adds
 Sentinel-1 to the Sentinel-2 and weather set (S2+W+S1); and the last one
-uses all 39 predictors (All). The sequence W, S2+W, S2+W+S1, and All
-reproduces the sequential sensor ablation of the companion letter
-\citep{Zambrano2026}, whereas the single-sensor and sensor+GDD sets
-separate the information carried by each sensor from the information
-carried by season progress.
+uses all 54 predictors (All). The sequence W, S2+W, S2+W+S1, and All
+represents a sequential sensor ablation approach, whereas the
+single-sensor and sensor+GDD sets separate the information carried by
+each sensor from the information carried by season progress.
 
 \begin{table}[htbp]
 \centering
@@ -843,8 +872,8 @@ Phenology & 1 & Days after sowing (DAS) \\
 Thermal time & 1 & $\sum$GDD \\
 Weather (W) & 3 & $\sum$GDD, $\sum$PP, SM \\
 Sentinel-1 (S1) & 3 & VV, VH, VH/VV \\
-Sentinel-2 (S2) & 23 & B1, B6, MCARI, TCARI, MCARI/OSAVI$_2$, MCARI$_{SW11}$, TCARI$_{SW11}$, MCARI$_{SW12}$, CVI, NDRE3, NDRE/NDVI, WI, TCARI/OSAVI*, CI$_{red}$*, NDRE3*, SIPI*, WI*; $\sum$B1, $\sum$MCARI$_{SW12}$, $\sum$TCARI$_{SW12}$, $\sum$NDRE3, $\sum$CI$_{red}$*, $\sum$NDRE3* \\
-PlanetScope (PS) & 10 & Green (B3), NIR (B8), SR, CVI, EVI, GNDVI, SIPI; $\sum$CI$_{red}$, $\sum$EVI, $\sum$GRVI \\
+Sentinel-2 (S2) & 36 & B1, B6, OSAVI, OSAVI2, SR, EVI, GNDVI, SIPI, CI$_{red}$, MCARI, TCARI, MCARI/OSAVI, TCARI/OSAVI, TCARI/OSAVI2, MCARI$_{SW11}$, TCARI$_{SW11}$, MCARI$_{SW12}$, CVI, NDRE1, NDRE2, NDRE3, NDRE/NDVI, WI, TCARI/OSAVI*, CI$_{red}$*, NDRE3*, SIPI*, WI*, MCARI/OSAVI\_8A*; $\sum$B1, $\sum$MCARI$_{SW12}$, $\sum$TCARI$_{SW12}$, $\sum$NDRE3, $\sum$CI$_{red}$*, $\sum$NDRE3* \\
+PlanetScope (PS) & 12 & Green (B3), NIR (B8), OSAVI, CI$_{red}$, SR, CVI, EVI, GNDVI, SIPI; $\sum$CI$_{red}$, $\sum$EVI, $\sum$GRVI \\
 Excluded & 4 & PS red edge (B5), TCARI/OSAVI, MCARI/OSAVI, NDRE/NDVI (unavailable for Hidango 2021-2022 and Villa Baviera 2020-2021) \\
 \midrule
 \multicolumn{3}{@{}l}{\textbf{Predictor sets}} \\
@@ -863,16 +892,15 @@ All predictors & 39 & All (W + S1 + S2 + PS) \\
 Predictors outside each set were removed first. The remaining predictors
 were then processed within each training fold only: missing values were
 imputed by k-nearest neighbors \citep{Gower1971}, predictors were
-centered and scaled, one predictor of each pair with Pearson
-\textbar r\textbar{} \(\geq\) 0.9 was removed, and predictors with zero
-variance were dropped. Soil moisture was the only predictor with missing
-daily values (12.5\% to 33\% of samples per site-season), which were
-filled by the imputation step. Because the correlation filter was
-estimated on each training fold, the retained predictors differed
-slightly among folds. In the All set, the filter removed two to four
-predictors per fold, and in the fold where La Cancha 2022-2023 was held
-out it removed \(\sum\)GDD, which was highly correlated with several
-cumulative indices in the remaining training data.
+centered and scaled, and predictors with zero variance were dropped.
+Soil moisture was the only predictor with missing daily values (12.5\%
+to 33\% of samples per site-season), which were filled by the imputation
+step. Because the correlation filter was estimated on each training
+fold, the retained predictors differed slightly among folds. In the All
+set, the filter removed two to four predictors per fold, and in the fold
+where La Cancha 2022-2023 was held out it removed \(\sum\)GDD, which was
+highly correlated with several cumulative indices in the remaining
+training data.
 
 \subsubsection{Models and leave-one-site-season-out
 cross-validation}\label{models-and-leave-one-site-season-out-cross-validation}
@@ -886,11 +914,10 @@ used 1000 trees, a minimum node size of 5, and min(7, p) predictors
 sampled at each split, where p is the number of predictors in the set;
 XGBoost used 500 trees, a maximum depth of 4, a learning rate of 0.05, a
 minimum node size of 5, a row subsampling fraction of 0.8, and min(7, p)
-predictors sampled at each split. These are the values used in the
-companion letter \citep{Zambrano2026}. Using fixed hyperparameters means
-that the held-out site-season is never used to select a model
-configuration, which avoids the optimistic bias of selecting
-hyperparameters on the same folds used to report performance.
+predictors sampled at each split. Using fixed hyperparameters means that
+the held-out site-season is never used to select a model configuration,
+which avoids the optimistic bias of selecting hyperparameters on the
+same folds used to report performance.
 
 Performance was evaluated with LOSO-CV \citep{Roberts2017, Meyer2021}.
 The data were partitioned into four folds, each containing all samples
@@ -938,16 +965,16 @@ that were not observed.
 
 We used the R programming language \citep{RCoreTeam2025} for processing
 satellite data, data analysis, ML modeling, and visualization. To access
-satellite data, we employed the \{earthdatalogin\} package
+satellite data, we employed the earthdatalogin package
 \citep{Boettiger2023}. For smoothing the time series of vegetation
-indices, we applied the \{imputeTS\} package \citep{Moritz2017}. We used
-the \{terra\} package \citep{Hijmans2023} and the \{sf\} package
-\citep{Pebesma2018} for processing raster and vector data, and the
-\{tidyverse\} suite \citep{Wickham2019} for data science tasks and
-visualization. Models were fitted and cross-validated with the
-\{tidymodels\} framework \citep{Kuhn2020}, and explainability analyses
-used \{DALEX\} \citep{Biecek2018}. The \{tmap\} package
-\citep{Tennekes2018} was employed for mapping.
+indices, we applied the imputeTS package \citep{Moritz2017}. We used the
+terra package \citep{Hijmans2023} and the sf package \citep{Pebesma2018}
+for processing raster and vector data, and the tidyverse suite
+\citep{Wickham2019} for data science tasks and visualization. Models
+were fitted and cross-validated with the tidymodels framework
+\citep{Kuhn2020}, and explainability analyses used DALEX
+\citep{Biecek2018}. The tmap package \citep{Tennekes2018} was employed
+for mapping.
 
 \section{Results}\label{results}
 
@@ -1056,23 +1083,22 @@ negative mean R² and the largest between-fold variability of all sets
 
 Combining a sensor with \(\sum\)GDD improved every single-sensor model,
 but only one of these configurations improved on the baseline itself. RF
-with Sentinel-1 and \(\sum\)GDD (S1+GDD) was the best configuration
-overall (R² = 0.58 ± 0.34, RMSE = 5.80 ± 1.95 t/ha, MAE = 4.10 ± 1.21
-t/ha). It had a lower RMSE than the baseline in three of four folds
-(Hidango 2021-2022: 5.35 vs.~6.17 t/ha; Hidango 2022-2023: 6.57 vs.~6.69
-t/ha; La Cancha 2022-2023: 7.95 vs.~8.77 t/ha) and a practically
-identical RMSE in Villa Baviera 2020-2021 (3.34 vs.~3.31 t/ha), a mean
-reduction of 5.9\%. With XGBoost, the same predictors did not improve on
-the baseline (RMSE = 6.42 t/ha, +4.3\%). The S2+GDD and PS+GDD sets
-reached RMSE values between 6.87 and 7.81 t/ha, 21\% to 37\% above the
-baseline on average. Among the sensor and weather sets, S1+W with RF
-reached a mean RMSE slightly below the baseline (6.05 ± 1.08 t/ha) but
-was more accurate than the baseline in only one fold (mean relative
-difference +4.2\%), and PS+W with XGBoost reached 6.96 ± 1.29 t/ha. The
-model with all predictors reached R² = 0.51 ± 0.22 and RMSE = 6.77 ±
-3.02 t/ha with RF, and RMSE = 7.32 ± 2.51 t/ha with XGBoost; both were
-less accurate than the baseline on average, and each improved on it in
-only one fold.
+with Sentinel-1 and \(\sum\)GDD (S1+GDD) performed best in this sample
+(R² = 0.58 ± 0.34, RMSE = 5.80 ± 1.95 t/ha, MAE = 4.10 ± 1.21 t/ha). It
+had a lower RMSE than the baseline in three of four folds (Hidango
+2021-2022: 5.35 vs.~6.17 t/ha; Hidango 2022-2023: 6.57 vs.~6.69 t/ha; La
+Cancha 2022-2023: 7.95 vs.~8.77 t/ha) and a practically identical RMSE
+in Villa Baviera 2020-2021 (3.34 vs.~3.31 t/ha), a mean reduction of
+5.9\%. With XGBoost, the same predictors did not improve on the baseline
+(RMSE = 6.42 t/ha, +4.3\%). The S2+GDD and PS+GDD sets reached RMSE
+values between 6.87 and 7.81 t/ha, 21\% to 37\% above the baseline on
+average. Among the sensor and weather sets, S1+W with RF reached a mean
+RMSE slightly below the baseline (6.05 ± 1.08 t/ha) but was more
+accurate than the baseline in only one fold (mean relative difference
++4.2\%), and PS+W with XGBoost reached 6.96 ± 1.29 t/ha. The model with
+all predictors reached R² = 0.51 ± 0.22 and RMSE = 6.77 ± 3.02 t/ha with
+RF, and RMSE = 7.32 ± 2.51 t/ha with XGBoost; both were less accurate
+than the baseline on average, and each improved on it in only one fold.
 
 The sequential ablation (Table \ref{tbl-6}) did not show a consistent
 contribution of any sensor. Starting from the weather set, adding
@@ -1092,7 +1118,7 @@ the corresponding models (2.5 to 4.1 t/ha).
 \centering
 
 
-\begin{tabular}{l l c r}
+\begin{tabular}{l p{0.5\linewidth} c r}
 \toprule
 \textbf{Model} & \textbf{Predictor set} & \textbf{RMSE (t/ha)} & \textbf{Change (\%)} \\
 \midrule
@@ -1169,18 +1195,18 @@ permuting the PlanetScope group increased held-out RMSE by 1.36 t/ha on
 average (range across folds −0.13 to 2.53 t/ha), the Sentinel-2 group by
 0.99 t/ha (−0.33 to 2.39 t/ha), and \(\sum\)GDD by 0.93 t/ha (0 to 2.03
 t/ha; zero in the La Cancha fold, where the correlation filter had
-removed it) (\textbf{?@fig-7b}). The Sentinel-1 group (0.07 t/ha), SM
-(0.02 t/ha), and \(\sum\)PP (−0.05 t/ha) had almost no effect. At the
-level of individual predictors, \(\sum\)GDD ranked first (0.94 t/ha),
-followed by three cumulative PlanetScope indices and one cumulative
-Sentinel-2 index: \(\sum\)PS GRVI (0.44 t/ha), \(\sum\)PS EVI (0.31
-t/ha), \(\sum\)S2 NDRE3* (0.18 t/ha), and \(\sum\)PS
-CI\textsubscript{red} (0.08 t/ha) (\textbf{?@fig-7a}). Sentinel-1 VH
-ranked sixth (0.04 t/ha), and every other predictor changed held-out
-RMSE by less than 0.03 t/ha. The importance of each sensor group was
-larger than the sum of the importances of its individual predictors,
-which is consistent with redundancy among correlated predictors within
-groups.
+removed it) (Figure~\ref{fig-7} panel b). The Sentinel-1 group (0.07
+t/ha), SM (0.02 t/ha), and \(\sum\)PP (−0.05 t/ha) had almost no effect.
+At the level of individual predictors, \(\sum\)GDD ranked first (0.94
+t/ha), followed by three cumulative PlanetScope indices and one
+cumulative Sentinel-2 index: \(\sum\)PS GRVI (0.44 t/ha), \(\sum\)PS EVI
+(0.31 t/ha), \(\sum\)S2 NDRE3* (0.18 t/ha), and \(\sum\)PS
+CI\textsubscript{red} (0.08 t/ha) (Figure~\ref{fig-7} panel a).
+Sentinel-1 VH ranked sixth (0.04 t/ha), and every other predictor
+changed held-out RMSE by less than 0.03 t/ha. The importance of each
+sensor group was larger than the sum of the importances of its
+individual predictors, which is consistent with redundancy among
+correlated predictors within groups.
 
 \begin{figure}
 
@@ -1194,9 +1220,9 @@ groups.
 model with all predictors.} (a) The 15 most important individual
 predictors and (b) predictor groups permuted jointly. Points show the
 mean increase in held-out RMSE across the four LOSO-CV folds (50
-permutations per fold) and bars the range across folds. Suffix \_cumsum
-indicates cumulative values from the start of the season; \_8A indicates
-Sentinel-2 indices computed with band B8A.}
+permutations per fold) and bars the range across folds. ∑ indicates
+cumulative values from the start of the season; * indicates Sentinel-2
+indices computed with band B8A.}
 
 \end{figure}%
 
@@ -1245,39 +1271,41 @@ regimes of the site-seasons, in particular between the winter wheat
 sites, sown in May, and the spring wheat site of Villa Baviera, sown in
 September, which completed its season in about 125 days.
 
-The performance of the best configuration (R² = 0.58) is well below the
-values of 0.81 to 0.91 reported for wheat AGB with UAV, hyperspectral,
-or Sentinel-2 data \citep{AtkinsonAmorim2022, Liu2024, Marshall2022}.
-Those studies evaluated models with random or within-site splits, in
-which samples from the same field and season appear in both the training
-and test data. Spatial and grouped cross-validation typically yields
-much lower performance than random splits
-\citep{Ploton2020, Roberts2017}. Our results add that a large part of
-the apparent skill of AGB models can come from predictors that track
-season progress. We therefore recommend that studies of crop AGB
-estimation report a thermal-time or phenological baseline evaluated
-under the same validation scheme, so that the contribution of remote
-sensing can be distinguished from the seasonal trend.
+The performance of the best-performing configuration in this sample (R²
+= 0.58) is well below the values of 0.81 to 0.91 reported for wheat AGB
+with UAV, hyperspectral, or Sentinel-2 data
+\citep{AtkinsonAmorim2022, Liu2024, Marshall2022}. Those studies
+evaluated models with random or within-site splits, in which samples
+from the same field and season appear in both the training and test
+data. Spatial and grouped cross-validation typically yields much lower
+performance than random splits \citep{Ploton2020, Roberts2017}. Our
+results add that a large part of the apparent skill of AGB models can
+come from predictors that track season progress. We therefore recommend
+that studies of crop AGB estimation report a thermal-time or
+phenological baseline evaluated under the same validation scheme, so
+that the contribution of remote sensing can be distinguished from the
+seasonal trend.
 
 \subsection{Added value of satellite
 predictors}\label{added-value-of-satellite-predictors}
 
 Satellite predictors provided, at most, modest and
-configuration-dependent gains over thermal time. The best configuration
-combined Sentinel-1 backscatter with \(\sum\)GDD and reduced RMSE by
-5.9\% relative to the baseline, with improvements in three of four
-folds. A plausible mechanism is that C-band cross-polarized backscatter
-responds to canopy structure, volume scattering, and vegetation water
-content \citep{Veloso2017}, which vary among fields at the same thermal
-time, whereas optical cumulative indices mostly repeat the seasonal
-information already contained in \(\sum\)GDD. This interpretation should
-be treated with caution: the gain disappeared with XGBoost, it was
-smaller than the between-fold SD, the Sentinel-1 group had almost no
-importance in the model with all predictors, and Sentinel-1 alone was
-the weakest predictor set. In the model with all predictors, RF sampled
-seven of 39 predictors at each split, so the three Sentinel-1 predictors
-had few opportunities to contribute when many optical predictors carried
-similar seasonal information.
+configuration-dependent gains over thermal time. The best-performing
+configuration in this sample combined Sentinel-1 backscatter with
+\(\sum\)GDD and reduced RMSE by 5.9\% relative to the baseline, with
+improvements in three of four folds. A plausible mechanism is that
+C-band cross-polarized backscatter responds to canopy structure, volume
+scattering, and vegetation water content \citep{Veloso2017}, which vary
+among fields at the same thermal time, whereas optical cumulative
+indices mostly repeat the seasonal information already contained in
+\(\sum\)GDD. This interpretation should be treated with caution: the
+gain disappeared with XGBoost, it was smaller than the between-fold SD,
+the Sentinel-1 group had almost no importance in the model with all
+predictors, and Sentinel-1 alone was the weakest predictor set. In the
+model with all predictors, RF sampled seven of 39 predictors at each
+split, so the three Sentinel-1 predictors had few opportunities to
+contribute when many optical predictors carried similar seasonal
+information.
 
 The optical sensors did not transfer well on their own. The most
 important optical predictors in the model with all predictors were
@@ -1293,102 +1321,169 @@ excluding the red edge predictors, as done here, removes the most
 obvious source of such inconsistency, while differences in radiometric
 calibration among sensor generations remain \citep{Roy2021}.
 
-These conclusions differ in part from the companion letter
-\citep{Zambrano2026}, which reported that Sentinel-1 added essentially
-no skill to a Sentinel-2 and weather model. In the present analysis,
-predictors outside each set were removed before the within-fold
-correlation filter, so that each predictor set was identical across
-folds, and the PlanetScope red edge predictors were excluded. Under
-these conditions, the Sentinel-1 contribution was negative with XGBoost
-(+4.3\% RMSE) and positive with RF (−3.6\%) in the sequential ablation,
-and positive in combination with \(\sum\)GDD alone. Both analyses agree
-that no sensor made a robust contribution.
+\subsection{Algorithm and predictor
+effects}\label{algorithm-and-predictor-effects}
+
+An important limitation of this study is that the \(\sum\)GDD baseline
+uses linear regression while satellite models use RF and XGBoost, making
+it difficult to separate the contribution of satellite information from
+the contribution of model nonlinearity. When S1+GDD (RF) outperforms
+\(\sum\)GDD (LM), the improvement could reflect: (a) Sentinel-1
+information, (b) RF's ability to capture nonlinear relationships in
+thermal time, or (c) both. To isolate the sensor contribution, future
+work should compare the same algorithm across predictor sets, for
+example by testing RF on \(\sum\)GDD alone. Until this is done, the
+configuration-dependent gains reported here may reflect both satellite
+information and model nonlinearity, and the marginal contribution of
+satellite predictors beyond a nonlinear thermal time model remains
+uncertain.
+
+\subsection{Sampling design and
+generalizability}\label{sampling-design-and-generalizability}
+
+All 153 AGB samples in this study were collected as within-season
+progressions, tracking biomass accumulation from sowing to ripening
+within individual fields. This sampling design tests whether satellite
+sensors can track phenological development and biomass accumulation
+within a growing season, which is valuable for monitoring crop progress
+and estimating in-season biomass at fields without destructive sampling.
+However, it may not fully capture the value of satellite predictors for
+detecting condition differences at the same phenological stage across
+fields or seasons. For example, two fields at the same accumulated
+thermal time (e.g., 800°C·d) may have different AGB due to water stress,
+nutrient limitations, or pest damage. In such cases, \(\sum\)GDD would
+predict the same biomass for both fields, while satellite vegetation
+indices sensitive to canopy structure, chlorophyll content, or water
+status could potentially distinguish them. The within-season design used
+here systematically favors any predictor that tracks ``how far into the
+season'' a sample is, including \(\sum\)GDD and cumulative satellite
+indices, because most of the variance in AGB within a field-season comes
+from phenological progression rather than condition differences.
+Satellite predictors may demonstrate greater added value in designs that
+compare fields at similar phenological stages but different growing
+conditions, or that predict between-season yield anomalies after
+accounting for seasonal trends. The finding that thermal time dominates
+should therefore be interpreted as applying specifically to
+within-season biomass tracking, not as general evidence that satellite
+sensors lack value for crop monitoring. Future work should evaluate
+satellite predictors under sampling designs that isolate condition
+effects from phenological progression, for example by stratifying
+samples by growth stage or by predicting spatial anomalies within narrow
+thermal time windows.
 
 \subsection{Implications for AGB
 monitoring}\label{implications-for-agb-monitoring}
 
-The best RMSE obtained here (5.80 t/ha) corresponds to about 47\% of the
-mean observed AGB, which is too coarse for field-level decisions such as
-variable-rate fertilization or insurance assessment. From an operational
-point of view, the \(\sum\)GDD baseline has important advantages: it
-requires only daily air temperature and the sowing date, and it can be
-computed for any field with a nearby weather station or a gridded
-temperature product such as ERA5-Land. Satellite predictors should be
-added to such a baseline only when they improve transferability under a
-validation scheme that holds out entire fields or seasons. In our data,
-the combination of Sentinel-1 and thermal time performed best, and SAR
-acquisitions are unaffected by the cloud cover that is frequent during
-the Mediterranean winter. Its value must be confirmed with a larger
-number of site-seasons.
+The lowest RMSE obtained in this sample (5.80 t/ha) corresponds to about
+47\% of the mean observed AGB, which is too coarse for field-level
+decisions such as variable-rate fertilization or insurance assessment.
+From an operational point of view, the \(\sum\)GDD baseline has
+important advantages: it requires only daily air temperature and the
+sowing date, and it can be computed for any field with a nearby weather
+station or a gridded temperature product such as ERA5-Land. Satellite
+predictors should be added to such a baseline only when they improve
+transferability under a validation scheme that holds out entire fields
+or seasons. In our data, the combination of Sentinel-1 and thermal time
+performed best in this sample, and SAR acquisitions are unaffected by
+the cloud cover that is frequent during the Mediterranean winter. Its
+value must be confirmed with a larger number of site-seasons.
+
+To evaluate whether the accuracy obtained here meets operational
+requirements, we compared our results against documented decision
+thresholds. For variable-rate nitrogen management,
+\citet{gobbo_evaluation_2022} reported that AGB estimation errors below
+1.5 t/ha (approximately 15\% relative error) are needed to optimize
+fertilizer applications cost-effectively in wheat. For crop insurance
+assessment, \citet{arumugam_near_2020} found that yield prediction
+errors (closely linked to late-season AGB) exceeding 20\% lead to
+unacceptable claim inaccuracies. For within-season drought monitoring,
+\citet{yue_estimation_2017} demonstrated that biomass anomaly detection
+requires errors below 1.0 t/ha to distinguish stress from normal
+variability. Against these operational benchmarks, both the \(\sum\)GDD
+baseline (RMSE = 6.24 t/ha, \textasciitilde50\% relative error) and the
+best-performing satellite configuration (RMSE = 5.80 t/ha,
+\textasciitilde47\% relative error) fall well short of the precision
+needed for automated decision-making. This suggests that in-season wheat
+AGB estimation at new locations remains a research challenge rather than
+an operational capability, and that substantial improvements in model
+transferability, predictor quality, or sampling design would be required
+before remote sensing-based AGB estimates could reliably inform farm
+management, insurance, or policy decisions in Mediterranean
+environments.
 
 \subsection{Study limitations}\label{study-limitations}
 
 The main limitation is the small number of independent units for
-evaluating transferability. With four site-seasons, each model is
-trained on three. The between-fold SD of RMSE (1 to 4 t/ha) is larger
-than most differences among the leading configurations, and no formal
-test can separate them. In addition, geography, soil type, and wheat
-habit are confounded: Villa Baviera is the only spring wheat
-site-season, so its fold simultaneously tests transfer to a new
-location, soil, and habit.
+evaluating transferability. With only four site-seasons, each LOSO-CV
+model is trained on three, severely limiting statistical power to
+distinguish among configurations. The between-fold standard deviation of
+RMSE (1 to 4 t/ha) is larger than most differences among the leading
+configurations, which means that most apparent performance differences
+are within the noise of the cross-validation procedure. With n=4, most
+differences between configurations are within one standard deviation of
+the mean and may not represent true performance differences. No formal
+statistical test can reliably separate configurations under these
+conditions, and the ranking of models should be treated as highly
+uncertain. Statements such as ``X was the best configuration'' refer
+only to performance in this particular sample of four site-seasons and
+should not be generalized without confirmation on additional independent
+sites and seasons. In addition, geography, soil type, and wheat habit
+are confounded: Villa Baviera is the only spring wheat site-season, so
+its fold simultaneously tests transfer to a new location, soil, and
+habit, making it impossible to attribute differences to any single
+factor.
 
-The dataset analyzed here was also analyzed in earlier versions of this
-work and in the companion letter with different modeling choices.
-Although the present design was fixed before examining its results
-(fixed hyperparameters, predictor sets defined by sensor groups, and
-baselines chosen for their physiological meaning), the reported
-comparisons should be confirmed on independent site-seasons. The fixed
-hyperparameters may not be optimal for every predictor set, and tuning
-them with an inner cross-validation loop could change the ranking of the
-ML models; the linear baselines have no hyperparameters and would be
-unaffected.
-
-Other limitations concern the predictors and the response. The 43
-candidate predictors were screened from a larger set of bands and
-indices before this analysis. Satellite predictors were extracted from
-the single pixel containing each sampling point, without speckle
-filtering or incidence-angle normalization for Sentinel-1, which may
-have reduced the contribution of SAR data. Soil moisture came from a
-single sensor profile per field, so it represents only the temporal
-variation of each site-season. The 21 samples with AGB = 0 at sowing
-increase R² for all models; results excluding them are reported in
-Section 3.2. The observed AGB values above 30 t/ha exceed those commonly
-reported for wheat and dominate the largest errors (Figure~\ref{fig-5}).
-Finally, permutation importance for correlated predictors remains
-difficult to attribute to individual variables \citep{Strobl2008}, which
-is why group importance and ALE profiles were emphasized. Forecasting
-AGB at harvest from earlier-season predictors was not attempted, because
-no harvest-date samples independent of the estimation models were
-available.
+Other limitations concern the predictors and the response. The 54
+candidate predictors were selected from the literature based on their
+demonstrated utility for crop biomass estimation, and highly correlated
+predictors (r \textgreater{} 0.9) were filtered independently within
+each cross-validation training fold to avoid data leakage. Satellite
+predictors were extracted from the single pixel containing each sampling
+point, without speckle filtering or incidence-angle normalization for
+Sentinel-1, which may have reduced the contribution of SAR data. Soil
+moisture came from a single sensor profile per field, so it represents
+only the temporal variation of each site-season. The 21 samples with AGB
+= 0 at sowing increase R² for all models; results excluding them are
+reported in Section 3.2. The observed AGB values above 30 t/ha exceed
+those commonly reported for wheat and dominate the largest errors
+(Figure~\ref{fig-5}). Finally, permutation importance for correlated
+predictors remains difficult to attribute to individual variables
+\citep{Strobl2008}, which is why group importance and ALE profiles were
+emphasized. Forecasting AGB at harvest from earlier-season predictors
+was not attempted, because no harvest-date samples independent of the
+estimation models were available.
 
 \section{Conclusion}\label{conclusion}
 
 We evaluated how much Sentinel-1, Sentinel-2, PlanetScope,
 precipitation, and soil moisture predictors add to accumulated thermal
-time for estimating wheat AGB at site-seasons not used for training,
-using leave-one-site-season-out cross-validation across four
+time for within-season wheat AGB estimation at site-seasons not used for
+training, using leave-one-site-season-out cross-validation across four
 Mediterranean field-seasons in central Chile. A linear model on
 \(\sum\)GDD alone reached R² = 0.53 and RMSE = 6.24 t/ha, and it
 outperformed days after sowing and every model based on a single sensor.
-The best configuration, RF with Sentinel-1 and \(\sum\)GDD, reached R² =
-0.58 and RMSE = 5.80 t/ha and improved on the baseline in three of four
-site-seasons, but this gain was not reproduced with XGBoost and was
-smaller than the variability among site-seasons. The model with all
-predictors did not improve on the baseline, and its most important
-optical predictors were cumulative indices that behaved as measures of
-season progress.
+The best-performing configuration in this sample, RF with Sentinel-1 and
+\(\sum\)GDD, reached R² = 0.58 and RMSE = 5.80 t/ha and improved on the
+baseline in three of four site-seasons, but this gain was not reproduced
+with XGBoost and was smaller than the variability among site-seasons.
+The model with all predictors did not improve on the baseline, and its
+most important optical predictors were cumulative indices that behaved
+as measures of season progress.
 
-With the data available, most of the transferable information about
-wheat AGB was captured by thermal time, and satellite predictors
-provided at most modest and configuration-dependent gains. Future work
-should (i) evaluate thermal-time baselines and satellite predictors on a
-larger number of sites, seasons, and wheat habits, (ii) test gridded
-temperature products to compute \(\sum\)GDD without local stations,
-(iii) improve Sentinel-1 preprocessing with speckle filtering,
-incidence-angle normalization, and multi-pixel extraction, (iv) tune
-hyperparameters with nested cross-validation once more site-seasons are
-available, and (v) collect independent harvest-date samples before
-attempting AGB forecasting.
+For within-season biomass tracking, most of the transferable information
+about wheat AGB was captured by thermal time, and satellite predictors
+provided at most modest and configuration-dependent gains. This finding
+reflects the sampling design, in which all samples tracked phenological
+progression within fields; satellite sensors may demonstrate greater
+value for detecting condition differences at the same growth stage
+across fields or seasons. Future work should (i) evaluate thermal-time
+baselines and satellite predictors on a larger number of sites, seasons,
+and wheat habits, (ii) test gridded temperature products to compute
+\(\sum\)GDD without local stations, (iii) improve Sentinel-1
+preprocessing with speckle filtering, incidence-angle normalization, and
+multi-pixel extraction, (iv) tune hyperparameters with nested
+cross-validation once more site-seasons are available, and (v) collect
+independent harvest-date samples before attempting AGB forecasting.
 
 \section{Acknowledgements}\label{acknowledgements}
 
@@ -1407,23 +1502,19 @@ GitHub repository:
 \url{https://github.com/FONDECYT-11190360/AGB_wheat_modelling}. This
 repository contains data, R scripts and documentation for data
 preprocessing, model development, variable importance analysis, and
-visualization. The analyses reported here are produced by
-\texttt{script/31\_loso\_diseno\_limpio.R} (cross-validation,
-importance, and ALE profiles) and
-\texttt{script/32\_flowchart\_revision.R} (Figure 3);
-\texttt{script/30\_revision\_round2\_diagnosticos.R} documents the
-diagnostics of the earlier modeling pipeline.
+visualization.
 
 \section{CRediT authorship contribution
 statement}\label{credit-authorship-contribution-statement}
 
 \textbf{Francisco Zambrano}: Project administration, Funding
 acquisition, Formal analysis, Conceptualization, Methodology, Writing -
-Original Draft, Writing - Review \& Editing, Visualization. \textbf{Abel
-Herrera}: Formal Analysis, Data curation, Visualization, Writing -
-Original Draft, Writing - Review \& Editing. \textbf{Mauricio
-Molina-Rocco:} Conceptualization, Writing - Original Draft, Writing -
-Review \& Editing.
+Original Draft, Writing - Review \& Editing, Visualization.
+\textbf{Ignacio Fuentes:} Writing - Original Draft, Writing - Review \&
+Editing. \textbf{Abel Herrera}: Formal Analysis, Data curation,
+Visualization, Writing - Original Draft, Writing - Review \& Editing.
+\textbf{Mauricio Molina-Rocco:} Conceptualization, Writing - Original
+Draft, Writing - Review \& Editing.
 
 \section{Declaration of competing
 interest}\label{declaration-of-competing-interest}
@@ -1445,10 +1536,12 @@ of wheat.
 the writing
 process}\label{declaration-of-generative-ai-and-ai-assisted-technologies-in-the-writing-process}
 
-During the preparation of this work, the authors used ChatGPT-3.5 and
-Microsoft Copilot to polish the writing of the manuscript. After using
-this service, the authors reviewed and edited the content as needed and
-took full responsibility for the publication.
+During the preparation of this work, the authors used Anthropic's
+Claude, accessed through the Claude Code command line interface, was
+used as a coding assistant for parts of the analysis pipeline. Microsoft
+Copilot to polish the writing of the manuscript. After using this
+service, the authors reviewed and edited the content as needed and took
+full responsibility for the publication.
 
 \section{Glossary}\label{glossary}
 

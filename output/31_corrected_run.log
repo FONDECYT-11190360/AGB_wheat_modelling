@@ -1,0 +1,107 @@
+── Attaching packages ────────────────────────────────────── tidymodels 1.5.0 ──
+✔ broom        1.0.13     ✔ recipes      1.4.0 
+✔ dials        1.4.4      ✔ rsample      1.3.2 
+✔ dplyr        1.2.1      ✔ tailor       0.1.0 
+✔ ggplot2      4.0.3      ✔ tidyr        1.3.2 
+✔ infer        1.1.0      ✔ tune         2.1.0 
+✔ modeldata    1.6.0      ✔ workflows    1.3.0 
+✔ parsnip      1.6.0      ✔ workflowsets 1.1.1 
+✔ purrr        1.2.2      ✔ yardstick    1.4.0 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::discard() masks scales::discard()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+✖ recipes::step()  masks stats::step()
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ lubridate 1.9.5     ✔ tibble    3.3.1
+✔ readr     2.2.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ readr::col_factor() masks scales::col_factor()
+✖ purrr::discard()    masks scales::discard()
+✖ dplyr::filter()     masks stats::filter()
+✖ stringr::fixed()    masks recipes::fixed()
+✖ dplyr::lag()        masks stats::lag()
+✖ readr::spec()       masks yardstick::spec()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Welcome to DALEX (version: 2.5.4).
+Find examples and detailed introduction at: http://ema.drwhy.ai/
+Additional features will be available after installation of: ggpubr.
+Use 'install_dependencies()' to get all suggested dependencies
+
+Adjuntando el paquete: ‘DALEX’
+
+The following object is masked from ‘package:dplyr’:
+
+    explain
+
+
+=== CORRECTED PREDICTOR SELECTION ===
+Total predictors: 54 
+  Weather: 3 
+  Sentinel-1: 3 
+  Sentinel-2: 36 
+  PlanetScope: 12 
+
+VIs RESTORED (15 total):
+  S2: OSAVI, OSAVI2, SR, EVI, GNDVI, SIPI, CI_red
+      MCARI_OSAVI, TCARI_OSAVI, TCARI_OSAVI2, NDRE1, NDRE2, MCARI_OSAVI_8A
+  PS: OSAVI, CI_red
+
+PS red edge EXCLUDED (unavailable): 4
+  PS_B5, PS_TCARI_OSAVI, PS_MCARI_OSAVI, PS_NDRE_NDVI
+
+DATA LEAKAGE FIX:
+  ✓ No pre-CV correlation screening
+  ✓ step_corr() filters within each training fold
+  ✓ Test fold never influences predictor selection
+
+Data loaded: 153 samples
+Samples/predictor ratio: 2.83 
+
+Running CORRECTED analysis (this will take several hours)...
+Progress will be printed as each model completes.
+
+[2026-09-17 15:28:39.078411] DAS | LM
+[2026-09-17 15:28:40.132604] GDD | LM
+[2026-09-17 15:28:41.044498] W | LM
+[2026-09-17 15:28:42.037456] W | RF
+[2026-09-17 15:28:43.329884] W | XGBoost
+[2026-09-17 15:28:44.937857] S1 | RF
+[2026-09-17 15:28:46.293516] S1 | XGBoost
+[2026-09-17 15:28:48.127386] S2 | RF
+[2026-09-17 15:28:49.603979] S2 | XGBoost
+[2026-09-17 15:28:51.328933] PS | RF
+[2026-09-17 15:28:52.748115] PS | XGBoost
+[2026-09-17 15:28:54.398086] S1+GDD | RF
+[2026-09-17 15:28:55.709275] S1+GDD | XGBoost
+[2026-09-17 15:28:57.221544] S2+GDD | RF
+[2026-09-17 15:28:58.751058] S2+GDD | XGBoost
+[2026-09-17 15:29:00.470005] PS+GDD | RF
+[2026-09-17 15:29:01.91853] PS+GDD | XGBoost
+[2026-09-17 15:29:03.658939] S1+W | RF
+[2026-09-17 15:29:05.031026] S1+W | XGBoost
+[2026-09-17 15:29:06.598328] S2+W | RF
+[2026-09-17 15:29:08.109047] S2+W | XGBoost
+[2026-09-17 15:29:09.91434] PS+W | RF
+[2026-09-17 15:29:11.386076] PS+W | XGBoost
+[2026-09-17 15:29:13.040345] S2+W+S1 | RF
+[2026-09-17 15:29:14.596123] S2+W+S1 | XGBoost
+[2026-09-17 15:29:16.456973] All | RF
+[2026-09-17 15:29:18.018274] All | XGBoost
+
+Saving CORRECTED results to: data/processed/modelos/rev2_loso_limpio_resultados_CORRECTED.rds 
+
+=== ANALYSIS COMPLETE ===
+Results saved to:
+  - data/processed/modelos/rev2_loso_limpio_resultados_CORRECTED.rds 
+  - output/tables/rev2_loso_limpio_por_fold_CORRECTED.rds
+  - output/tables/rev2_loso_limpio_resumen_CORRECTED.csv
+  - output/tables/rev2_loso_limpio_resumen_con_comparacion_CORRECTED.csv
+
+Next steps:
+  1. Compare CORRECTED vs original results
+  2. Continue with rest of script 31 (importance, ALE, figures)
+  3. Update manuscript Methods §2.3.2 (remove TODO at line 218)
+  4. Update manuscript Results with CORRECTED values
+
