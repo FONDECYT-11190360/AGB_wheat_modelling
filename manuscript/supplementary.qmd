@@ -1,8 +1,11 @@
 ---
-title: "Supplementary Material for: How much do satellite sensors add to thermal time? A leave-one-site-season-out evaluation of Sentinel-1, Sentinel-2, and PlanetScope predictors for wheat above-ground biomass"
+title: "Supplementary Material"
+subtitle: "Thermal time dominates satellite predictors for within-season wheat biomass estimation under spatial cross-validation"
 author:
   - name: "Francisco Zambrano"
-    affiliation: "Facultad de Economía, Negocios y Gobierno, Universidad San Sebastián, Santiago, Chile"
+    affiliation: "Facultad de Medicina Veterinaria y Agronomía, Universidad de Las Américas, Santiago, Chile"
+  - name: "Ignacio Fuentes"
+    affiliation: "Facultad de Medicina Veterinaria y Agronomía, Universidad de Las Américas, Santiago, Chile"
   - name: "Abel Herrera"
     affiliation: "Hemera Centro de Observación de la Tierra, Facultad de Ciencias, Ingeniería y Tecnología; Universidad Mayor, Santiago, Chile"
   - name: "Mauricio Molina-Rocco"

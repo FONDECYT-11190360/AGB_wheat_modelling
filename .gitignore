@@ -62,4 +62,6 @@ rsconnect/
 /*_files/
 
 /output/claude_files
+CLAUDE.m
+/.claude/
 # End of https://www.toptal.com/developers/gitignore/api/r

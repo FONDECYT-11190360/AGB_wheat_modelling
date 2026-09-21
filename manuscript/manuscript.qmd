@@ -1,6 +1,6 @@
 ---
 title: "Thermal time dominates satellite predictors for within-season wheat biomass estimation under spatial cross-validation"
-# subtitle: "(This paper is a non-peer reviewed preprint submitted to EarthArXiv)"
+subtitle: "(This paper is a non-peer reviewed preprint submitted to EarthArXiv)"
 author:
   - name: "Francisco Zambrano"
     affiliation: "Facultad de Medicina Veterinaria y Agronomía, Universidad de Las Américas, Santiago, Chile"
