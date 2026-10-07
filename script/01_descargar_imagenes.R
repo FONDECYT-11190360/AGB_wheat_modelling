@@ -32,6 +32,18 @@ download_s <- function(pol,collection,inicio,fin,dir_out) {
     items_sign(sign_fn = sign_planetary_computer()) |>
     items_fetch()
   
+  # Sentinel-2: entre diciembre de 2021 y febrero de 2022 Planetary Computer publica algunas
+  # escenas dos veces, con línea base de procesamiento < 04.00 y >= 04.00. Se descartan los
+  # duplicados con línea base más nueva para que el desplazamiento BOA_ADD_OFFSET (-1000),
+  # vigente desde la línea base 04.00 (25 de enero de 2022), dependa solo de la fecha (ver script 02)
+  if (collection == 'sentinel-2-l2a') {
+    props <- lapply(items$features, \(f) f$properties)
+    clave <- paste(as.Date(sapply(props, \(p) p$datetime)), sapply(props, \(p) p[['s2:mgrs_tile']]))
+    base <- as.numeric(sapply(props, \(p) p[['s2:processing_baseline']]))
+    duplicado_nuevo <- base >= 4 & clave %in% clave[base < 4]
+    items$features <- items$features[!duplicado_nuevo]
+  }
+  
   bb <- pol |> 
     st_transform(4326) |>  #cambiar
     st_bbox() |>

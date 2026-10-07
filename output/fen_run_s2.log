@@ -1,0 +1,49 @@
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+[1] "en_US.UTF-8"
+Joining with `by = join_by(sitio, temporada, muestra, fecha)`
+`geom_smooth()` using formula = 'y ~ s(x, bs = "cs")'
+Avisos:
+1: The `label.size` argument of `geom_label()` is deprecated as of ggplot2 3.5.0.
+ℹ Please use the `linewidth` argument instead. 
+2: Removed 408 rows containing non-finite outside the scale range
+(`stat_smooth()`). 
+3: Removed 4743 rows containing missing values or values outside the scale range
+(`geom_point()`). 
+4: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'AGB (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+`geom_smooth()` using formula = 'y ~ s(x, bs = "cs")'
+Avisos:
+1: Removed 408 rows containing non-finite outside the scale range
+(`stat_smooth()`). 
+2: Removed 4743 rows containing missing values or values outside the scale range
+(`geom_point()`). 
+`geom_smooth()` using formula = 'y ~ s(x, bs = "cs")'
+Avisos:
+1: Removed 408 rows containing non-finite outside the scale range
+(`stat_smooth()`). 
+2: Removed 4743 rows containing missing values or values outside the scale range
+(`geom_point()`). 
+3: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'AGB (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+`geom_smooth()` using formula = 'y ~ s(x, bs = "cs")'
+Avisos:
+1: Removed 408 rows containing non-finite outside the scale range
+(`stat_smooth()`). 
+2: Removed 4743 rows containing missing values or values outside the scale range
+(`geom_point()`). 
+# A tibble: 4 × 3
+  sitio         temporada       n
+  <chr>         <chr>       <int>
+1 Hidango       2021 season    40
+2 Hidango       2022 season    48
+3 La Cancha     2022 season    35
+4 Villa Baviera 2020 season    30

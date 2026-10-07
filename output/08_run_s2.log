@@ -1,0 +1,52 @@
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+
+Adjuntando el paquete: ‘scales’
+
+The following object is masked from ‘package:purrr’:
+
+    discard
+
+The following object is masked from ‘package:readr’:
+
+    col_factor
+
+Joining with `by = join_by(sitio, temporada, fecha)`
+Joining with `by = join_by(sitio, temporada, fecha)`
+Joining with `by = join_by(sitio, temporada, muestra)`
+Joining with `by = join_by(sitio, temporada, fecha, muestra)`
+Error in `pivot_longer()` at dplyr/R/mutate.R:146:3:
+! Can't select columns that don't exist.
+✖ Column `SAVI_cumsum` doesn't exist.
+Backtrace:
+     ▆
+  1. ├─ggplot2::ggplot(...)
+  2. ├─dplyr::mutate(...) at ggplot2/R/plot.R:112:3
+  3. ├─tidyr::pivot_longer(...) at dplyr/R/mutate.R:146:3
+  4. ├─tidyr:::pivot_longer.data.frame(data, cols = biomasa:SAVI_cumsum, names_to = "variable", values_to = "valor") at tidyr/R/pivot-long.R:155:3
+  5. │ └─tidyr::build_longer_spec(...) at tidyr/R/pivot-long.R:176:3
+  6. │   └─tidyselect::eval_select(...) at tidyr/R/pivot-long.R:378:3
+  7. │     └─tidyselect:::eval_select_impl(...) at tidyselect/R/eval-select.R:140:3
+  8. │       ├─tidyselect:::with_subscript_errors(...) at tidyselect/R/eval-select.R:181:3
+  9. │       │ └─base::withCallingHandlers(...) at tidyselect/R/conditions.R:2:3
+ 10. │       └─tidyselect:::vars_select_eval(...) at tidyselect/R/eval-select.R:181:3
+ 11. │         └─tidyselect:::walk_data_tree(expr, data_mask, context_mask) at tidyselect/R/eval-walk.R:83:3
+ 12. │           └─tidyselect:::eval_colon(expr, data_mask, context_mask) at tidyselect/R/eval-walk.R:154:3
+ 13. │             └─tidyselect:::walk_data_tree(...) at tidyselect/R/eval-walk.R:354:5
+ 14. │               └─tidyselect:::as_indices_sel_impl(...) at tidyselect/R/eval-walk.R:180:3
+ 15. │                 └─tidyselect:::as_indices_impl(...) at tidyselect/R/eval-walk.R:225:3
+ 16. │                   └─tidyselect:::chr_as_locations(x, vars, call = call, arg = arg) at tidyselect/R/eval-walk.R:260:3
+ 17. │                     └─vctrs::vec_as_location(...) at tidyselect/R/eval-walk.R:270:3
+ 18. └─vctrs (local) `<fn>`() at vctrs/R/subscript-loc.R:84:3
+ 19.   └─vctrs:::stop_subscript_oob(...)
+ 20.     └─vctrs:::stop_subscript(...) at vctrs/R/subscript-loc.R:503:3
+ 21.       └─rlang::abort(...) at vctrs/R/subscript.R:150:3
+Ejecución interrumpida

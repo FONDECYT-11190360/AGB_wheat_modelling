@@ -1,0 +1,18 @@
+\articletype{RESEARCH ARTICLE}
+
+\title{Thermal time baselines for evaluating Sentinel-1, Sentinel-2 and PlanetScope predictors of wheat above-ground biomass under spatial cross-validation}
+
+\author{
+\name{Francisco Zambrano\textsuperscript{a}\thanks{CONTACT Francisco Zambrano. Email: frzambra@gmail.com}, Ignacio Fuentes\textsuperscript{a}, Abel Herrera\textsuperscript{b} and Mauricio Molina-Rocco\textsuperscript{c}}
+\affil{\textsuperscript{a}Facultad de Medicina Veterinaria y Agronom\'{i}a, Universidad de Las Am\'{e}ricas, Santiago, Chile; \textsuperscript{b}Hemera Centro de Observaci\'{o}n de la Tierra, Facultad de Ciencias, Ingenier\'{i}a y Tecnolog\'{i}a, Universidad Mayor, Santiago, Chile; \textsuperscript{c}Laboratorio de Suelos y Sostenibilidad, Departamento de Acuicultura y Recursos Agroalimentarios, Universidad de Los Lagos, Osorno, Chile}
+}
+
+\maketitle
+
+\begin{abstract}
+Studies that estimate crop above-ground biomass (AGB) from satellite imagery and machine learning (ML) rarely test whether satellite predictors outperform a simple measure of season progress at fields not used for training. We evaluated Sentinel-1 (S1) C-band backscatter, Sentinel-2 (S2) and PlanetScope (PS) bands and vegetation indices, precipitation and soil moisture against accumulated growing degree days ($\sum$GDD) for within-season wheat AGB estimation in four Mediterranean fields in central Chile (153 destructive samples, 2020 to 2023). Fourteen predictor sets were fitted with linear regression, random forest (RF) and XGBoost and evaluated with leave-one-site-season-out cross-validation (LOSSO-CV). A linear model on $\sum$GDD alone reached $R^2 = 0.52$ (RMSE = 6.26 t ha$^{-1}$). Every model built on one sensor transferred worse than this baseline (RF RMSE = 6.94 t ha$^{-1}$ for S2, 8.65 t ha$^{-1}$ for PS and 10.92 t ha$^{-1}$ for S1). RF with S2, S1 and weather predictors gave the lowest mean error ($R^2 = 0.58$, RMSE = 6.07 t ha$^{-1}$) and improved on the baseline in three of four held-out fields, a mean gain of about 5\%. S2 was the only sensor that reduced error consistently when added to weather predictors. Under the same algorithm, adding S1 or S2 to $\sum$GDD reduced RMSE by 25\% to 30\%, because tree models on $\sum$GDD alone transferred much worse than the linear model. In RF with all 54 predictors (RMSE = 6.11 t ha$^{-1}$), $\sum$GDD was the most important predictor in every fold, and the leading optical predictors were cumulative indices whose effects followed season progress. With four fields, differences among the leading configurations were smaller than the variability among folds. Thermal time carried most of the AGB signal that transferred between fields, and satellite predictors added at most small gains. Satellite AGB studies should report a phenological baseline under validation that holds out whole fields before attributing predictive skill to remote sensing.
+\end{abstract}
+
+\begin{keywords}
+Above-ground biomass; growing degree days; Sentinel-1; Sentinel-2; PlanetScope; spatial cross-validation; machine learning; wheat
+\end{keywords}

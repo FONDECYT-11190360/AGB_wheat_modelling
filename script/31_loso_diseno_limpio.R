@@ -5,7 +5,10 @@
 #   - las variables se eliminan ANTES de imputar, normalizar y filtrar por correlación,
 #     de modo que cada conjunto de predictores es idéntico en todos los folds
 #   - se excluyen los predictores red edge de PlanetScope (ausentes en 2 de 4 sitio-temporadas)
-#   - líneas base: regresión lineal sobre días desde la siembra (DAS) y sobre ∑GDD
+#   - 54 predictores candidatos; la versión anterior usaba 39 preseleccionados por correlación con
+#     todos los datos (fuga de información). Correr con XGB17_LIB apuntando a xgboost 1.7.11.1
+#   - líneas base: regresión lineal sobre días desde la siembra (DAS) y sobre ∑GDD;
+#     ∑GDD también con RF y XGBoost para separar el aporte del sensor del aporte del algoritmo
 #   - R² tradicional (1 - SSE/SST), RMSE y MAE por fold; media ± SD entre folds
 #   - importancia por permutación sobre el sitio retenido (variables y grupos de sensores)
 #   - efectos locales acumulados (ALE) del modelo con todos los predictores
@@ -35,7 +38,85 @@ metricas <- function(df, truth, estimate) {
 
 #1. Datos y conjuntos de predictores ----
 
-vars <- c("pp_cumsum", "sm_mm","gdd_cumsum","S2_B1", "S2_B6", "S2_MCARI", "S2_TCARI", "S2_MCARI_OSAVI2", "S2_SWIR11_MCARI", "S2_SWIR11_TCARI","S2_SWIR12_MCARI", "S2_CVI", "S2_NDRE3", "S2_NDRE_NDVI", "S2_WI1", "S2_TCARI_OSAVI_8A", "S2_CI_red_8A", "S2_NDRE3_8A", "S2_SIPI_8A", "S2_WI1_8A", "S1_VV", "S1_VH", "S1_VH_VV", "PS_B3", "PS_B8", "PS_SR", "PS_CVI", "PS_EVI", "PS_GNDVI", "PS_SIPI", "PS_CI_red_cumsum", "PS_EVI_cumsum", "PS_GRVI_cumsum", "S2_B1_cumsum","S2_SWIR12_MCARI_cumsum", "S2_SWIR12_TCARI_cumsum", "S2_NDRE3_cumsum", "S2_CI_red_8A_cumsum", "S2_NDRE3_8A_cumsum")
+# 54 predictores candidatos (Tabla 4): sin preselección por correlación sobre todos los datos;
+# la correlación se filtra solo dentro de cada fold (step_corr en la receta); ∑GDD se excluye del filtro
+# para que la línea base térmica esté en todos los conjuntos que la incluyen (revisión IJRS, ítem R12)
+# Weather
+weather_vars <- c("pp_cumsum", "sm_mm", "gdd_cumsum")
+
+# Sentinel-1 (3)
+s1_vars <- c("S1_VV", "S1_VH", "S1_VH_VV")
+
+# Sentinel-2 daily VIs - INCLUDING those restored from pre-CV filtering (36 total)
+s2_daily <- c(
+  # Bands
+  "S2_B1", "S2_B6",
+  # Chlorophyll indices
+  "S2_MCARI", "S2_TCARI",
+  "S2_MCARI_OSAVI", "S2_TCARI_OSAVI",  # RESTORED
+  "S2_MCARI_OSAVI2", "S2_TCARI_OSAVI2",  # TCARI_OSAVI2 RESTORED
+  "S2_SWIR11_MCARI", "S2_SWIR11_TCARI", "S2_SWIR12_MCARI",
+  # Structure/soil indices
+  "S2_OSAVI", "S2_OSAVI2",  # RESTORED
+  "S2_SR",  # RESTORED (Simple Ratio)
+  # Red edge indices
+  "S2_NDRE1", "S2_NDRE2", "S2_NDRE3", "S2_NDRE_NDVI",  # NDRE1/2 RESTORED
+  # Other VIs
+  "S2_CVI",
+  "S2_EVI",  # RESTORED (Enhanced VI - very important!)
+  "S2_GNDVI",  # RESTORED
+  "S2_SIPI",  # RESTORED
+  "S2_WI1",
+  "S2_CI_red"  # RESTORED
+)
+
+# Sentinel-2 B8A variants
+s2_8a <- c(
+  "S2_TCARI_OSAVI_8A",
+  "S2_MCARI_OSAVI_8A",  # RESTORED
+  "S2_CI_red_8A",
+  "S2_NDRE3_8A",
+  "S2_SIPI_8A",
+  "S2_WI1_8A"
+)
+
+# Sentinel-2 cumulative
+s2_cumsum <- c(
+  "S2_B1_cumsum",
+  "S2_SWIR12_MCARI_cumsum",
+  "S2_SWIR12_TCARI_cumsum",
+  "S2_NDRE3_cumsum",
+  "S2_CI_red_8A_cumsum",
+  "S2_NDRE3_8A_cumsum"
+)
+
+s2_vars <- c(s2_daily, s2_8a, s2_cumsum)
+
+# PlanetScope - EXCLUDING 4 red edge predictors (unavailable for 2 sites) (12 total)
+ps_daily <- c(
+  "PS_B3", "PS_B8",
+  "PS_SR",
+  "PS_OSAVI",  # RESTORED
+  "PS_CVI",
+  "PS_EVI",
+  "PS_GNDVI",
+  "PS_SIPI",
+  "PS_CI_red"  # RESTORED
+)
+
+ps_cumsum <- c(
+  "PS_CI_red_cumsum",
+  "PS_EVI_cumsum",
+  "PS_GRVI_cumsum"
+)
+
+ps_vars <- c(ps_daily, ps_cumsum)
+
+# EXCLUDED (missing for Hidango 2021-2022 and Villa Baviera 2020-2021):
+# PS_B5, PS_TCARI_OSAVI, PS_MCARI_OSAVI, PS_NDRE_NDVI
+
+# All predictors (53 total: 3 weather + 3 S1 + 36 S2 + 12 PS)
+vars <- c(weather_vars, s1_vars, s2_vars, ps_vars)
 
 siembra <- read_rds('data/processed/rds/fechas_fenologia.rds') |>
   filter(fenologia == 'SOWING') |>
@@ -83,7 +164,7 @@ receta <- function(variables) {
   recipe(biomasa ~ ., data = select(data, all_of(variables), biomasa)) |>
     step_impute_knn(all_numeric_predictors()) |>
     step_normalize(all_numeric_predictors()) |>
-    step_corr(all_numeric_predictors(), threshold = 0.9) |>
+    step_corr(all_numeric_predictors(), -any_of('gdd_cumsum'), threshold = 0.9) |>
     step_zv(all_predictors())
 }
 
@@ -106,36 +187,48 @@ xgb_spec <- function(p) {
 
 lm_spec <- function(p) linear_reg() |> set_engine('lm')
 
+# ∑GDD también se ajusta con RF y XGBoost (control del confundido algoritmo/sensor, IJRS 2026-10-07)
 disenio <- conjuntos |>
   mutate(p = map_int(variables, length)) |>
   expand_grid(modelo = c('LM', 'RF', 'XGBoost')) |>
-  filter((modelo == 'LM') == (conjunto %in% c('DAS', 'GDD')) | conjunto == 'W')
+  filter((modelo == 'LM') == (conjunto == 'DAS') | conjunto %in% c('GDD', 'W'))
+
+ajustar <- function(cj, v, m, p) {
+  message(glue('{cj} {m}'))
+  dat <- select(data, all_of(v), biomasa, sitio_temporada)
+  folds <- group_vfold_cv(dat, group = 'sitio_temporada')
+  rec <- recipe(biomasa ~ ., data = dat) |>
+    update_role(sitio_temporada, new_role = 'ID') |>
+    step_impute_knn(all_numeric_predictors()) |>
+    step_normalize(all_numeric_predictors()) |>
+    step_corr(all_numeric_predictors(), -any_of('gdd_cumsum'), threshold = 0.9) |>
+    step_zv(all_predictors())
+  spec <- switch(m, LM = lm_spec(p), RF = rf_spec(p), XGBoost = xgb_spec(p))
+  set.seed(1603)
+  workflow(rec, spec) |>
+    fit_resamples(folds, control = control_resamples(save_pred = TRUE)) |>
+    collect_predictions() |>
+    select(.row, .pred)
+}
 
 archivo_res <- 'data/processed/modelos/rev2_loso_limpio_resultados.rds'
 
-if (file.exists(archivo_res)) {
-  res <- read_rds(archivo_res)
-} else {
-  res <- disenio |>
-    mutate(pred = pmap(list(conjunto, variables, modelo, p), \(cj, v, m, p) {
-      message(glue('{cj} {m}'))
-      dat <- select(data, all_of(v), biomasa, sitio_temporada)
-      folds <- group_vfold_cv(dat, group = 'sitio_temporada')
-      rec <- recipe(biomasa ~ ., data = dat) |>
-        update_role(sitio_temporada, new_role = 'ID') |>
-        step_impute_knn(all_numeric_predictors()) |>
-        step_normalize(all_numeric_predictors()) |>
-        step_corr(all_numeric_predictors(), threshold = 0.9) |>
-        step_zv(all_predictors())
-      spec <- switch(m, LM = lm_spec(p), RF = rf_spec(p), XGBoost = xgb_spec(p))
-      set.seed(1603)
-      workflow(rec, spec) |>
-        fit_resamples(folds, control = control_resamples(save_pred = TRUE)) |>
-        collect_predictions() |>
-        select(.row, .pred)
-    }))
+# Se ajustan solo las combinaciones conjunto × modelo que faltan en el caché
+res <- if (file.exists(archivo_res)) read_rds(archivo_res) else NULL
+faltan <- disenio |>
+  anti_join(select(res %||% tibble(conjunto = character(), modelo = character()), conjunto, modelo),
+            by = c('conjunto', 'modelo'))
+
+if (nrow(faltan) > 0) {
+  nuevos <- faltan |>
+    mutate(pred = pmap(list(conjunto, variables, modelo, p), ajustar))
+  res <- bind_rows(res, nuevos)
   write_rds(res, archivo_res)
 }
+
+res <- disenio |>
+  select(conjunto, modelo) |>
+  left_join(res, by = c('conjunto', 'modelo'))
 
 oof <- res |>
   select(conjunto, modelo, pred) |>
@@ -191,16 +284,16 @@ resumen |>
   filter(subconjunto == 'all') |>
   select(conjunto, modelo, rmse_mean, rmse_sd, rsq_mean, rsq_sd) |>
   pivot_longer(-c(conjunto, modelo), names_to = c('.metric', '.value'), names_sep = '_') |>
-  mutate(.metric = factor(.metric, levels = c('rmse', 'rsq'), labels = c('RMSE (t/ha)', 'R²')),
+  mutate(.metric = factor(.metric, levels = c('rmse', 'rsq'), labels = c('RMSE (t ha⁻¹)', 'R²')),
          conjunto = factor(conjunto, levels = rev(orden))) |>
   ggplot(aes(mean, conjunto, colour = modelo)) +
-  geom_vline(data = \(d) filter(d, conjunto == 'GDD'), aes(xintercept = mean),
+  geom_vline(data = \(d) filter(d, conjunto == 'GDD', modelo == 'LM'), aes(xintercept = mean),
              linetype = 'dashed', colour = 'grey50') +
   geom_pointrange(aes(xmin = mean - sd, xmax = mean + sd),
                   position = position_dodge(width = 0.6), size = 0.25) +
   facet_wrap(~.metric, scales = 'free_x') +
   scale_colour_manual(name = 'Model', values = cols4all::c4a('color_blind')) +
-  labs(x = 'Mean ± SD across the four LOSO folds', y = 'Predictor set') +
+  labs(x = 'Mean ± SD across the four LOSSO folds', y = 'Predictor set') +
   theme_bw() +
   theme(strip.background = element_rect(fill = 'white'), legend.position = 'bottom')
 
@@ -209,17 +302,17 @@ ggsave('output/figs/loso_limpio_desempeno_conjuntos.png',
 
 #5. Figura: observado vs predicho fuera del fold y trayectoria temporal ----
 
-modelos_fig <- c('GDD | LM', 'S1+GDD | RF', 'All | RF')
+modelos_fig <- c('GDD | LM', 'S2+W+S1 | RF', 'All | RF')
 
 etq <- por_fold |>
   filter(subconjunto == 'all', id %in% modelos_fig) |>
   group_by(id) |>
-  summarize(lab = sprintf('RMSE = %.2f t/ha\nR² = %.2f', mean(rmse), mean(rsq)))
+  summarize(lab = sprintf('RMSE = %.2f t ha⁻¹\nR² = %.2f', mean(rmse), mean(rsq)))
 
-etiquetas_sitio <- c('hidango_2021-2022' = 'Hidango 2021-2022',
-                     'hidango_2022-2023' = 'Hidango 2022-2023',
-                     'la_cancha_2022-2023' = 'La Cancha 2022-2023',
-                     'villa_baviera_2020-2021' = 'Villa Baviera 2020-2021')
+etiquetas_sitio <- c('hidango_2021-2022' = 'Hidango North',
+                     'hidango_2022-2023' = 'Hidango South',
+                     'la_cancha_2022-2023' = 'La Cancha',
+                     'villa_baviera_2020-2021' = 'Villa Baviera')
 
 oof |>
   filter(id %in% modelos_fig) |>
@@ -233,7 +326,7 @@ oof |>
   facet_wrap(~id) +
   coord_equal(xlim = c(0, 45), ylim = c(-2, 45)) +
   scale_colour_manual(name = NULL, values = cols4all::c4a('color_blind'), labels = etiquetas_sitio) +
-  labs(x = 'Observed AGB (t/ha)', y = 'Out-of-fold predicted AGB (t/ha)') +
+  labs(x = 'Observed AGB (t ha⁻¹)', y = 'Out-of-fold predicted AGB (t ha⁻¹)') +
   theme_bw() +
   theme(strip.background = element_rect(fill = 'white'), legend.position = 'bottom')
 
@@ -250,7 +343,7 @@ oof |>
   geom_line(aes(y = pred, colour = id)) +
   facet_wrap(~sitio_temporada, labeller = as_labeller(etiquetas_sitio)) +
   scale_colour_manual(name = 'Out-of-fold prediction', values = cols4all::c4a('color_blind')) +
-  labs(x = 'Days after sowing', y = 'Mean AGB per sampling date (t/ha)') +
+  labs(x = 'Days after sowing', y = 'Mean AGB per sampling date (t ha⁻¹)') +
   theme_bw() +
   theme(strip.background = element_rect(fill = 'white'), legend.position = 'bottom')
 
@@ -316,7 +409,7 @@ p_var <- vip_resumen |>
   geom_vline(xintercept = 0, linetype = 'dashed', colour = 'grey50') +
   geom_pointrange(aes(xmin = delta_min, xmax = delta_max), size = 0.25) +
   scale_colour_manual(name = NULL, values = paleta_grupos, drop = TRUE) +
-  labs(x = 'Increase in held-out RMSE (t/ha)', y = NULL, title = '(a) Individual predictors') +
+  labs(x = 'Increase in held-out RMSE (t ha⁻¹)', y = NULL, title = '(a) Individual predictors') +
   theme_bw()
 
 p_grp <- vip_resumen |>
@@ -325,7 +418,7 @@ p_grp <- vip_resumen |>
   geom_vline(xintercept = 0, linetype = 'dashed', colour = 'grey50') +
   geom_pointrange(aes(xmin = delta_min, xmax = delta_max), size = 0.25) +
   scale_colour_manual(values = paleta_grupos, guide = 'none') +
-  labs(x = 'Increase in held-out RMSE (t/ha)', y = NULL, title = '(b) Predictor groups') +
+  labs(x = 'Increase in held-out RMSE (t ha⁻¹)', y = NULL, title = '(b) Predictor groups') +
   theme_bw()
 
 patchwork::wrap_plots(p_var, p_grp, ncol = 2, widths = c(1.4, 1), guides = 'collect') &
@@ -342,7 +435,13 @@ fit_all <- workflow(receta(todas), rf_spec(length(todas))) |>
 expl_all <- explain_tidymodels(fit_all, data = select(data, all_of(todas)), y = data$biomasa,
                                label = 'RF all predictors', verbose = FALSE)
 
+# predictores que el filtro de correlación mantiene en el modelo ajustado a todos los datos; los que
+# elimina tendrían un perfil ALE plano, así que se excluyen de la figura
+retenidos <- names(extract_mold(fit_all)$predictors)
 top6 <- vip_resumen |> filter(nivel == 'variable') |> slice_head(n = 6) |> pull(variable)
+excluidos_ale <- setdiff(top6, retenidos)
+if (length(excluidos_ale) > 0) message('ALE: se excluyen por el filtro de correlación: ', paste(excluidos_ale, collapse = ', '))
+top6 <- intersect(top6, retenidos)
 
 ale <- model_profile(expl_all, variables = top6, N = NULL, type = 'accumulated')
 
@@ -357,9 +456,34 @@ as_tibble(ale$agr_profiles) |>
              mutate(`_vname_` = factor(`_vname_`, levels = top6)),
            aes(`_x_`), inherit.aes = FALSE, alpha = 0.3, sides = 'b') +
   facet_wrap(~`_vname_`, scales = 'free_x') +
-  labs(x = 'Predictor value', y = 'Accumulated local effect on AGB (t/ha)') +
+  labs(x = 'Predictor value', y = 'Accumulated local effect on AGB (t ha⁻¹)') +
   theme_bw() +
   theme(strip.background = element_rect(fill = 'white'))
 
 ggsave('output/figs/loso_limpio_ale_rf_all.png',
        width = 6, height = 4, dpi = 300, scale = 1.2)
+
+#8. Tabla S2: RMSE (R²) por sitio retenido ----
+
+orden_s2 <- c('DAS | LM', 'GDD | LM', 'GDD | RF', 'GDD | XGBoost', 'W | LM', 'W | RF', 'W | XGBoost',
+              paste(rep(c('S1', 'S2', 'PS', 'S1+GDD', 'S2+GDD', 'PS+GDD', 'S1+W', 'S2+W', 'PS+W',
+                          'S2+W+S1', 'All'), each = 2), c('RF', 'XGBoost'), sep = ' | '))
+fmt <- function(x) sub('-', '$-$', sprintf('%.2f', x), fixed = TRUE)
+
+filas_s2 <- por_fold |>
+  filter(subconjunto == 'all') |>
+  mutate(celda = paste0(fmt(rmse), ' (', fmt(rsq), ')')) |>
+  select(id, conjunto, modelo, sitio_temporada, celda) |>
+  pivot_wider(names_from = sitio_temporada, values_from = celda) |>
+  mutate(id = factor(id, levels = orden_s2)) |>
+  arrange(id) |>
+  transmute(linea = paste(conjunto, modelo, `hidango_2021-2022`, `hidango_2022-2023`,
+                          `la_cancha_2022-2023`, `villa_baviera_2020-2021`, sep = ' & ') |> paste('\\\\'))
+
+writeLines(c(
+  '\\begin{table}[htbp]', '\\centering', '\\footnotesize',
+  '\\caption{RMSE (t ha$^{-1}$) and, in parentheses, R$^2$ (1 $-$ SSE/SST) for each held-out site-season under leave-one-site-season-out cross-validation (LOSSO-CV). Each value is obtained with a model trained on the other three site-seasons.}',
+  '\\label{tbl-s2}', '\\begin{tabular}{l l c c c c}', '\\toprule',
+  '\\textbf{Predictor set} & \\textbf{Model} & \\textbf{Hidango North} & \\textbf{Hidango South} & \\textbf{La Cancha} & \\textbf{Villa Baviera} \\\\',
+  '\\midrule', filas_s2$linea, '\\bottomrule', '\\end{tabular}', '\\end{table}'),
+  'output/tables/rev2_tabla_S2.tex')

@@ -16,8 +16,11 @@ calc_index_s2 <- function(r,index = NULL, dates, mask_values = NULL, dir.out = N
   }
   
   band_name <- grep('^B', unique(names(r)), value = T)
+  # desde la línea base de procesamiento 04.00 (25 de enero de 2022) los ND de nivel 2A incluyen
+  # BOA_ADD_OFFSET = -1000: reflectancia = (ND - 1000) / 10000
+  offset <- ifelse(as.Date(dates) >= as.Date('2022-01-25'), 1000, 0)
   B <- lapply(band_name, \(x) {
-    band <- r[[which(names(r) == x)]] / 10000 * scl
+    band <- (r[[which(names(r) == x)]] - offset) / 10000 * scl
     band[band > 1] <- NA
     band[band < 0.01] <- NA
     band

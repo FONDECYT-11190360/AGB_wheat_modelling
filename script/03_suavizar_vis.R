@@ -117,6 +117,7 @@ lapply(cod_id, \(x) {
     r_completo <- r_completo[[order(names(r_completo))]]
     
     r_filled[[vi]] <- app(r_completo, naApprox_fill, cores = cl)
+    stopCluster(cl)  # se crea un clúster por índice; sin cerrarlo, los procesos R se acumulan
     names(r_filled[[vi]]) <- fechas_continuas
     
   }
@@ -185,6 +186,7 @@ lapply(cod_id, \(x) {
     r_completo <- r_completo[[order(names(r_completo))]]
     
     r_filled[[vi]] <- app(r_completo, naApprox_fill, cores = cl)
+    stopCluster(cl)  # se crea un clúster por índice; sin cerrarlo, los procesos R se acumulan
     names(r_filled[[vi]]) <- fechas_continuas
     
   }

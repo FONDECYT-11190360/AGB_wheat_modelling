@@ -1,5 +1,6 @@
 library(tidyverse)
 library(terra)
+library(tidyterra)
 library(stringr)
 library(agrometR)
 library(glue)
@@ -7,6 +8,10 @@ library(glue)
 estaciones <- vect(estaciones_agromet, geom = c("longitud", "latitud"), crs = "EPSG:4326")
 
 cod_id <- list.files('data/raw/raster/sentinel_2')
+# si no están las imágenes crudas, los sitio-temporada se toman de las capas a_{cod_id} de sitios.gpkg
+if (length(cod_id) == 0) {
+  cod_id <- sort(sub('^a_', '', grep('^a_', sf::st_layers('data/processed/sitios.gpkg')$name, value = TRUE)))
+}
 pols <- lapply(cod_id,function(x) {
   vector <- vect('data/processed/sitios.gpkg',layer = glue('a_{x}'))
 })
@@ -61,23 +66,24 @@ lapply(cod_id, \(x) {
   
 }) # graficar
   
-data_h1 <- get_agro_data(stations_id = ema_id['hidango_2021-2022'],
+data_h1 <- get_agro_data(stations_id = unname(ema_id['hidango_2021-2022']),
                       date_start = '2021-05-01 01:00:00', date_end = '2022-01-31 24:00:00') |> 
   mutate(sitio = 'hidango', temporada = '2021-2022', .before = station_id)
-data_h2 <- get_agro_data(stations_id = ema_id['hidango_2022-2023'],
+data_h2 <- get_agro_data(stations_id = unname(ema_id['hidango_2022-2023']),
                       date_start = '2022-05-01 01:00:00', date_end = '2023-01-05 24:00:00') |> 
   mutate(sitio = 'hidango', temporada = '2022-2023', .before = station_id)
-data_lc <- get_agro_data(stations_id = ema_id['la_cancha_2022-2023'],
+data_lc <- get_agro_data(stations_id = unname(ema_id['la_cancha_2022-2023']),
                       date_start = '2022-05-01 01:00:00', date_end = '2022-12-31 24:00:00') |> 
   mutate(sitio = 'la_cancha', temporada = '2022-2023', .before = station_id)
-data_vb <- get_agro_data(stations_id = ema_id['villa_baviera_2020-2021'],
+data_vb <- get_agro_data(stations_id = unname(ema_id['villa_baviera_2020-2021']),
                       date_start = '2020-09-01 01:00:00', date_end = '2021-01-31 24:00:00') |> 
   mutate(sitio = 'villa_baviera', temporada = '2020-2021', .before = station_id)
 
 data_clima <- bind_rows(data_h1,data_h2,data_lc,data_vb) |> 
   group_by(sitio,temporada,fecha = as.Date(fecha_hora)) |> 
-  reframe(t_mean_dia = (min(temp_minima.na.rm=T)+max(temp_maxima, na.rm=T))/2,
+  reframe(t_mean_dia = (min(temp_minima, na.rm=T)+max(temp_maxima, na.rm=T))/2,
           pp_dia = sum(precipitacion_horaria, na.rm=T)) |> 
   arrange(temporada,sitio,fecha)
 
+dir.create('data/processed_old', showWarnings = FALSE)
 write_rds(data_clima,'data/processed_old/data_clima_new.rds')

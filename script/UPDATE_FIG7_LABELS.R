@@ -68,7 +68,7 @@ p_var <- vip_resumen |>
   geom_vline(xintercept = 0, linetype = 'dashed', colour = 'grey50') +
   geom_pointrange(aes(xmin = delta_min, xmax = delta_max), size = 0.25) +
   scale_colour_manual(values = paleta_grupos, guide = 'none') +
-  labs(x = 'Increase in held-out RMSE (t/ha)', y = NULL, title = '(a) Individual predictors') +
+  labs(x = 'Increase in held-out RMSE (t ha⁻¹)', y = NULL, title = '(a) Individual predictors') +
   theme_bw() +
   theme(axis.text.y = element_text(size = 9))
 
@@ -79,7 +79,7 @@ p_grp <- vip_resumen |>
   geom_vline(xintercept = 0, linetype = 'dashed', colour = 'grey50') +
   geom_pointrange(aes(xmin = delta_min, xmax = delta_max), size = 0.25) +
   scale_colour_manual(values = paleta_grupos, guide = 'none') +
-  labs(x = 'Increase in held-out RMSE (t/ha)', y = NULL, title = '(b) Predictor groups') +
+  labs(x = 'Increase in held-out RMSE (t ha⁻¹)', y = NULL, title = '(b) Predictor groups') +
   theme_bw()
 
 # Combine panels

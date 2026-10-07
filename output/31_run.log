@@ -1,0 +1,95 @@
+── Attaching packages ────────────────────────────────────── tidymodels 1.5.0 ──
+✔ broom        1.0.13     ✔ recipes      1.4.0 
+✔ dials        1.4.4      ✔ rsample      1.3.2 
+✔ dplyr        1.2.1      ✔ tailor       0.1.0 
+✔ ggplot2      4.0.3      ✔ tidyr        1.3.2 
+✔ infer        1.1.0      ✔ tune         2.1.0 
+✔ modeldata    1.6.0      ✔ workflows    1.3.0 
+✔ parsnip      1.6.0      ✔ workflowsets 1.1.1 
+✔ purrr        1.2.2      ✔ yardstick    1.4.0 
+── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+✖ purrr::discard() masks scales::discard()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()
+✖ recipes::step()  masks stats::step()
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ lubridate 1.9.5     ✔ tibble    3.3.1
+✔ readr     2.2.0     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ readr::col_factor() masks scales::col_factor()
+✖ purrr::discard()    masks scales::discard()
+✖ dplyr::filter()     masks stats::filter()
+✖ stringr::fixed()    masks recipes::fixed()
+✖ dplyr::lag()        masks stats::lag()
+✖ readr::spec()       masks yardstick::spec()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Welcome to DALEX (version: 2.5.4).
+Find examples and detailed introduction at: http://ema.drwhy.ai/
+Additional features will be available after installation of: ggpubr.
+Use 'install_dependencies()' to get all suggested dependencies
+
+Adjuntando el paquete: ‘DALEX’
+
+The following object is masked from ‘package:dplyr’:
+
+    explain
+
+DAS LM
+GDD LM
+GDD RF
+GDD XGBoost
+W LM
+W RF
+W XGBoost
+S1 RF
+S1 XGBoost
+S2 RF
+S2 XGBoost
+PS RF
+PS XGBoost
+S1+GDD RF
+S1+GDD XGBoost
+S2+GDD RF
+S2+GDD XGBoost
+PS+GDD RF
+PS+GDD XGBoost
+S1+W RF
+S1+W XGBoost
+S2+W RF
+S2+W XGBoost
+PS+W RF
+PS+W XGBoost
+S2+W+S1 RF
+S2+W+S1 XGBoost
+All RF
+All XGBoost
+Aviso:
+In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'RMSE (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+Avisos:
+1: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'RMSE = 6.26 t ha⁻¹' in 'mbcsToSbcs': for ⁻ (U+207B)
+2: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'RMSE = 6.32 t ha⁻¹' in 'mbcsToSbcs': for ⁻ (U+207B)
+3: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'RMSE = 6.11 t ha⁻¹' in 'mbcsToSbcs': for ⁻ (U+207B)
+4: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Observed AGB (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+5: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Out-of-fold predicted AGB (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+Aviso:
+In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Mean AGB per sampling date (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+DALEX villa_baviera_2020-2021
+DALEX hidango_2021-2022
+DALEX hidango_2022-2023
+DALEX la_cancha_2022-2023
+Avisos:
+1: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Increase in held-out RMSE (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+2: In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Increase in held-out RMSE (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)
+Aviso:
+In grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  :
+  conversion failure on 'Accumulated local effect on AGB (t ha⁻¹)' in 'mbcsToSbcs': for ⁻ (U+207B)

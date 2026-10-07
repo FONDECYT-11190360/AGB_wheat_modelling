@@ -1,6 +1,13 @@
 library(tidyverse)
 Sys.setlocale("LC_TIME", "en_US.UTF-8")
 
+# nombre de cada campo sin la temporada (Hidango tuvo un campo norte y uno sur)
+nombre_campo <- function(sitio, temporada) {
+  case_when(sitio == 'Hidango' & str_starts(temporada, '2021') ~ 'Hidango North',
+            sitio == 'Hidango' & str_starts(temporada, '2022') ~ 'Hidango South',
+            .default = sitio)
+}
+
 abrev <- function(string) {
   str_extract_all(string, "\\b[A-Za-z]") |>
     unlist() |>
@@ -62,7 +69,7 @@ data_plot |>
              size = 3.5,alpha = .5,vjust = -.3,hjust = 1,parse = TRUE, label.size = 0) +
   geom_text(data = fechas_feno, aes(x = fecha_nueva, y = 47, label = label, hjust = .5), size = 3, color = 'black') +
   scale_color_manual(values = c("NDVI" = "darkolivegreen3", "AGB" = "darkorange"),name = NULL) +
-  scale_y_continuous(name = "AGB",
+  scale_y_continuous(name = "AGB (t ha⁻¹)",
                      sec.axis = sec_axis(~ . / 45, 
                                          name = "NDVI",
                                          labels = function(x) sub("\\.0$", "", as.character(x)),
@@ -79,7 +86,11 @@ data_plot |>
 
 ggsave('output/figs/fenology_and_biomass_new_v1.png', height = 8, width = 7, scale=1)
 
-data_plot |> 
+data_plot <- mutate(data_plot, campo = nombre_campo(sitio, temporada))
+data_label <- mutate(data_label, campo = nombre_campo(sitio, temporada))
+fechas_feno <- mutate(fechas_feno, campo = nombre_campo(sitio, temporada))
+
+data_plot |>
   ggplot(aes(fecha,biomasa,color = 'AGB')) +
   geom_vline(data = fechas_feno, aes(xintercept = fecha), linetype = 'dotted', alpha = .6, color = 'navyblue') +
   geom_line(aes(fecha,NDVI*45,color = 'NDVI'), stat = "smooth", method = 'gam',
@@ -91,7 +102,7 @@ data_plot |>
              size = 3.5,alpha = .5,vjust = -.3,hjust = 1,parse = TRUE, label.size = 0) +
   geom_text(data = fechas_feno, aes(x = fecha_nueva, y = 47, label = label, hjust = .5), size = 3, color = 'black') +
   scale_color_manual(values = c("NDVI" = "darkolivegreen3", "AGB" = "darkorange"),name = NULL) +
-  scale_y_continuous(name = "AGB",
+  scale_y_continuous(name = "AGB (t ha⁻¹)",
                      sec.axis = sec_axis(~ . / 45, 
                                          name = "NDVI",
                                          labels = function(x) sub("\\.0$", "", as.character(x)),
@@ -102,7 +113,7 @@ data_plot |>
   scale_x_date(date_breaks='1 month',minor_breaks='1 month',date_labels='%b',
                limits = c(as.Date('2021-05-01'),as.Date('2022-01-20'))) +
   labs(x = NULL, y = NULL) +
-  facet_wrap(~sitio+temporada,ncol=2) +
+  facet_wrap(~campo,ncol=2) +
   theme_bw() +
   theme(strip.background = element_rect(fill = 'white'),
         legend.position = 'bottom')
